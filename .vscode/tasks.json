@@ -60,7 +60,74 @@
             },
             "problemMatcher": [
                 "$gcc"
-            ]
-        }
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "g++ precompile header",
+            "command": "g++",
+            "args": [
+                "-c", "${file}",
+                "-std=c++0x",
+                "-L", "${cwd}/lib",
+                "-I", "${cwd}",
+                "-I", "${cwd}/include",
+                "-l", "graphics",
+                "-l", "graphicsd",
+                "-l", "SDL",
+                "-l", "SDLmain",
+                "-l", "sdl_ttf"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "g++ build .o file",
+            "command": "g++",
+            "args": [
+                "-c", "${file}",
+                "-o", "${fileBasenameNoExtension}.o",
+                "-std=c++0x",
+                "-L", "${cwd}/lib",
+                "-I", "${cwd}",
+                "-I", "${cwd}/include",
+                "-l", "graphics",
+                "-l", "graphicsd",
+                "-l", "SDL",
+                "-l", "SDLmain",
+                "-l", "sdl_ttf"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "shell",
+            "label": "create static library",
+            "command": "ar",
+            "args": [
+                "rvs",
+                "lib/lib${fileBasenameNoExtension}.a",
+                "${file}"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
     ]
 }

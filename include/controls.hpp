@@ -28,7 +28,7 @@ namespace Controls
     const static color DEFAULT_NORMAL = hex_to_color("FFFFFF");
     const static color DEFAULT_HOVER = hex_to_color("D4BA6A");
     const static color DEFAULT_FOCUS = hex_to_color("AA8E39");
-    const static color DEFAULT_DRAG = hex_to_color("AA5939");
+    const static color DEFAULT_MOUSEDOWN = hex_to_color("AA5939");
     const static color DEFAULT_TEXT_NORMAL = hex_to_color("000000");
     const static color DEFAULT_TEXT_FOCUS = hex_to_color("FFFFFF");
 
@@ -95,8 +95,8 @@ namespace Controls
 
         virtual bool check_hover(const event& mouse_ev) {}
         virtual bool check_drag(const event& mouse_ev, const int btn) {}
-        virtual bool on_mouse_ev(const event& mouse_ev) {}
-        virtual bool on_key_ev(const event& key_ev) {}
+        virtual void on_mouse_ev(const event& mouse_ev) {}
+        virtual void on_key_ev(const event& key_ev) {}
 
         virtual void render() {}
         virtual void draw(canvas& c) {}
@@ -147,6 +147,20 @@ namespace Controls
 
         void render() override;
         void set_text(const std::string& text);
+    };
+
+    struct Button : public Frame
+    {
+    protected:
+        void (*action)();
+        // canvas content;
+        int content_width, content_height;
+
+    public:
+        Button(Point start, int width, int height, void(*action)());
+
+        void on_mouse_ev(const event& mouse_ev) override;
+        // void render() override;
     };
 
     struct Scene

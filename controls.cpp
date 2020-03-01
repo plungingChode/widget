@@ -109,7 +109,7 @@ namespace Controls
           rendered(width, height),
           normal_bg(DEFAULT_NORMAL), 
           hover_bg(DEFAULT_HOVER),
-          drag_bg(DEFAULT_DRAG), 
+          drag_bg(DEFAULT_MOUSEDOWN), 
           focus_bg(DEFAULT_FOCUS),
           fill(DEFAULT_NORMAL), 
           border(DEFAULT_BORDER),
@@ -282,6 +282,19 @@ namespace Controls
         {
             rendered << move_to(text_x, text_y)
                     << text_fill_normal << genv::text(text);
+        }
+    }
+
+    // Button
+    Button::Button(Point start, int width, int height, void (*action)())
+        : Frame(start, width, height), action(action)
+    {}
+
+    void Button::on_mouse_ev(const event& mev)
+    {
+        if (mev.button == btn_left)
+        {
+            action();
         }
     }
 

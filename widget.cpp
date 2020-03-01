@@ -8,12 +8,18 @@ const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 600;
 const int CANVAS_WIDTH = 600;
 
+void print_one()
+{
+    std::cout << 1 << '\n';
+}
+
 Frame* MENU_BOX1 = new Frame(Point(CANVAS_WIDTH + 1, 0), Point(SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2 - 1));
 // Control MENU_BOX2 = Control(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 Frame* MENU_BOX3 = new Frame(Point(50, SCREEN_HEIGHT / 2 - 50), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 Frame* MENU_BOX4 = new Frame(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 Label* lbl1 = new Label(Point(0, 0), "Sample text", Margin(25, 15));
 Label* lbl2 = new Label(Point(10, 50), "LUL", Margin(50, 18));
+Button* btn1 = new Button(Point(50, 50), 100, 100, print_one);
 
 int main(int argc, char const *argv[])
 {
@@ -31,6 +37,7 @@ int main(int argc, char const *argv[])
     s.add_control(MENU_BOX1);
     s.add_control(MENU_BOX3);
     s.add_control(MENU_BOX4);
+    s.add_control(btn1);
 
     event ev;
     while (gin >> ev)

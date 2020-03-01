@@ -90,8 +90,8 @@ namespace Controls
         bool is_focused() const;
         bool updated() const;
 
-        virtual void set_hover(bool val) {}
-        virtual void set_focus(bool val) {}
+        virtual void set_hover(bool val);
+        virtual void set_focus(bool val);
 
         virtual bool check_hover(const event& mouse_ev) {}
         virtual bool check_drag(const event& mouse_ev, const int btn) {}

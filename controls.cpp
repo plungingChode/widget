@@ -286,16 +286,75 @@ namespace Controls
     }
 
     // Button
-    Button::Button(Point start, int width, int height, void (*action)())
-        : Frame(start, width, height), action(action)
-    {}
+    Button::Button(
+        Point start, int width, int height, 
+        canvas content, Point content_offset, 
+        void (*action)())
+        :
+        Frame(start, width, height), 
+        content(content), 
+        content_offset(content_offset), 
+        action(action),
+        is_held(false)
+    {
+        this->is_draggable = false;
+    }
+
+    Button::Button(
+        Point start, int width, int height,
+        canvas content, void (*action)())
+        :
+        Button(start, width, height, content, Point(0, 0), action)
+    {
+    }
+
+    inline void Button::set_held(bool val)
+    {
+        is_held = val;
+        _needs_update = true;
+        _updated = true;
+    }
 
     void Button::on_mouse_ev(const event& mev)
     {
         if (mev.button == btn_left)
         {
-            action();
+            set_held(true);
         }
+        if (mev.button == -btn_left)
+        {
+            if (intersects(mev.pos_x, mev.pos_y))
+            {
+                action();
+            }
+            set_held(false);
+        }
+    }
+
+    void Button::render()
+    {
+        if (is_held)
+        {
+            fill = drag_bg;
+        }
+        else if (_is_focused)
+        {
+            fill = focus_bg;
+        }
+        else if (_is_hovered)
+        {
+            fill = hover_bg;
+        }
+        else
+        {
+            fill = normal_bg;
+        }
+
+        int b = border_thickness;
+        // std::cout << "Frame @ " << this << " updated\n";
+        rendered << move_to(0, 0) << border << box(width, height)
+                 << move_to(b, b) << fill << box(width - 2*b, height - 2*b)
+                 << stamp(content, content_offset.x, content_offset.y);
     }
 
     // Scene
@@ -349,8 +408,6 @@ namespace Controls
                         focused = hovered;
                         c->set_focus(true);
                     }
-
-                    c->on_mouse_ev(ev);                
                     break;
                 }
                 else
@@ -369,9 +426,13 @@ namespace Controls
             }
         }
         
-        if (focused != nullptr && focused->check_drag(ev, click_buf))
+        if (focused != nullptr)
         {
-            dragged = focused;
+            focused->on_mouse_ev(ev);
+            if (focused->check_drag(ev, click_buf))
+            {
+                dragged = focused;
+            }
         }
         else
         {
@@ -379,10 +440,11 @@ namespace Controls
         }
         
         
-        for (Control*& f : controls)
+        for (Control*& c : controls)
         {
-            if (f->updated())
+            if (c->updated())
             {
+                // std::cout << "Button updated\n";
                 return true;
             }
         }
@@ -394,7 +456,9 @@ namespace Controls
         if (focused != nullptr)
         {
             focused->on_key_ev(kev);
+            return focused->updated();
         }
+        return false;
     }
 
     void Scene::render(canvas& c)

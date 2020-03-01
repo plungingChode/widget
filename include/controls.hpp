@@ -153,14 +153,22 @@ namespace Controls
     {
     protected:
         void (*action)();
-        // canvas content;
-        int content_width, content_height;
+        canvas content;
+        Point content_offset;
+        bool is_held;
+
+        inline void set_held(bool val);
 
     public:
-        Button(Point start, int width, int height, void(*action)());
+        Button(Point start, int width, int height, 
+               canvas content, Point content_offset,
+               void(*action)());
+        
+        Button(Point start, int width, int height,
+               canvas content, void (*action)());
 
         void on_mouse_ev(const event& mouse_ev) override;
-        // void render() override;
+        void render() override;
     };
 
     struct Scene

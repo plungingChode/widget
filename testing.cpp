@@ -1,16 +1,18 @@
 #include <sstream>
 #include <iostream>
-#include "controls.hpp"
 #include "pch.hpp"
 
-using namespace Controls;
 using namespace genv;
+
 
 int main(int argc, char const *argv[])
 {
-    ENV_HEIGHT = 600;
-    ENV_WIDTH = 800;
-    gout.open(ENV_WIDTH, ENV_HEIGHT);
+    gout.open(800, 600);
+
+    canvas dnarrow = downarrow(7);
+    gout << stamp(dnarrow, 100, 100);
+
+    gout << refresh;
 
     event ev;
     while(gin >> ev)

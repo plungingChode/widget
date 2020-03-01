@@ -7,6 +7,21 @@ namespace Controls
     // Point
     Point::Point(int x, int y) : x(x), y(y) {};
     Point::Point() : x(0), y(0) {};
+
+    // Margin
+    Margin::Margin(int top, int left, int bottom, int right)
+        : top(top), left(left), bottom(bottom), right(right)
+    {}
+    Margin::Margin(int all) 
+        : Margin(all, all, all, all) 
+    {}
+    Margin::Margin(int horizontal, int vertical)
+        : Margin(vertical, horizontal, vertical, horizontal)
+    {} 
+    Margin::Margin() 
+        : Margin(0, 0, 0, 0)
+    {}
+
     
     // Rect
     Rect::Rect(Point start, Point end) 
@@ -88,14 +103,14 @@ namespace Controls
     }
     
     // Frame
-    Frame::Frame(Point start, Point end)
-        : Rect(start, end),
+    Frame::Frame(Point start, int width, int height)
+        : Rect(start, width, height),
           Control(start, start),
           rendered(width, height),
-          color_normal(DEFAULT_NORMAL), 
-          color_hover(DEFAULT_HOVER),
-          color_drag(DEFAULT_DRAG), 
-          color_focus(DEFAULT_FOCUS),
+          normal_bg(DEFAULT_NORMAL), 
+          hover_bg(DEFAULT_HOVER),
+          drag_bg(DEFAULT_DRAG), 
+          focus_bg(DEFAULT_FOCUS),
           fill(DEFAULT_NORMAL), 
           border(DEFAULT_BORDER),
           border_thickness(10)
@@ -103,28 +118,30 @@ namespace Controls
         std::cout << &rendered << '\n';
     }
 
-    inline void Frame::set_color(color& target, const std::string& hex)
+    Frame::Frame(Point start, Point end)
+        : Frame(start, end.x - start.x, end.y - start.y)
+    {
+    }
+
+        inline void Frame::set_color(color& target, const std::string& hex)
     {
         target = hex_to_color(hex);
     }
 
-    Frame::Frame(Point start, int width, int height)
-        : Frame(start, Point(start.x + width, start.y + height))
-    {}
 
     void Frame::set_normal_color(const std::string& hex)
     {
-        set_color(color_normal, hex);
+        set_color(normal_bg, hex);
     }
 
     void Frame::set_focus_color(const std::string& hex)
     {
-        set_color(color_focus, hex);
+        set_color(focus_bg, hex);
     }
 
     void Frame::set_hover_color(const std::string& hex)
     {
-        set_color(color_hover, hex);
+        set_color(hover_bg, hex);
     }
 
     void Frame::set_border_color(const std::string& hex)
@@ -135,6 +152,7 @@ namespace Controls
     void Frame::set_border_thickness(const int thickness)
     {
         border_thickness = thickness;
+        _needs_update = true;
     }
 
     bool Frame::check_hover(const event& mouse_ev)
@@ -180,40 +198,92 @@ namespace Controls
         return _is_dragging;
     }
 
-    void Frame::render(canvas& c)
+    void Frame::render()
     {
         // std::cout << "Calling Frame::render()\n"; 
-        if (_needs_update)
+        if (_is_dragging)
         {
-            if (_is_dragging)
-            {
-                fill = color_drag;
-            }
-            else if (_is_focused)
-            {
-                fill = color_focus;
-            }
-            else if (_is_hovered)
-            {
-                fill = color_hover;
-            }
-            else
-            {
-                fill = color_normal;
-            }
-
-            int b = border_thickness;
-            // std::cout << "Frame @ " << this << " updated\n";
-            rendered << move_to(0, 0) << border << box(width, height)
-                     << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
-            _needs_update = false;
+            fill = drag_bg;
+        }
+        else if (_is_focused)
+        {
+            fill = focus_bg;
+        }
+        else if (_is_hovered)
+        {
+            fill = hover_bg;
+        }
+        else
+        {
+            fill = normal_bg;
         }
 
-        // TODO miert nem mukodsz
+        int b = border_thickness;
+        // std::cout << "Frame @ " << this << " updated\n";
+        rendered << move_to(0, 0) << border << box(width, height)
+                 << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
+    }
+
+    void Frame::draw(canvas& c)
+    {
+        if (_needs_update)
+        {
+            render();
+            _needs_update = false;
+        }
         c << stamp(rendered, start.x, start.y);
         _updated = false;
     }
 
+    //Label
+    Label::Label(Point start, const std::string& text, Margin padding)
+        : text_fill_normal(DEFAULT_TEXT_NORMAL),
+          text_fill_focused(DEFAULT_TEXT_FOCUS),
+          text(text),
+          text_width(rendered.twidth(text)),
+          char_ascent(rendered.cascent()),
+          char_descent(rendered.cdescent()),
+          text_x(width  / 2 - rendered.twidth(text) / 2),
+          text_y(height / 2 + rendered.cdescent()),
+          padding(padding),
+          Frame(start,
+            Point(start.x 
+                    + padding.left + padding.right 
+                    + rendered.twidth(text) 
+                    + 2*border_thickness,
+                  start.y 
+                    + padding.top  + padding.bottom 
+                    + rendered.cdescent() + rendered.cascent() 
+                    + 2*border_thickness))
+    {
+    }
+
+    Label::Label(Point start, int width, int height, const std::string& text)
+        : Label(start, text, 
+            Margin((width - start.x) / 2, 
+                   (height - start.x) / 2))
+    {
+    }
+
+    Label::Label(Point start, const std::string& text, int padding)
+        : Label(start, text, Margin(padding))
+    {
+    }
+
+    void Label::render()
+    {
+        Frame::render();
+        if (_is_focused)
+        {   
+            rendered << move_to(text_x, text_y)
+                    << text_fill_focused << genv::text(text);
+        }
+        else
+        {
+            rendered << move_to(text_x, text_y)
+                    << text_fill_normal << genv::text(text);
+        }
+    }
 
     // Scene
     Scene::Scene(int width, int height)
@@ -221,6 +291,14 @@ namespace Controls
     {
         ENV_WIDTH = width;
         ENV_HEIGHT = height;
+    }
+
+    Scene::~Scene()
+    {
+        for (Control*& c : controls)
+        {
+            delete c;
+        }
     }
 
     bool Scene::on_mouse_event(const event& ev)
@@ -258,6 +336,8 @@ namespace Controls
                         focused = hovered;
                         c->set_focus(true);
                     }
+
+                    c->on_mouse_ev(ev);                
                     break;
                 }
                 else
@@ -296,12 +376,20 @@ namespace Controls
         return false;
     }
 
+    bool Scene::on_key_event(const event& kev)
+    {
+        if (focused != nullptr)
+        {
+            focused->on_key_ev(kev);
+        }
+    }
+
     void Scene::render(canvas& c)
     {
         c << stamp(clear_screen, 0, 0);
         for (int i = controls.size() - 1; i >= 0; i--)
         {
-            controls[i]->render(c);
+            controls[i]->draw(c);
         }
     }
 

@@ -29,6 +29,8 @@ namespace Controls
     const static color DEFAULT_HOVER = hex_to_color("D4BA6A");
     const static color DEFAULT_FOCUS = hex_to_color("AA8E39");
     const static color DEFAULT_DRAG = hex_to_color("AA5939");
+    const static color DEFAULT_TEXT_NORMAL = hex_to_color("000000");
+    const static color DEFAULT_TEXT_FOCUS = hex_to_color("FFFFFF");
 
     static int ENV_WIDTH  = 999999;
     static int ENV_HEIGHT = 999999;
@@ -38,6 +40,15 @@ namespace Controls
         int x, y;
         Point(int x, int y);
         Point();
+    };
+
+    struct Margin
+    {
+        int top, left, bottom, right;
+        Margin(int top, int left, int bottom, int right);
+        Margin(int all);
+        Margin(int horizontal, int vertical);
+        Margin();
     };
 
     struct Rect
@@ -79,18 +90,22 @@ namespace Controls
         bool is_focused() const;
         bool updated() const;
 
-        void set_hover(bool val);
-        void set_focus(bool val);
+        virtual void set_hover(bool val) {}
+        virtual void set_focus(bool val) {}
 
-        virtual bool check_hover(const event& mouse_ev) {};
-        virtual bool check_drag(const event& mouse_ev, const int btn) {};
-        virtual void render(canvas& c) {};
+        virtual bool check_hover(const event& mouse_ev) {}
+        virtual bool check_drag(const event& mouse_ev, const int btn) {}
+        virtual bool on_mouse_ev(const event& mouse_ev) {}
+        virtual bool on_key_ev(const event& key_ev) {}
+
+        virtual void render() {}
+        virtual void draw(canvas& c) {}
     };
 
     struct Frame : public Control, public Rect
     {
     protected:
-        color color_normal, color_hover, color_focus, color_drag;
+        color normal_bg, hover_bg, focus_bg, drag_bg;
         color fill, border;
         int border_thickness;
 
@@ -108,9 +123,30 @@ namespace Controls
         void set_border_color(const std::string& hex);
         void set_border_thickness(const int thickness);
 
+        // allow override
         bool check_hover(const event& mouse_ev) override;
         bool check_drag(const event& mouse_ev, const int btn) override;
-        void render(canvas& c) override;
+        virtual void render() override;
+        virtual void draw(canvas& c) override;
+    };
+
+    struct Label : public Frame
+    {
+    protected:
+        color text_fill_normal, text_fill_focused;
+        Margin padding;
+
+        std::string text;
+        int text_width, char_ascent, char_descent;
+        int text_x, text_y;
+
+    public:
+        Label(Point start, int width, int height, const std::string& text);
+        Label(Point start, const std::string& text, int padding);
+        Label(Point start, const std::string& text, Margin padding);
+
+        void render() override;
+        void set_text(const std::string& text);
     };
 
     struct Scene
@@ -127,8 +163,10 @@ namespace Controls
 
     public:
         Scene(int width, int height);
+        ~Scene();
 
         bool on_mouse_event(const event& mev);
+        bool on_key_event(const event& kev);
         void render(canvas& c);
         void add_control(Control* c);
     };

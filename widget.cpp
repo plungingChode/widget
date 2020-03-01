@@ -8,21 +8,62 @@ const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 600;
 const int CANVAS_WIDTH = 600;
 
-void print_one()
+void print_one(const event& none)
 {
-    std::cout << 1 << '\n';
+    std::cout << "+1\n";
 }
 
-canvas downarrow(int sz, color clr = color(255, 255, 255))
+void print_neg_one(const event& none)
 {
-    canvas c(2*sz, sz);
-    c << clr;
-    for (int i = 0; i < sz; i++)
+    std::cout << "-1\n";
+}
+
+void print_ten(const event& key_ev)
+{
+    if (key_ev.keycode == key_up)
     {
-        for (int x = 0; x < i; x++)
+        std::cout << "+1\n";
+    }
+
+    if (key_ev.keycode == key_pgup)
+    {
+        std::cout << "+10\n";
+    }
+}
+
+void print_neg_ten(const event& key_ev)
+{
+    if (key_ev.keycode == key_down)
+    {
+        std::cout << "-1\n";
+    }
+
+    if (key_ev.keycode == key_pgdn)
+    {
+        std::cout << "-10\n";
+    }
+}
+
+canvas read_kep(const std::string& fname)
+{
+    std::ifstream f(fname);
+    int width, height;
+    f >> width >> std::ws;
+    f >> height >> std::ws;
+
+    canvas c(width, height); 
+
+    int x, y;
+    int r, g, b;
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
         {
-            c << move_to(sz+x, sz-i) << dot;
-            c << move_to(sz-x, sz-i) << dot;
+            f >> r >> g >> b;
+
+            c << move_to(x, y) 
+              << color(r, g, b) 
+              << dot;
         }
     }
     c.transparent(true);
@@ -35,7 +76,8 @@ canvas downarrow(int sz, color clr = color(255, 255, 255))
 // Frame* MENU_BOX4 = new Frame(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 // Label* lbl1 = new Label(Point(0, 0), "Sample text", Margin(25, 15));
 // Label* lbl2 = new Label(Point(10, 50), "LUL", Margin(50, 18));
-Button* btn1 = new Button(Point(50, 50), 100, 100, downarrow(15, color(1,0,0)), Point(35, 45), print_one);
+Button* btn1 = new Button(Point(50, 50), 21, 15, read_kep("dnarrow.kep"), Point(5, 5), print_neg_one, print_neg_ten);
+Button* btn2 = new Button(Point(50, 50-14), 21, 15, read_kep("uarrow.kep"), Point(5, 5), print_one, print_ten);
 
 int main(int argc, char const *argv[])
 {
@@ -53,7 +95,10 @@ int main(int argc, char const *argv[])
     // s.add_control(MENU_BOX1);
     // s.add_control(MENU_BOX3);
     // s.add_control(MENU_BOX4);
+    btn1->set_border_thickness(1);
+    btn2->set_border_thickness(1);
     s.add_control(btn1);
+    s.add_control(btn2);
 
     event ev;
     while (gin >> ev)
@@ -64,6 +109,7 @@ int main(int argc, char const *argv[])
             // {
             //     std::cout << char(ev.keycode) << '\n';
             // }
+            s.on_key_event(ev);
             
             if (ev.keycode == key_escape)
             {

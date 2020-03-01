@@ -152,7 +152,8 @@ namespace Controls
     struct Button : public Frame
     {
     protected:
-        void (*action)();
+        void (*on_mouse)(const event& mouse_ev);
+        void (*on_key)(const event& key_ev);
         canvas content;
         Point content_offset;
         bool is_held;
@@ -162,12 +163,15 @@ namespace Controls
     public:
         Button(Point start, int width, int height, 
                canvas content, Point content_offset,
-               void(*action)());
+               void(*on_mouse)(const event& mouse_ev),
+               void(*on_key)(const event& key_ev));
         
         Button(Point start, int width, int height,
-               canvas content, void (*action)());
+               canvas content, void(*on_mouse)(const event& mouse_ev),
+               void(*on_key)(const event& key_ev));
 
         void on_mouse_ev(const event& mouse_ev) override;
+        void on_key_ev(const event& key_ev) override;
         void render() override;
     };
 

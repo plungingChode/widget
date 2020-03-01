@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "controls.hpp"
+#include "controls.cpp"
 
 using namespace genv;
 using namespace Controls;
@@ -8,20 +8,18 @@ const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 600;
 const int CANVAS_WIDTH = 600;
 
-
-
-Control MENU_BOX1 = Control(Point(CANVAS_WIDTH + 1, 0), Point(SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2 - 1));
+Frame* MENU_BOX1 = new Frame(Point(CANVAS_WIDTH + 1, 0), Point(SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2 - 1));
 // Control MENU_BOX2 = Control(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-Control MENU_BOX3 = Control(Point(50, SCREEN_HEIGHT / 2 - 50), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-Control MENU_BOX4 = Control(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
+Frame* MENU_BOX3 = new Frame(Point(50, SCREEN_HEIGHT / 2 - 50), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
+Frame* MENU_BOX4 = new Frame(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 int main(int argc, char const *argv[])
 {
     gout.open(900, 600);
     Scene s(900, 600);
-
-    MENU_BOX1.is_draggable = false;
-    MENU_BOX3.set_border_thickness(15);
+ 
+    MENU_BOX1->is_draggable = false;
+    // MENU_BOX3->set_border_thickness(15);
 
     s.add_control(MENU_BOX1);
     s.add_control(MENU_BOX3);

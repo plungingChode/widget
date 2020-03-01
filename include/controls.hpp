@@ -55,39 +55,52 @@ namespace Controls
         bool intersects(int x, int y) const;
     };
 
-    struct Control : public Rect
+    struct Control
     {
     protected:
-        color color_normal, color_hover, color_focus, color_drag;
-        color fill, border;
-
         bool _is_hovered, _is_focused;
         bool _needs_update, _updated;
 
         bool _is_dragging;
 
-        // Coordinates of the mouse event that started the drag1
+        // Coordinates of the mouse event that started the drag
         Point drag_center;
 
         // Coordinates of the 'start' point when the drag begins
         Point drag_start;
 
-        int border_thickness;
-        canvas rendered;
+        Control(Point drag_center, Point drag_start);
 
-        Control();
-        void set_defaults() const;
         inline void set_drag(bool val);
-        inline void set_color(color& target, const std::string& hex);
     
     public:
         bool is_draggable;
 
-        Control(Point start, Point end);
-        Control(Point start, int width, int height);
-
         bool is_focused() const;
         bool updated() const;
+
+        void set_hover(bool val);
+        void set_focus(bool val);
+
+        virtual bool check_hover(const event& mouse_ev) {};
+        virtual bool check_drag(const event& mouse_ev, const int btn) {};
+        virtual void render(canvas& c) {};
+    };
+
+    struct Frame : public Control, public Rect
+    {
+    protected:
+        color color_normal, color_hover, color_focus, color_drag;
+        color fill, border;
+        int border_thickness;
+
+        canvas rendered;
+
+        inline void set_color(color& target, const std::string& hex);
+
+    public:
+        Frame(Point start, Point end);
+        Frame(Point start, int width, int height);
 
         void set_normal_color(const std::string& hex);
         void set_focus_color(const std::string& hex);
@@ -95,11 +108,9 @@ namespace Controls
         void set_border_color(const std::string& hex);
         void set_border_thickness(const int thickness);
 
-        void set_hover(bool val);
-        void set_focus(bool val);
-        bool check_drag(const event& mouse_ev, const int btn);
-        
-        void render(canvas& c);
+        bool check_hover(const event& mouse_ev) override;
+        bool check_drag(const event& mouse_ev, const int btn) override;
+        void render(canvas& c) override;
     };
 
     struct Scene
@@ -107,7 +118,7 @@ namespace Controls
     private:
         canvas clear_screen = canvas(ENV_HEIGHT, ENV_WIDTH);
 
-        std::vector<Control> controls;
+        std::vector<Control*> controls;
         int click_buf = 0; 
         bool needs_update = true;
         Control* hovered = nullptr;
@@ -119,7 +130,7 @@ namespace Controls
 
         bool on_mouse_event(const event& mev);
         void render(canvas& c);
-        void add_control(const Control& c);
+        void add_control(Control* c);
     };
 }
 

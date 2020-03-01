@@ -59,6 +59,16 @@
     "ctime": "cpp",
     "map": "cpp",
     "set": "cpp",
-    "cinttypes": "cpp"
+    "cinttypes": "cpp",
+    "list": "cpp",
+    "iomanip": "cpp",
+    "locale": "cpp",
+    "queue": "cpp",
+    "xhash": "cpp",
+    "xlocbuf": "cpp",
+    "xlocmes": "cpp",
+    "xlocmon": "cpp",
+    "xloctime": "cpp",
+    "xtree": "cpp"
   }
 }

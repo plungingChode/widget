@@ -39,68 +39,35 @@ canvas read_kep(const std::string& fname)
     return c;
 }
 
-// Frame* MENU_BOX1 = new Frame(Point(CANVAS_WIDTH + 1, 0), Point(SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2 - 1));
-// // Control MENU_BOX2 = Control(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-// Frame* MENU_BOX3 = new Frame(Point(50, SCREEN_HEIGHT / 2 - 50), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-// Frame* MENU_BOX4 = new Frame(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-Label* lbl1 = new Label(Point(0, 0), "Sample text", Margin(25, 15));
-// Label* lbl2 = new Label(Point(10, 50), "LUL", Margin(50, 18));
-Button* btn1 = new Button(Point(50, 60), "Test button", Margin(25, 8), print_one);
+// Button* btn1 = new Button(Point(50, 60), "Test button", 120, 30, print_one);
+// Button* btn2 = new Button(Point(50+btn1->get_width()+10, 60), "Test button 2", 120, 30, print_one);
+
+void style_btn(Button*& btn)
+{
+    btn->set_border_color("E5D96E");
+    btn->set_text_fill_normal("E5D96E");
+    btn->set_normal_bg("7c7c7c");
+    btn->set_hover_bg("8c8c8c");
+    btn->set_focus_bg("8c8c8c");
+    btn->set_drag_bg("999999");
+    btn->set_font("LiberationSans-Regular.ttf");
+}
+
+void style_label(Label*& lbl)
+{
+    lbl->is_hittest_visible = true;
+    lbl->set_font("LiberationSans-Regular.ttf");
+    lbl->set_border_thickness(3);
+}
 
 int main(int argc, char const *argv[])
 {
-    gout.open(900, 600);
-    Scene s(900, 600);
- 
-    // MENU_BOX1->is_draggable = false;
-    // MENU_BOX3->set_border_thickness(15);
-    // lbl1->set_border_thickness(3);
-    // lbl1->set_border_color("CFCFCF");
-    // lbl2->set_border_thickness(1);
-    btn1->set_border_color("FFF7AA");
-    btn1->set_text_fill_normal("FFF7AA");
-    btn1->set_normal_bg("7f7f7f");
-    btn1->set_hover_bg("8c8c8c");
-    btn1->set_focus_bg("8c8c8c");
-    btn1->set_drag_bg("999999");
-    btn1->set_font("LiberationSans-Regular.ttf");
-    lbl1->set_font("LiberationSans-Regular.ttf");
-
-    s.add_control(lbl1);
-    // s.add_control(lbl2);
-    // s.add_control(MENU_BOX1);
-    // s.add_control(MENU_BOX3);
-    // s.add_control(MENU_BOX4);
-    // btn1->set_border_thickness(1);
-    // btn2->set_border_thickness(1);
-    s.add_control(btn1);
-    // s.add_control(btn2);
-
-    event ev;
-    while (gin >> ev)
+    Scene s(500, 300);
+    for (int i = 0; i < 10; i++)
     {
-        if (ev.type == ev_key)
-        {
-            // if (ev.keycode >= 97 && ev.keycode <= 122)
-            // {
-            //     std::cout << char(ev.keycode) << '\n';
-            // }
-            s.on_key_event(ev);
-            
-            if (ev.keycode == key_escape)
-            {
-                return 0;
-            }
-        }
-
-        if (ev.type == ev_mouse)
-        {
-            if (s.on_mouse_event(ev))
-            {
-                s.render(gout);
-                gout << refresh;
-            }
-        }
+        Label* lbl1 = new Label(Point(std::rand() % 400, std::rand() % 200), "0", Margin(25, 10));
+        style_label(lbl1);
+        s.add_control(lbl1);
     }
-    return 0;
+    s.run();
 }

@@ -62,6 +62,11 @@ namespace Controls
         Rect(Point start, int width, int height);
         Rect(int width, int height);
 
+        Point get_start();
+        Point get_end();
+        unsigned int get_width();
+        unsigned int get_height();
+
         bool intersects(Point p) const;
         bool intersects(int x, int y) const;
     };
@@ -143,7 +148,7 @@ namespace Controls
         int text_x, text_y;
 
     public:
-        Label(Point start, int width, int height, const std::string& text);
+        Label(Point start, const std::string& text,int width, int height);
         Label(Point start, const std::string& text, int padding);
         Label(Point start, const std::string& text, Margin padding);
 
@@ -164,15 +169,24 @@ namespace Controls
 
     public:
         Button(Point start, const std::string& text, Margin padding, void (*action)());
-        
+        Button(Point start, const std::string& text, int width, int height, void (*action)());
+
         void on_mouse_ev(const event& mouse_ev) override;
         void render() override;
     };
 
+    // struct Spinner : public Label
+    // {
+
+    // };
+
+    // struct ComboBox
+    // {};
+
     struct Scene
     {
     private:
-        canvas background = canvas(ENV_HEIGHT, ENV_WIDTH);
+        canvas background;
 
         std::vector<Control*> controls;
         int click_buf = 0; 
@@ -182,15 +196,17 @@ namespace Controls
         Control* dragged = nullptr;
 
         void render_background();
+        bool on_mouse_event(const event& mev);
+        bool on_key_event(const event& kev);
+        void render(canvas& c);
 
     public:
         Scene(int width, int height);
         ~Scene();
 
-        bool on_mouse_event(const event& mev);
-        bool on_key_event(const event& kev);
-        void render(canvas& c);
         void add_control(Control* c);
+
+        int run();
     };
 }
 

@@ -42,6 +42,11 @@ namespace Controls
           width(width), height(height)
     {}
 
+    Point Rect::get_start() { return start; }
+    Point Rect::get_end() { return end; }
+    unsigned int Rect::get_width() { return width; }
+    unsigned int Rect::get_height() { return height; }
+
     bool Rect::intersects(Point p) const
     {
         return start.x <= p.x && start.y <= p.y
@@ -267,10 +272,10 @@ namespace Controls
         Control::is_hittest_visible = false;
     }
 
-    Label::Label(Point start, int width, int height, const std::string& text)
+    Label::Label(Point start, const std::string& text, int width, int height)
         : Label(start, text, 
-            Margin((width - start.x) / 2, 
-                   (height - start.x) / 2))
+            Margin((width  - rendered.twidth(text)) / 2, 
+                   (height - (rendered.cdescent() + rendered.cascent())) / 2))
     {
     }
 
@@ -310,6 +315,13 @@ namespace Controls
         : Label(start, text, padding), action(action)
     {
         // Frame::rendered.transparent(true);
+        Control::is_draggable = false;
+        Control::is_hittest_visible = true;
+    }
+
+    Button::Button(Point start, const std::string& text, int width, int height, void (*action)())
+        : Label(start, text, width, height), action(action)
+    {
         Control::is_draggable = false;
         Control::is_hittest_visible = true;
     }
@@ -415,10 +427,11 @@ namespace Controls
         {
             for (Control*& c : controls)
             {
-                // Control*& c = controls[i];
                 if (c->is_hittest_visible && c->check_hover(ev))
                 {
-                    // check highest hover
+                    // std::cout << "Hover!\n";
+
+                    // check first hover
                     if (hovered != c)
                     {
                         if (hovered != nullptr)
@@ -442,20 +455,19 @@ namespace Controls
                     }
                     break;
                 }
-                else
-                {
-                    if (hovered == c)
-                    {
-                        hovered->set_hover(false);
-                        hovered = nullptr;
-                    }
-                    if (ev.button == btn_left && focused == c)
-                    {
-                        focused->set_focus(false);
-                        focused = nullptr;
-                    }
-                }   
             }
+        }
+
+        if (hovered != nullptr && !hovered->check_hover(ev))
+        {
+            hovered->set_hover(false);
+            hovered = nullptr;
+        }
+
+        if (ev.button == btn_left && focused != nullptr && hovered == nullptr)
+        {
+            focused->set_focus(false);
+            focused = nullptr;
         }
         
         if (focused != nullptr)
@@ -465,10 +477,10 @@ namespace Controls
             {
                 dragged = focused;
             }
-        }
-        else
-        {
-            dragged = nullptr;
+            else
+            {
+                dragged = nullptr;
+            }
         }
         
         
@@ -505,5 +517,34 @@ namespace Controls
     void Scene::add_control(Control* c)
     {
         controls.push_back(c);
+    }
+
+    int Scene::run()
+    {
+        gout.open(ENV_WIDTH, ENV_HEIGHT);
+
+        event ev;
+        while (gin >> ev)
+        {
+            if (ev.type == ev_key)
+            {
+                on_key_event(ev);
+                
+                if (ev.keycode == key_escape)
+                {
+                    return 0;
+                }
+            }
+
+            if (ev.type == ev_mouse)
+            {
+                if (on_mouse_event(ev))
+                {
+                    render(gout);
+                    gout << refresh;
+                }
+            }
+        }
+        return 0;
     }
 }

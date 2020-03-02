@@ -8,40 +8,9 @@ const int SCREEN_WIDTH = 900;
 const int SCREEN_HEIGHT = 600;
 const int CANVAS_WIDTH = 600;
 
-void print_one(const event& none)
+void print_one()
 {
     std::cout << "+1\n";
-}
-
-void print_neg_one(const event& none)
-{
-    std::cout << "-1\n";
-}
-
-void print_ten(const event& key_ev)
-{
-    if (key_ev.keycode == key_up)
-    {
-        std::cout << "+1\n";
-    }
-
-    if (key_ev.keycode == key_pgup)
-    {
-        std::cout << "+10\n";
-    }
-}
-
-void print_neg_ten(const event& key_ev)
-{
-    if (key_ev.keycode == key_down)
-    {
-        std::cout << "-1\n";
-    }
-
-    if (key_ev.keycode == key_pgdn)
-    {
-        std::cout << "-10\n";
-    }
 }
 
 canvas read_kep(const std::string& fname)
@@ -74,10 +43,9 @@ canvas read_kep(const std::string& fname)
 // // Control MENU_BOX2 = Control(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 // Frame* MENU_BOX3 = new Frame(Point(50, SCREEN_HEIGHT / 2 - 50), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
 // Frame* MENU_BOX4 = new Frame(Point(0, SCREEN_HEIGHT / 2 + 3), CANVAS_WIDTH / 2, SCREEN_HEIGHT / 2);
-// Label* lbl1 = new Label(Point(0, 0), "Sample text", Margin(25, 15));
+Label* lbl1 = new Label(Point(0, 0), "Sample text", Margin(25, 15));
 // Label* lbl2 = new Label(Point(10, 50), "LUL", Margin(50, 18));
-Button* btn1 = new Button(Point(50, 50), 21, 15, read_kep("dnarrow.kep"), Point(5, 5), print_neg_one, print_neg_ten);
-Button* btn2 = new Button(Point(50, 50-14), 21, 15, read_kep("uarrow.kep"), Point(5, 5), print_one, print_ten);
+Button* btn1 = new Button(Point(50, 60), "Test button", Margin(25, 8), print_one);
 
 int main(int argc, char const *argv[])
 {
@@ -89,16 +57,24 @@ int main(int argc, char const *argv[])
     // lbl1->set_border_thickness(3);
     // lbl1->set_border_color("CFCFCF");
     // lbl2->set_border_thickness(1);
+    btn1->set_border_color("FFF7AA");
+    btn1->set_text_fill_normal("FFF7AA");
+    btn1->set_normal_bg("7f7f7f");
+    btn1->set_hover_bg("8c8c8c");
+    btn1->set_focus_bg("8c8c8c");
+    btn1->set_drag_bg("999999");
+    btn1->set_font("LiberationSans-Regular.ttf");
+    lbl1->set_font("LiberationSans-Regular.ttf");
 
-    // s.add_control(lbl1);
+    s.add_control(lbl1);
     // s.add_control(lbl2);
     // s.add_control(MENU_BOX1);
     // s.add_control(MENU_BOX3);
     // s.add_control(MENU_BOX4);
-    btn1->set_border_thickness(1);
-    btn2->set_border_thickness(1);
+    // btn1->set_border_thickness(1);
+    // btn2->set_border_thickness(1);
     s.add_control(btn1);
-    s.add_control(btn2);
+    // s.add_control(btn2);
 
     event ev;
     while (gin >> ev)

@@ -29,7 +29,7 @@ namespace Controls
     const static color DEFAULT_HOVER = hex_to_color("D4BA6A");
     const static color DEFAULT_FOCUS = hex_to_color("AA8E39");
     const static color DEFAULT_MOUSEDOWN = hex_to_color("AA5939");
-    const static color DEFAULT_TEXT_NORMAL = hex_to_color("000000");
+    const static color DEFAULT_TEXT_NORMAL = hex_to_color("100000");
     const static color DEFAULT_TEXT_FOCUS = hex_to_color("FFFFFF");
 
     static int ENV_WIDTH  = 999999;
@@ -85,6 +85,7 @@ namespace Controls
         inline void set_drag(bool val);
     
     public:
+        bool is_hittest_visible;
         bool is_draggable;
 
         bool is_focused() const;
@@ -117,9 +118,10 @@ namespace Controls
         Frame(Point start, Point end);
         Frame(Point start, int width, int height);
 
-        void set_normal_color(const std::string& hex);
-        void set_focus_color(const std::string& hex);
-        void set_hover_color(const std::string& hex);
+        void set_normal_bg(const std::string& hex);
+        void set_focus_bg(const std::string& hex);
+        void set_hover_bg(const std::string& hex);
+        void set_drag_bg(const std::string& hex);
         void set_border_color(const std::string& hex);
         void set_border_thickness(const int thickness);
 
@@ -136,7 +138,7 @@ namespace Controls
         color text_fill_normal, text_fill_focused;
         Margin padding;
 
-        std::string text;
+        std::string text, font_src;
         int text_width, char_ascent, char_descent;
         int text_x, text_y;
 
@@ -145,15 +147,15 @@ namespace Controls
         Label(Point start, const std::string& text, int padding);
         Label(Point start, const std::string& text, Margin padding);
 
-        void render() override;
-        void set_text(const std::string& text);
+        void set_text_fill_normal(const std::string& hex);
+        void set_font(const std::string& font_src, int font_size = 16);
+        virtual void render() override;
     };
 
-    struct Button : public Frame
+    struct Button : public Label
     {
     protected:
-        void (*on_mouse)(const event& mouse_ev);
-        void (*on_key)(const event& key_ev);
+        void (*action)();
         canvas content;
         Point content_offset;
         bool is_held;
@@ -161,24 +163,16 @@ namespace Controls
         inline void set_held(bool val);
 
     public:
-        Button(Point start, int width, int height, 
-               canvas content, Point content_offset,
-               void(*on_mouse)(const event& mouse_ev),
-               void(*on_key)(const event& key_ev));
+        Button(Point start, const std::string& text, Margin padding, void (*action)());
         
-        Button(Point start, int width, int height,
-               canvas content, void(*on_mouse)(const event& mouse_ev),
-               void(*on_key)(const event& key_ev));
-
         void on_mouse_ev(const event& mouse_ev) override;
-        void on_key_ev(const event& key_ev) override;
         void render() override;
     };
 
     struct Scene
     {
     private:
-        canvas clear_screen = canvas(ENV_HEIGHT, ENV_WIDTH);
+        canvas background = canvas(ENV_HEIGHT, ENV_WIDTH);
 
         std::vector<Control*> controls;
         int click_buf = 0; 
@@ -186,6 +180,8 @@ namespace Controls
         Control* hovered = nullptr;
         Control* focused = nullptr;
         Control* dragged = nullptr;
+
+        void render_background();
 
     public:
         Scene(int width, int height);

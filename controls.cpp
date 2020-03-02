@@ -64,6 +64,7 @@ namespace Controls
           _is_dragging(false),
           _needs_update(true),
           _updated(true),
+          is_hittest_visible(true),
           is_draggable(true)
     {
     }
@@ -129,19 +130,24 @@ namespace Controls
     }
 
 
-    void Frame::set_normal_color(const std::string& hex)
+    void Frame::set_normal_bg(const std::string& hex)
     {
         set_color(normal_bg, hex);
     }
 
-    void Frame::set_focus_color(const std::string& hex)
+    void Frame::set_focus_bg(const std::string& hex)
     {
         set_color(focus_bg, hex);
     }
 
-    void Frame::set_hover_color(const std::string& hex)
+    void Frame::set_hover_bg(const std::string& hex)
     {
         set_color(hover_bg, hex);
+    }
+
+    void Frame::set_drag_bg(const std::string& hex)
+    {
+        set_color(drag_bg, hex);
     }
 
     void Frame::set_border_color(const std::string& hex)
@@ -235,7 +241,8 @@ namespace Controls
         _updated = false;
     }
 
-    //Label
+    // Label
+    // default border thickness = 1
     Label::Label(Point start, const std::string& text, Margin padding)
         : text_fill_normal(DEFAULT_TEXT_NORMAL),
           text_fill_focused(DEFAULT_TEXT_FOCUS),
@@ -244,18 +251,20 @@ namespace Controls
           char_ascent(rendered.cascent()),
           char_descent(rendered.cdescent()),
           text_x(width  / 2 - rendered.twidth(text) / 2),
-          text_y(height / 2 + rendered.cdescent()),
+          text_y(height / 2 + rendered.cdescent() - rendered.cascent()),
           padding(padding),
           Frame(start,
             Point(start.x 
                     + padding.left + padding.right 
                     + rendered.twidth(text) 
-                    + 2*border_thickness,
+                    + 2*2,
                   start.y 
                     + padding.top  + padding.bottom 
                     + rendered.cdescent() + rendered.cascent() 
-                    + 2*border_thickness))
+                    + 2*2))
     {
+        Frame::border_thickness = 1;
+        Control::is_hittest_visible = false;
     }
 
     Label::Label(Point start, int width, int height, const std::string& text)
@@ -270,6 +279,16 @@ namespace Controls
     {
     }
 
+    void Label::set_text_fill_normal(const std::string& hex)
+    {
+        set_color(text_fill_normal, hex);
+    }
+
+    void Label::set_font(const std::string& font_src, int font_size)
+    {
+        rendered.load_font(font_src, font_size);
+    }
+
     void Label::render()
     {
         Frame::render();
@@ -281,31 +300,18 @@ namespace Controls
         else
         {
             rendered << move_to(text_x, text_y)
-                    << text_fill_normal << genv::text(text);
+                     << text_fill_normal << genv::text(text);
         }
     }
 
     // Button
-    Button::Button(
-        Point start, int width, int height, 
-        canvas content, Point content_offset, 
-        void (*action)())
-        :
-        Frame(start, width, height), 
-        content(content), 
-        content_offset(content_offset), 
-        action(action),
-        is_held(false)
+    // TODO transparency + text = error 3?
+    Button::Button(Point start, const std::string& text, Margin padding, void (*action)())
+        : Label(start, text, padding), action(action)
     {
-        this->is_draggable = false;
-    }
-
-    Button::Button(
-        Point start, int width, int height,
-        canvas content, void (*action)())
-        :
-        Button(start, width, height, content, Point(0, 0), action)
-    {
+        // Frame::rendered.transparent(true);
+        Control::is_draggable = false;
+        Control::is_hittest_visible = true;
     }
 
     inline void Button::set_held(bool val)
@@ -351,18 +357,44 @@ namespace Controls
         }
 
         int b = border_thickness;
-        // std::cout << "Frame @ " << this << " updated\n";
-        rendered << move_to(0, 0) << border << box(width, height)
-                 << move_to(b, b) << fill << box(width - 2*b, height - 2*b)
-                 << stamp(content, content_offset.x, content_offset.y);
+        rendered 
+            << move_to(0, 0) << color(65, 65, 65) << box(width, height)
+            << move_to(0, 0) << fill << box(width - b, height - b);
+
+        if (is_held)
+        {
+            // bevel on the bottom right
+            rendered 
+                << move_to(1, height-b) << border << box(width-1, b)
+                << move_to(width-b, 1) << border << box(b, height-1)
+                << move_to(text_x + b, text_y + b) << text_fill_normal << genv::text(text);
+        }
+        else
+        {
+            // bevel on the top left
+            rendered 
+                << move_to(0, 0) << border << box(width-b, b)
+                << move_to(0, 0) << border << box(b, height-b)
+                << move_to(text_x, text_y) << text_fill_normal << genv::text(text);
+        } 
     }
 
     // Scene
+    // TODO share common background color
+    void Scene::render_background()
+    {
+        background 
+            << move_to(0, 0) 
+            << color(65, 65, 65)
+            << box(ENV_WIDTH, ENV_HEIGHT);
+    }
+
     Scene::Scene(int width, int height)
-        : clear_screen(width, height)
+        : background(width, height)
     {
         ENV_WIDTH = width;
         ENV_HEIGHT = height;
+        render_background();
     }
 
     Scene::~Scene()
@@ -384,7 +416,7 @@ namespace Controls
             for (Control*& c : controls)
             {
                 // Control*& c = controls[i];
-                if (c->check_hover(ev))
+                if (c->is_hittest_visible && c->check_hover(ev))
                 {
                     // check highest hover
                     if (hovered != c)
@@ -463,7 +495,7 @@ namespace Controls
 
     void Scene::render(canvas& c)
     {
-        c << stamp(clear_screen, 0, 0);
+        c << stamp(background, 0, 0);
         for (int i = controls.size() - 1; i >= 0; i--)
         {
             controls[i]->draw(c);

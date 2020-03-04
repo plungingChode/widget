@@ -121,7 +121,7 @@ namespace Controls
           border(DEFAULT_BORDER),
           border_thickness(10)
     {
-        std::cout << &rendered << '\n';
+        // std::cout << &rendered << '\n';
     }
 
     Frame::Frame(Point start, Point end)
@@ -300,21 +300,29 @@ namespace Controls
         if (_is_focused)
         {   
             rendered << move_to(text_x, text_y)
-                    << text_fill_focused << genv::text(text);
+                     << text_fill_focused << genv::text(text);
         }
         else
         {
             rendered << move_to(text_x, text_y)
                      << text_fill_normal << genv::text(text);
         }
+        rendered << move_to(width - 5, height - 5)
+                 << color(0, 0, 0) << box(5, 5);
     }
+
+    // void Label::on_mouse_ev(const event& m)
+    // {
+    //     // if ()
+    // }
+
 
     // Button
     // TODO transparency + text = error 3?
     Button::Button(Point start, const std::string& text, Margin padding, void (*action)())
         : Label(start, text, padding), action(action)
     {
-        // Frame::rendered.transparent(true);
+        Frame::rendered.transparent(true);
         Control::is_draggable = false;
         Control::is_hittest_visible = true;
     }
@@ -322,6 +330,7 @@ namespace Controls
     Button::Button(Point start, const std::string& text, int width, int height, void (*action)())
         : Label(start, text, width, height), action(action)
     {
+        Frame::rendered.transparent(true);
         Control::is_draggable = false;
         Control::is_hittest_visible = true;
     }
@@ -369,13 +378,16 @@ namespace Controls
         }
 
         int b = border_thickness;
+
+        // leave gap for bevel effect
         rendered 
-            << move_to(0, 0) << color(65, 65, 65) << box(width, height)
+            // << move_to(0, 0) << BACKGROUND_COLOR << box(width, height)
+            << move_to(0, 0) << color(0, 0, 0) << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
         if (is_held)
         {
-            // bevel on the bottom right
+            // bevel on the bottom right, push in text
             rendered 
                 << move_to(1, height-b) << border << box(width-1, b)
                 << move_to(width-b, 1) << border << box(b, height-1)
@@ -391,13 +403,29 @@ namespace Controls
         } 
     }
 
+    // // TextBox
+    // TextBox::TextBox(Point start, const std::string& text, Margin padding)
+    //     : Label(start, text, padding)
+    // {
+    // }
+
+    // TextBox::TextBox(Point start, const std::string& text, int width, int height)
+    //     : Label(start, text, width, height)
+    // {
+    // }
+
+    // void TextBox::on_key_ev(const event& kev)
+    // {
+    //     // visible char: 32 - 255
+    // }
+
     // Scene
     // TODO share common background color
     void Scene::render_background()
     {
         background 
             << move_to(0, 0) 
-            << color(65, 65, 65)
+            << BACKGROUND_COLOR
             << box(ENV_WIDTH, ENV_HEIGHT);
     }
 
@@ -464,12 +492,14 @@ namespace Controls
             hovered = nullptr;
         }
 
+        // check for click outside of control
         if (ev.button == btn_left && focused != nullptr && hovered == nullptr)
         {
             focused->set_focus(false);
             focused = nullptr;
         }
         
+        // check for drag
         if (focused != nullptr)
         {
             focused->on_mouse_ev(ev);
@@ -482,7 +512,6 @@ namespace Controls
                 dragged = nullptr;
             }
         }
-        
         
         for (Control*& c : controls)
         {

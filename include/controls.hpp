@@ -34,6 +34,7 @@ namespace Controls
 
     static int ENV_WIDTH  = 999999;
     static int ENV_HEIGHT = 999999;
+    static color BACKGROUND_COLOR = color(60, 60, 60);
 
     struct Point
     {
@@ -155,6 +156,7 @@ namespace Controls
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src, int font_size = 16);
         virtual void render() override;
+        void on_mouse_ev(const event& mouse_ev) override;
     };
 
     struct Button : public Label
@@ -175,8 +177,26 @@ namespace Controls
         void render() override;
     };
 
+    // struct TextBox : public Label
+    // {
+    // public:
+    //     TextBox(Point start, const std::string& text, Margin padding);
+    //     TextBox(Point start, const std::string& text, int width, int height);
+    //     // TextBox(Point start, Margin padding);
+    //     // TextBox(Point start, int width, int height);
+
+    //     void on_key_ev(const event& key_ev) override;
+    //     void render() override;
+    // };
+
     // struct Spinner : public Label
     // {
+    // protected:
+    //     void (*spin_up)(int& value);
+    //     void (*spin_dn)(int& value);
+    //     void (*spin_up_big)(int& value);
+    //     void (*spin_dn_big)(int& value);
+
 
     // };
 

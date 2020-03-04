@@ -346,6 +346,15 @@ namespace Controls
         Control::is_hittest_visible = true;
     }
 
+    void Button::set_focus(bool val)
+    {
+        Label::set_focus(val);
+        if (!val)
+        {
+            set_held(false);
+        }
+    }
+
     inline void Button::set_held(bool val)
     {
         is_held = val;
@@ -363,7 +372,7 @@ namespace Controls
         }
         if (m.button == -btn_left)
         {
-            if (_is_hovered)
+            if (is_held)
             {
                 action();
             }

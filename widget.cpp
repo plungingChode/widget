@@ -50,21 +50,27 @@ void style_btn(Button*& btn)
     btn->set_font("LiberationSans-Regular.ttf");
 }
 
+void vmi()
+{
+    std::cout << "vmi\n";
+}
 
 int main(int argc, char const *argv[])
 {
-    Scene s(470, 300);
-    for (int y = 0; y < 3; y++)
+    Scene s(500, 300);
+    for (int i = 0; i < 7; i++)
     {
-        for (int x = 0; x < 5; x++)
-        {
-            Point start = Point(60 + y*110, 50 + x*40);
-            std::string text = "Btn " + std::to_string(x+1) + ':' + std::to_string(y+1);
-            Frame* btn1 = new Frame(start, 100, 30);
-            // style_btn(btn1);
-            s.add_control(btn1);
-        }
-        
+        int x = std::rand() % 400;
+        int y = std::rand() % 200;
+        int m_x = 10 + std::rand() % 20;
+        int m_y = 5 + std::rand() % 15;
+        Button* lbl1 = new Button(Point(x, y), "Text", 100, 50, vmi);
+        lbl1->set_font("LiberationSans-Regular.ttf");
+        lbl1->is_hittest_visible = true;
+        // lbl1->is_draggable = false;
+
+        // style_label(lbl1);
+        s.add_control(lbl1);
     }
     s.run();
 }

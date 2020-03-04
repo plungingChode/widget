@@ -88,7 +88,6 @@ namespace Controls
 
         Control(Point drag_center, Point drag_start);
 
-        inline void set_drag(bool val);
     
     public:
         bool is_hittest_visible;
@@ -101,10 +100,11 @@ namespace Controls
 
         virtual void set_hover(bool val);
         virtual void set_focus(bool val);
+        inline void set_drag(bool val);
 
         // virtual bool check_hover(const event& mouse_ev) {}
         // virtual bool check_drag(const event& mouse_ev, const int btn) {}
-        virtual void on_mouse_ev(const event& mouse_ev, const int btn = 0) {}
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) {}
         virtual void on_key_ev(const event& key_ev) {}
 
         virtual void render() {}
@@ -136,7 +136,7 @@ namespace Controls
         // allow override
         // bool check_hover(const event& mouse_ev) override;
         // bool check_drag(const event& mouse_ev, const int btn) override;
-        virtual void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         virtual void render() override;
         virtual void draw(canvas& c) override;
     };
@@ -176,7 +176,7 @@ namespace Controls
         Button(Point start, const std::string& text, Margin padding, void (*action)());
         Button(Point start, const std::string& text, int width, int height, void (*action)());
 
-        void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
+        void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         void render() override;
     };
 
@@ -212,7 +212,8 @@ namespace Controls
         canvas background;
 
         std::vector<Control*> controls;
-        int click_buf = 0; 
+        int click_buffer = 0; 
+        bool mouse_held = false;
         bool needs_update = true;
         Control* hovered = nullptr;
         Control* focused = nullptr;

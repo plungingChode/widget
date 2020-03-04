@@ -139,7 +139,7 @@ namespace Controls
     {
     }
 
-        inline void Frame::set_color(color& target, const std::string& hex)
+    inline void Frame::set_color(color& target, const std::string& hex)
     {
         target = hex_to_color(hex);
     }
@@ -176,100 +176,49 @@ namespace Controls
         _needs_update = true;
     }
 
-    void Frame::on_mouse_ev(const event& m, const int btn)
+    void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
-        if (intersects(m.pos_x, m.pos_y))
-        {
-            _is_hovered = true;
+        if (!is_hittest_visible) return;
 
-            if (!_is_focused && btn == btn_left)
+        _is_hovered = intersects(m.pos_x, m.pos_y);
+
+        if (m.button == btn_left && !btn_held)
+        {
+            _is_focused = _is_hovered;
+        }
+
+        if (is_draggable)
+        {
+            _is_dragging =  _is_focused && (m.button == btn_left || btn_held);
+        }
+
+        if (_is_dragging)
+        {
+            if (drag_center.x == start.x)
             {
-                _is_focused = true;
+                drag_center.x = m.pos_x;
+                drag_center.y = m.pos_y;
+
+                drag_start = start;
             }
+
+            start.x = drag_start.x + m.pos_x - drag_center.x;
+            start.y = drag_start.y + m.pos_y - drag_center.y;
+
+            start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
+            start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
+            
+            end.x = start.x + width;
+            end.y = start.y + height;
+
+            _updated = true;
         }
         else
         {
-            _is_hovered = false;
+            _is_dragging = false;
+            drag_center = start;
         }
-        
-
-        // if (is_draggable)
-        // {
-        //     if (btn == btn_left && _is_focused)
-        //     {
-        //         if (_is_hovered && !_is_dragging)
-        //         {
-        //             drag_center.x = m.pos_x;
-        //             drag_center.y = m.pos_y;
-
-        //             drag_start = start;
-
-        //             set_drag(true);
-        //         }
-
-        //         if (_is_dragging)
-        //         {
-        //             start.x = drag_start.x + m.pos_x - drag_center.x;
-        //             start.y = drag_start.y + m.pos_y - drag_center.y;
-
-        //             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
-        //             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
-                    
-        //             end.x = start.x + width;
-        //             end.y = start.y + height;
-
-        //             _updated = true;
-        //         }
-        //     }
-        //     else if (_is_dragging)
-        //     {
-        //         set_drag(false);
-        //     }
-        // }
     }
-
-    // bool Frame::check_hover(const event& mouse_ev)
-    // {
-    //     return intersects(mouse_ev.pos_x, mouse_ev.pos_y);
-    // }
-
-    // bool Frame::check_drag(const event& mouse_ev, const int btn)
-    // {
-    //     if (is_draggable)
-    //     {
-    //         if (btn == btn_left && _is_focused)
-    //         {
-    //             if (_is_hovered && !_is_dragging)
-    //             {
-    //                 drag_center.x = mouse_ev.pos_x;
-    //                 drag_center.y = mouse_ev.pos_y;
-
-    //                 drag_start = start;
-
-    //                 set_drag(true);
-    //             }
-
-    //             if (_is_dragging)
-    //             {
-    //                 start.x = drag_start.x + mouse_ev.pos_x - drag_center.x;
-    //                 start.y = drag_start.y + mouse_ev.pos_y - drag_center.y;
-
-    //                 start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
-    //                 start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
-                    
-    //                 end.x = start.x + width;
-    //                 end.y = start.y + height;
-
-    //                 _updated = true;
-    //             }
-    //         }
-    //         else if (_is_dragging)
-    //         {
-    //             set_drag(false);
-    //         }
-    //     }
-    //     return _is_dragging;
-    // }
 
     void Frame::render()
     {
@@ -369,8 +318,8 @@ namespace Controls
             rendered << move_to(text_x, text_y)
                      << text_fill_normal << genv::text(text);
         }
-        rendered << move_to(width - 5, height - 5)
-                 << color(0, 0, 0) << box(5, 5);
+        rendered << move_to(width - 8, height - 8)
+                 << color(0, 0, 0) << box(8, 8);
     }
 
     // void Label::on_mouse_ev(const event& m)
@@ -404,15 +353,17 @@ namespace Controls
         _updated = true;
     }
 
-    void Button::on_mouse_ev(const event& mev, const int btn)
+    // TODO
+    void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
-        if (mev.button == btn_left)
+        Frame::on_mouse_ev(m, btn_held);
+        if (_is_hovered && m.button == btn_left)
         {
             set_held(true);
         }
-        if (mev.button == -btn_left)
+        if (m.button == -btn_left)
         {
-            if (intersects(mev.pos_x, mev.pos_y))
+            if (_is_hovered)
             {
                 action();
             }
@@ -507,9 +458,22 @@ namespace Controls
         }
     }
 
-    bool Scene::on_mouse_event(const event& ev)
+    bool Scene::on_mouse_event(const event& m)
     {
-        click_buf += ev.button;
+        click_buffer += m.button;
+        mouse_held = (click_buffer != 0 && m.button == 0);
+        // if (click_buffer != 0 && m.button == 0)
+        // {
+        //     mouse_held = true;
+        //     std::cout << "button held: " << click_buffer << '\n';
+        // }
+        // else
+        // {
+        //     mouse_held = false;
+        // }
+
+        // std::cout << "mbutton buffer: " << click_buffer << '\n';
+
 
         // something is being dragged -> ignore others
         // hover unchanged -> ignore others
@@ -517,7 +481,8 @@ namespace Controls
         {
             for (Control*& c : controls)
             {
-                c->on_mouse_ev(ev, click_buf);
+                c->on_mouse_ev(m, mouse_held);
+                // std::cout << "mouse event handled\n";
 
                 if (c->is_hittest_visible && c->is_hovered())
                 {
@@ -526,14 +491,14 @@ namespace Controls
                     // check first hover
                     if (hovered != c)
                     {
+                        // std::cout << "old: " << hovered << '\n';
                         if (hovered != nullptr)
                         {
                             hovered->set_hover(false);
-                            std::cout << "old: " << hovered << '\n';
                         }
                         hovered = c;
                         c->set_hover(true);
-                        std::cout << "new: " << hovered << '\n';
+                        // std::cout << "new: " << hovered << '\n';
                     }
 
                     // check to assign focus
@@ -551,6 +516,11 @@ namespace Controls
                 }
             }
         }
+        else
+        {
+            dragged->on_mouse_ev(m, mouse_held);
+        }
+        
 
         if (hovered != nullptr && !hovered->is_hovered())
         {
@@ -559,25 +529,33 @@ namespace Controls
         }
 
         // check for click outside of control
-        if (ev.button == btn_left && focused != nullptr && hovered == nullptr)
+        if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
             focused->set_focus(false);
             focused = nullptr;
         }
-        
-        // // check for drag
-        // if (focused != nullptr)
-        // {
-        //     focused->on_mouse_ev(ev);
-        //     if (focused->check_drag(ev, click_buf))
-        //     {
-        //         dragged = focused;
-        //     }
-        //     else
-        //     {
-        //         dragged = nullptr;
-        //     }
-        // }
+    
+        // check for drag
+        if (focused != nullptr)
+        {
+            // focused->on_mouse_ev(ev);
+            // std::cout << "idaig? 1\n";
+
+            if (focused->is_dragging())
+            {
+                // std::cout << "idaig? 2\n";
+
+                dragged = focused;
+                dragged->set_drag(true);
+            }
+            else if (dragged != nullptr)
+            {
+                std::cout << dragged << "\n";
+
+                dragged->set_drag(false);
+                dragged = nullptr;
+            }
+        }
         
         for (Control*& c : controls)
         {

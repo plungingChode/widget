@@ -60,8 +60,8 @@ int main(int argc, char const *argv[])
         {
             Point start = Point(60 + y*110, 50 + x*40);
             std::string text = "Btn " + std::to_string(x+1) + ':' + std::to_string(y+1);
-            Button* btn1 = new Button(start, text, 100, 30, print_one);
-            style_btn(btn1);
+            Frame* btn1 = new Frame(start, 100, 30);
+            // style_btn(btn1);
             s.add_control(btn1);
         }
         

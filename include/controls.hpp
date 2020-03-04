@@ -95,14 +95,16 @@ namespace Controls
         bool is_draggable;
 
         bool is_focused() const;
+        bool is_hovered() const;
+        bool is_dragging() const;
         bool updated() const;
 
         virtual void set_hover(bool val);
         virtual void set_focus(bool val);
 
-        virtual bool check_hover(const event& mouse_ev) {}
-        virtual bool check_drag(const event& mouse_ev, const int btn) {}
-        virtual void on_mouse_ev(const event& mouse_ev) {}
+        // virtual bool check_hover(const event& mouse_ev) {}
+        // virtual bool check_drag(const event& mouse_ev, const int btn) {}
+        virtual void on_mouse_ev(const event& mouse_ev, const int btn = 0) {}
         virtual void on_key_ev(const event& key_ev) {}
 
         virtual void render() {}
@@ -132,8 +134,9 @@ namespace Controls
         void set_border_thickness(const int thickness);
 
         // allow override
-        bool check_hover(const event& mouse_ev) override;
-        bool check_drag(const event& mouse_ev, const int btn) override;
+        // bool check_hover(const event& mouse_ev) override;
+        // bool check_drag(const event& mouse_ev, const int btn) override;
+        virtual void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
         virtual void render() override;
         virtual void draw(canvas& c) override;
     };
@@ -156,7 +159,7 @@ namespace Controls
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src, int font_size = 16);
         virtual void render() override;
-        void on_mouse_ev(const event& mouse_ev) override;
+        // void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
     };
 
     struct Button : public Label
@@ -173,7 +176,7 @@ namespace Controls
         Button(Point start, const std::string& text, Margin padding, void (*action)());
         Button(Point start, const std::string& text, int width, int height, void (*action)());
 
-        void on_mouse_ev(const event& mouse_ev) override;
+        void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
         void render() override;
     };
 

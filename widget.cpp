@@ -64,12 +64,11 @@ int main(int argc, char const *argv[])
         int y = std::rand() % 200;
         int m_x = 10 + std::rand() % 20;
         int m_y = 5 + std::rand() % 15;
-        Button* lbl1 = new Button(Point(x, y), "Text", 100, 50, vmi);
-        lbl1->set_font("LiberationSans-Regular.ttf");
-        lbl1->is_hittest_visible = true;
+        Button* lbl1 = new Button(Point(x, y), "Text", 100, 30, vmi);
+        // lbl1->is_hittest_visible = true;
         // lbl1->is_draggable = false;
 
-        // style_label(lbl1);
+        style_btn(lbl1);
         s.add_control(lbl1);
     }
     s.run();

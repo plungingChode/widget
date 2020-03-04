@@ -170,6 +170,7 @@ namespace Controls
         Point content_offset;
         bool is_held;
 
+        void set_focus(bool val) override;
         inline void set_held(bool val);
 
     public:

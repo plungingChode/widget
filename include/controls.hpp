@@ -74,11 +74,12 @@ namespace Controls
 
     struct Control
     {
+    friend class Scene;
     protected:
         bool _is_hovered, _is_focused;
-        bool _needs_update, _updated;
+        bool _needs_visual_update;
 
-        bool _is_dragging;
+        bool _is_held;
 
         // Coordinates of the mouse event that started the drag
         Point drag_center;
@@ -95,15 +96,11 @@ namespace Controls
 
         bool is_focused() const;
         bool is_hovered() const;
-        bool is_dragging() const;
+        bool is_held() const;
+
+        void update_visuals();
         bool updated() const;
 
-        virtual void set_hover(bool val);
-        virtual void set_focus(bool val);
-        inline void set_drag(bool val);
-
-        // virtual bool check_hover(const event& mouse_ev) {}
-        // virtual bool check_drag(const event& mouse_ev, const int btn) {}
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) {}
         virtual void on_key_ev(const event& key_ev) {}
 
@@ -114,7 +111,7 @@ namespace Controls
     struct Frame : public Control, public Rect
     {
     protected:
-        color normal_bg, hover_bg, focus_bg, drag_bg;
+        color normal_bg, hover_bg, focus_bg, hold_bg;
         color fill, border;
         int border_thickness;
 
@@ -170,9 +167,6 @@ namespace Controls
         Point content_offset;
         bool is_held;
 
-        void set_focus(bool val) override;
-        inline void set_held(bool val);
-
     public:
         Button(Point start, const std::string& text, Margin padding, void (*action)());
         Button(Point start, const std::string& text, int width, int height, void (*action)());
@@ -209,6 +203,7 @@ namespace Controls
 
     struct Scene
     {
+    friend class Control;
     private:
         canvas background;
 

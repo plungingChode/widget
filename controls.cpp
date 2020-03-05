@@ -66,37 +66,17 @@ namespace Controls
           drag_start(drag_start),
           _is_hovered(false), 
           _is_focused(false), 
-          _is_dragging(false),
-          _needs_update(true),
-          _updated(true),
+          _is_held(false),
+          _needs_visual_update(true),
           is_hittest_visible(true),
           is_draggable(true)
     {
     }
 
-    void Control::set_hover(bool val)
+    void Control::update_visuals()
     {
-        _is_hovered = val;
-        _needs_update = true;
-        _updated = true;
-        // std::cout << "Control @ " << this << " - hover changed\n";
+        _needs_visual_update = true;
     }
-
-    void Control::set_focus(bool val)
-    {
-        _is_focused = val;
-        _needs_update = true;
-        _updated = true;
-        // std::cout << "Control @ " << this << " - focus changed\n";
-    }
-
-    inline void Control::set_drag(bool val)
-    {
-        _is_dragging = val;
-        _needs_update = true;
-        _updated = true;
-        // std::cout << "Control @ " << this << " - drag changed\n";
-    }   
 
     bool Control::is_focused() const
     {
@@ -108,14 +88,14 @@ namespace Controls
         return _is_hovered;
     }
 
-    bool Control::is_dragging() const
+    bool Control::is_held() const
     {
-        return _is_dragging;
+        return _is_held;
     }
 
     bool Control::updated() const
     {
-        return _updated;
+        return _needs_visual_update;
     }
     
     // Frame
@@ -125,7 +105,7 @@ namespace Controls
           rendered(width, height),
           normal_bg(DEFAULT_NORMAL), 
           hover_bg(DEFAULT_HOVER),
-          drag_bg(DEFAULT_MOUSEDOWN), 
+          hold_bg(DEFAULT_MOUSEDOWN), 
           focus_bg(DEFAULT_FOCUS),
           fill(DEFAULT_NORMAL), 
           border(DEFAULT_BORDER),
@@ -162,7 +142,7 @@ namespace Controls
 
     void Frame::set_drag_bg(const std::string& hex)
     {
-        set_color(drag_bg, hex);
+        set_color(hold_bg, hex);
     }
 
     void Frame::set_border_color(const std::string& hex)
@@ -173,7 +153,7 @@ namespace Controls
     void Frame::set_border_thickness(const int thickness)
     {
         border_thickness = thickness;
-        _needs_update = true;
+        _needs_visual_update = true;
     }
 
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
@@ -187,12 +167,11 @@ namespace Controls
             _is_focused = _is_hovered;
         }
 
-        if (is_draggable)
-        {
-            _is_dragging =  _is_focused && (m.button == btn_left || btn_held);
-        }
+        _is_held =  _is_focused && (m.button == btn_left || btn_held);
 
-        if (_is_dragging)
+        if (!is_draggable) return;
+
+        if (_is_held)
         {
             if (drag_center.x == start.x)
             {
@@ -210,22 +189,19 @@ namespace Controls
             
             end.x = start.x + width;
             end.y = start.y + height;
-
-            _updated = true;
         }
         else
         {
-            _is_dragging = false;
+            _is_held = false;
             drag_center = start;
         }
     }
 
     void Frame::render()
     {
-        // std::cout << "Calling Frame::render()\n"; 
-        if (_is_dragging)
+        if (_is_held)
         {
-            fill = drag_bg;
+            fill = hold_bg;
         }
         else if (_is_focused)
         {
@@ -248,13 +224,12 @@ namespace Controls
 
     void Frame::draw(canvas& c)
     {
-        if (_needs_update)
+        if (_needs_visual_update)
         {
             render();
-            _needs_update = false;
         }
         c << stamp(rendered, start.x, start.y);
-        _updated = false;
+        _needs_visual_update = false;
     }
 
     // Label
@@ -346,45 +321,24 @@ namespace Controls
         Control::is_hittest_visible = true;
     }
 
-    void Button::set_focus(bool val)
-    {
-        Label::set_focus(val);
-        if (!val)
-        {
-            set_held(false);
-        }
-    }
-
-    inline void Button::set_held(bool val)
-    {
-        is_held = val;
-        _needs_update = true;
-        _updated = true;
-    }
-
-    // TODO
     void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
-        Frame::on_mouse_ev(m, btn_held);
-        if (_is_hovered && m.button == btn_left)
+        if (m.button == -btn_left && _is_held && _is_hovered)
         {
-            set_held(true);
-        }
-        if (m.button == -btn_left)
-        {
-            if (is_held)
+            if (_is_hovered)
             {
                 action();
             }
-            set_held(false);
         }
+        Frame::on_mouse_ev(m, btn_held);
     }
 
+    // TODO replace color(0,0,0) with static BLACK
     void Button::render()
     {
-        if (is_held)
+        if (_is_held)
         {
-            fill = drag_bg;
+            fill = hold_bg;
         }
         else if (_is_focused)
         {
@@ -407,7 +361,7 @@ namespace Controls
             << move_to(0, 0) << color(0, 0, 0) << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
-        if (is_held)
+        if (_is_held)
         {
             // bevel on the bottom right, push in text
             rendered 
@@ -471,55 +425,39 @@ namespace Controls
     {
         click_buffer += m.button;
         mouse_held = (click_buffer != 0 && m.button == 0);
-        // if (click_buffer != 0 && m.button == 0)
-        // {
-        //     mouse_held = true;
-        //     std::cout << "button held: " << click_buffer << '\n';
-        // }
-        // else
-        // {
-        //     mouse_held = false;
-        // }
 
-        // std::cout << "mbutton buffer: " << click_buffer << '\n';
-
-
-        // something is being dragged -> ignore others
+        // something is being held -> ignore others
         // hover unchanged -> ignore others
-        if (dragged == nullptr)
+        if (held == nullptr)
         {
             for (Control*& c : controls)
             {
                 c->on_mouse_ev(m, mouse_held);
-                // std::cout << "mouse event handled\n";
 
                 if (c->is_hittest_visible && c->is_hovered())
                 {
-                    // std::cout << "Hover!\n";
-
                     // check first hover
                     if (hovered != c)
                     {
-                        // std::cout << "old: " << hovered << '\n';
                         if (hovered != nullptr)
                         {
-                            hovered->set_hover(false);
+                            hovered->_is_hovered = false;
+                            hovered->update_visuals();
                         }
                         hovered = c;
-                        c->set_hover(true);
-                        // std::cout << "new: " << hovered << '\n';
+                        c->update_visuals();
                     }
 
                     // check to assign focus
                     if (focused != c && c->is_focused())
                     {
-                        // std::cout << "something was focused!\n";
                         if (focused != nullptr)
                         {
-                            focused->set_focus(false);
+                            focused->_is_focused = false;
+                            focused->update_visuals();
                         }
                         focused = hovered;
-                        c->set_focus(true);
+                        c->update_visuals();
                     }
                     break;
                 }
@@ -527,50 +465,47 @@ namespace Controls
         }
         else
         {
-            dragged->on_mouse_ev(m, mouse_held);
+            // something held -> update hold state
+            held->on_mouse_ev(m, mouse_held);
         }
         
 
         if (hovered != nullptr && !hovered->is_hovered())
         {
-            hovered->set_hover(false);
+            hovered->_is_hovered = false;
+            hovered->update_visuals();
             hovered = nullptr;
         }
 
         // check for click outside of control
         if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
-            focused->set_focus(false);
+            focused->_is_focused = false;
+            focused->update_visuals();
             focused = nullptr;
         }
     
+// TODO on drag end: check for hover!
         // check for drag
         if (focused != nullptr)
         {
-            // focused->on_mouse_ev(ev);
-            // std::cout << "idaig? 1\n";
-
-            if (focused->is_dragging())
+            if (focused->is_held())
             {
-                // std::cout << "idaig? 2\n";
-
-                dragged = focused;
-                dragged->set_drag(true);
+                held = focused;
+                held->update_visuals();
             }
-            else if (dragged != nullptr)
+            else if (held != nullptr)
             {
-                std::cout << dragged << "\n";
-
-                dragged->set_drag(false);
-                dragged = nullptr;
+                held->update_visuals();
+                held = nullptr;
             }
         }
-        
+    
+// TODO set local variable to avoid another loop?
         for (Control*& c : controls)
         {
             if (c->updated())
             {
-                // std::cout << "Button updated\n";
                 return true;
             }
         }

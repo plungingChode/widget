@@ -38,6 +38,7 @@ canvas read_kep(const std::string& fname)
     return c;
 }
 
+// HF.: label bal alsó sarkát húzva lehessen átméretezni
 void style_btn(Button*& btn)
 {
     btn->set_border_color("E5D96E");

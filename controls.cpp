@@ -59,8 +59,7 @@ namespace Controls
             && end.x >= x && end.y >= y;
     }
 
-    // Control base
-    // initialize defaults
+    // Control (base)
     Control::Control(Point drag_center, Point drag_start)
         : drag_center(drag_center),
           drag_start(drag_start),
@@ -304,7 +303,7 @@ namespace Controls
 
 
     // Button
-    // TODO transparency + text = error 3?
+    // button is not draggable by default
     Button::Button(Point start, const std::string& text, Margin padding, void (*action)())
         : Label(start, text, padding), action(action)
     {
@@ -357,7 +356,6 @@ namespace Controls
 
         // leave gap for bevel effect
         rendered 
-            // << move_to(0, 0) << BACKGROUND_COLOR << box(width, height)
             << move_to(0, 0) << color(0, 0, 0) << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
@@ -469,7 +467,6 @@ namespace Controls
             held->on_mouse_ev(m, mouse_held);
         }
         
-
         if (hovered != nullptr && !hovered->is_hovered())
         {
             hovered->_is_hovered = false;
@@ -536,9 +533,9 @@ namespace Controls
         controls.push_back(c);
     }
 
-    int Scene::run()
+    int Scene::run(bool fullscreen)
     {
-        gout.open(ENV_WIDTH, ENV_HEIGHT);
+        gout.open(ENV_WIDTH, ENV_HEIGHT, fullscreen);
 
         event ev;
         while (gin >> ev)

@@ -72,14 +72,13 @@ namespace Controls
         bool intersects(int x, int y) const;
     };
 
+// TODO move drag handling (is_draggable, drag_center, drag_start) to Frame?
     struct Control
     {
     friend class Scene;
     protected:
-        bool _is_hovered, _is_focused;
+        bool _is_hovered, _is_focused, _is_held;
         bool _needs_visual_update;
-
-        bool _is_held;
 
         // Coordinates of the mouse event that started the drag
         Point drag_center;
@@ -89,7 +88,6 @@ namespace Controls
 
         Control(Point drag_center, Point drag_start);
 
-    
     public:
         bool is_hittest_visible;
         bool is_draggable;
@@ -101,11 +99,11 @@ namespace Controls
         void update_visuals();
         bool updated() const;
 
-        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) {}
-        virtual void on_key_ev(const event& key_ev) {}
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) = 0;
+        virtual void on_key_ev(const event& key_ev, const bool key_held = false) = 0;
 
-        virtual void render() {}
-        virtual void draw(canvas& c) {}
+        virtual void render() = 0;
+        virtual void draw(canvas& c) = 0;
     };
 
     struct Frame : public Control, public Rect
@@ -131,9 +129,8 @@ namespace Controls
         void set_border_thickness(const int thickness);
 
         // allow override
-        // bool check_hover(const event& mouse_ev) override;
-        // bool check_drag(const event& mouse_ev, const int btn) override;
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
+        virtual void on_key_ev(const event& key_ev, const bool key_held = false) override {}
         virtual void render() override;
         virtual void draw(canvas& c) override;
     };
@@ -164,8 +161,7 @@ namespace Controls
     protected:
         void (*action)();
         canvas content;
-        Point content_offset;
-        bool is_held;
+        // Point content_offset;
 
     public:
         Button(Point start, const std::string& text, Margin padding, void (*action)());
@@ -203,7 +199,6 @@ namespace Controls
 
     struct Scene
     {
-    friend class Control;
     private:
         canvas background;
 
@@ -213,7 +208,7 @@ namespace Controls
         bool needs_update = true;
         Control* hovered = nullptr;
         Control* focused = nullptr;
-        Control* dragged = nullptr;
+        Control* held = nullptr;
 
         void render_background();
         bool on_mouse_event(const event& mev);
@@ -226,7 +221,7 @@ namespace Controls
 
         void add_control(Control* c);
 
-        int run();
+        int run(bool fullscreen = false);
     };
 }
 

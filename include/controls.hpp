@@ -34,6 +34,7 @@ namespace Controls
 
     static int ENV_WIDTH  = 999999;
     static int ENV_HEIGHT = 999999;
+    static color BACKGROUND_COLOR = color(60, 60, 60);
 
     struct Point
     {
@@ -71,13 +72,13 @@ namespace Controls
         bool intersects(int x, int y) const;
     };
 
+// TODO move drag handling (is_draggable, drag_center, drag_start) to Frame?
     struct Control
     {
+    friend class Scene;
     protected:
-        bool _is_hovered, _is_focused;
-        bool _needs_update, _updated;
-
-        bool _is_dragging;
+        bool _is_hovered, _is_focused, _is_held;
+        bool _needs_visual_update;
 
         // Coordinates of the mouse event that started the drag
         Point drag_center;
@@ -87,31 +88,28 @@ namespace Controls
 
         Control(Point drag_center, Point drag_start);
 
-        inline void set_drag(bool val);
-    
     public:
         bool is_hittest_visible;
         bool is_draggable;
 
         bool is_focused() const;
+        bool is_hovered() const;
+        bool is_held() const;
+
+        void update_visuals();
         bool updated() const;
 
-        virtual void set_hover(bool val);
-        virtual void set_focus(bool val);
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) = 0;
+        virtual void on_key_ev(const event& key_ev, const bool key_held = false) = 0;
 
-        virtual bool check_hover(const event& mouse_ev) {}
-        virtual bool check_drag(const event& mouse_ev, const int btn) {}
-        virtual void on_mouse_ev(const event& mouse_ev) {}
-        virtual void on_key_ev(const event& key_ev) {}
-
-        virtual void render() {}
-        virtual void draw(canvas& c) {}
+        virtual void render() = 0;
+        virtual void draw(canvas& c) = 0;
     };
 
     struct Frame : public Control, public Rect
     {
     protected:
-        color normal_bg, hover_bg, focus_bg, drag_bg;
+        color normal_bg, hover_bg, focus_bg, hold_bg;
         color fill, border;
         int border_thickness;
 
@@ -131,8 +129,8 @@ namespace Controls
         void set_border_thickness(const int thickness);
 
         // allow override
-        bool check_hover(const event& mouse_ev) override;
-        bool check_drag(const event& mouse_ev, const int btn) override;
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
+        virtual void on_key_ev(const event& key_ev, const bool key_held = false) override {}
         virtual void render() override;
         virtual void draw(canvas& c) override;
     };
@@ -155,6 +153,7 @@ namespace Controls
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src, int font_size = 16);
         virtual void render() override;
+        // void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
     };
 
     struct Button : public Label
@@ -162,21 +161,36 @@ namespace Controls
     protected:
         void (*action)();
         canvas content;
-        Point content_offset;
-        bool is_held;
-
-        inline void set_held(bool val);
+        // Point content_offset;
 
     public:
         Button(Point start, const std::string& text, Margin padding, void (*action)());
         Button(Point start, const std::string& text, int width, int height, void (*action)());
 
-        void on_mouse_ev(const event& mouse_ev) override;
+        void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         void render() override;
     };
 
+    // struct TextBox : public Label
+    // {
+    // public:
+    //     TextBox(Point start, const std::string& text, Margin padding);
+    //     TextBox(Point start, const std::string& text, int width, int height);
+    //     // TextBox(Point start, Margin padding);
+    //     // TextBox(Point start, int width, int height);
+
+    //     void on_key_ev(const event& key_ev) override;
+    //     void render() override;
+    // };
+
     // struct Spinner : public Label
     // {
+    // protected:
+    //     void (*spin_up)(int& value);
+    //     void (*spin_dn)(int& value);
+    //     void (*spin_up_big)(int& value);
+    //     void (*spin_dn_big)(int& value);
+
 
     // };
 
@@ -189,11 +203,12 @@ namespace Controls
         canvas background;
 
         std::vector<Control*> controls;
-        int click_buf = 0; 
+        int click_buffer = 0; 
+        bool mouse_held = false;
         bool needs_update = true;
         Control* hovered = nullptr;
         Control* focused = nullptr;
-        Control* dragged = nullptr;
+        Control* held = nullptr;
 
         void render_background();
         bool on_mouse_event(const event& mev);
@@ -206,7 +221,7 @@ namespace Controls
 
         void add_control(Control* c);
 
-        int run();
+        int run(bool fullscreen = false);
     };
 }
 

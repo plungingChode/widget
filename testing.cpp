@@ -36,17 +36,21 @@ canvas downarrow(int sz, color clr = color(255, 255, 255))
 
 int main(int argc, char const *argv[])
 {
-    gout.open(800, 600);
+    std::string a = "adsadsd";
+    std::vector<char> chars(a.begin(), a.end());
+    std::cout << chars.size() << '\n';
+    
+    // gout.open(800, 600);
 
-    canvas dnarrow = downarrow(5);
-    gout << stamp(dnarrow, 100, 100);
+    // canvas dnarrow = downarrow(5);
+    // gout << stamp(dnarrow, 100, 100);
 
-    gout << refresh;
+    // gout << refresh;
 
-    event ev;
-    while(gin >> ev)
-    {
-    }
+    // event ev;
+    // while(gin >> ev)
+    // {
+    // }
 
     return 0;
 }

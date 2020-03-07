@@ -197,6 +197,7 @@ namespace Controls
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
         if (!is_hittest_visible) return;
+        if (_size_changed) _size_changed = false; // assume change was handled
 
         _is_hovered = intersects(m.pos_x, m.pos_y);
 
@@ -255,14 +256,22 @@ namespace Controls
                 _size_changed = true;
                 
                 _is_resizing = false;
+                _is_held = false;
             }
             if (_is_dragging)
             {
                 drag_center = start;
                 _is_dragging = false;
+                _is_held = false;
             }
-            _is_held = false;
         }
+    }
+
+    void Frame::render_resize_area()
+    {
+        rendered << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
+                 << DEFAULT_TEXT_NORMAL
+                 << box(resize_hitbox.width, resize_hitbox.height);
     }
 
     void Frame::render()
@@ -291,9 +300,7 @@ namespace Controls
 
         if (_is_resizable)
         {
-            rendered << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
-                     << color(0, 0, 0)
-                     << box(resize_hitbox.width, resize_hitbox.height);
+            render_resize_area();
         }
     }
 
@@ -354,6 +361,12 @@ namespace Controls
     {
     }
 
+    void Label::set_text(const std::string& text)
+    {
+        this->text = text;
+        update_visuals();
+    }
+
     void Label::set_text_fill_normal(const std::string& hex)
     {
         set_color(text_fill_normal, hex);
@@ -368,12 +381,6 @@ namespace Controls
     void Label::render()
     {
         Frame::render();
-        if (_size_changed)
-        {
-            std::cout << "Reload font\n";
-            rendered.load_font(font_src);
-            _size_changed = false;
-        }
         if (_is_focused)
         {   
             rendered << move_to(text_x, text_y)
@@ -386,11 +393,15 @@ namespace Controls
         }
     }
 
-    // void Label::on_mouse_ev(const event& m)
-    // {
-    //     // if ()
-    // }
-
+    void Label::on_mouse_ev(const event& m, const bool btn_held)
+    {
+        Frame::on_mouse_ev(m, btn_held);
+        if (_size_changed)
+        {
+            // std::cout << "Reload font\n";
+            rendered.load_font(font_src);
+        }
+    }
 
     // Button
     // button is not draggable by default
@@ -412,17 +423,18 @@ namespace Controls
 
     void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
+        // std::cout << "held: " << _is_held << "btn: " << m.button <<  '\n';
         if (m.button == -btn_left && _is_held && _is_hovered)
         {
-            if (_is_hovered)
-            {
-                action();
-            }
+            action();
         }
-        Frame::on_mouse_ev(m, btn_held);
+        Label::on_mouse_ev(m, btn_held);
+        if (_size_changed)
+        {
+            rendered.transparent(true);
+        }
     }
 
-    // TODO replace color(0,0,0) with static BLACK
     void Button::render()
     {
         if (_is_held)
@@ -446,7 +458,7 @@ namespace Controls
 
         // leave gap for bevel effect
         rendered 
-            << move_to(0, 0) << color(0, 0, 0) << box(width, height)
+            << move_to(0, 0) << BLACK << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
         if (_is_held)
@@ -455,7 +467,7 @@ namespace Controls
             rendered 
                 << move_to(1, height-b) << border << box(width-1, b)
                 << move_to(width-b, 1) << border << box(b, height-1)
-                << move_to(text_x + b, text_y + b) << text_fill_normal << genv::text(text);
+                << move_to(text_x + b+1, text_y + b+1) << text_fill_normal << genv::text(text);
         }
         else
         {
@@ -464,7 +476,102 @@ namespace Controls
                 << move_to(0, 0) << border << box(width-b, b)
                 << move_to(0, 0) << border << box(b, height-b)
                 << move_to(text_x, text_y) << text_fill_normal << genv::text(text);
-        } 
+        }
+        if(_is_resizable)
+        {
+            render_resize_area();
+        }
+    }
+
+    // Spinner
+    Spinner::Spinner(Point start, int value, int width, int height)
+        : Label(start, std::to_string(value), width, height),
+          min_value(INT_MIN),
+          max_value(INT_MAX),
+          value(value)
+    {
+        spin_up_hitbox = Rect(Point(width - 10, height), Point(width, height / 2));
+        //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
+    }
+
+    Spinner::Spinner(Point start, int value, Margin padding)
+        : Label(start, std::to_string(value), padding),
+          min_value(INT_MIN),
+          max_value(INT_MAX),
+          value(value),
+          spin_up_hitbox(Point(width - 10, height), Point(width, height / 2))
+        //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
+    {}
+
+    void Spinner::set_value(const int val)
+    {     
+        value = std::max(std::min(val, max_value), min_value);
+        set_text(std::to_string(value));
+    }
+
+    int Spinner::get_value() const
+    {
+        return value;
+    }
+    
+    void Spinner::on_mouse_ev(const event& m, const bool btn_held)
+    {
+        Label::on_mouse_ev(m, btn_held);
+        if (_is_focused)
+        {
+            if (m.button == btn_wheelup)
+            {
+                set_value(value+1);
+            }
+            else if (m.button == btn_wheeldown)
+            {
+                set_value(value-1);
+            }
+        }
+    }
+
+    void Spinner::on_key_ev(const event& k, const bool key_held)
+    {
+        // std::cout << "Spin w/ key\n";
+        if (_is_focused)
+        {
+            switch (k.keycode)
+            {
+            case key_up:
+                set_value(value+1);
+                break;
+
+            case key_down:
+                set_value(value-1);
+                break;
+
+            case key_pgup:
+                set_value(value+10);
+                break;
+
+            case key_pgdn:
+                set_value(value-10);
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    void Spinner::render()
+    {
+        Label::render();
+        Rect& r = spin_up_hitbox;
+        std::cout << r.start.x << ':' << r.start.y << '\n';
+        rendered << move_to(r.start.x, r.start.y)
+                 << text_fill_normal
+                 << box(r.width, r.height);
+
+        // r = spin_dn_hitbox;
+        // rendered << move_to(r.start.x, r.start.y)
+        //          << border
+        //          << box(r.width, r.height);
     }
 
     // // TextBox
@@ -480,7 +587,7 @@ namespace Controls
 
     // void TextBox::on_key_ev(const event& kev)
     // {
-    //     // visible char: 32 - 255
+    //     // visible charcodes: 32 - 255
     // }
 
     // Scene
@@ -603,7 +710,7 @@ namespace Controls
     {
         if (focused != nullptr)
         {
-            focused->on_key_ev(kev);
+            focused->on_key_ev(kev, false);
             return focused->updated();
         }
         return false;
@@ -634,7 +741,11 @@ namespace Controls
         {
             if (ev.type == ev_key)
             {
-                on_key_event(ev);
+                if(on_key_event(ev))
+                {
+                    render(gout);
+                    gout << refresh;
+                }
                 
                 if (ev.keycode == key_escape)
                 {

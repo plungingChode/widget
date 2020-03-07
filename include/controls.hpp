@@ -24,6 +24,7 @@ namespace Controls
         return color(r, g, b);
     }
 
+    const static color BLACK = hex_to_color("000000");
     const static color DEFAULT_BORDER = hex_to_color("718EA4");
     const static color DEFAULT_NORMAL = hex_to_color("FFFFFF");
     const static color DEFAULT_HOVER = hex_to_color("D4BA6A");
@@ -143,6 +144,8 @@ namespace Controls
         void set_border_color(const std::string& hex);
         void set_border_thickness(const unsigned thickness);
 
+        virtual void render_resize_area();
+
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         virtual void on_key_ev(const event& key_ev, const bool key_held = false) override {}
         virtual void render() override;
@@ -164,9 +167,11 @@ namespace Controls
         Label(Point start, const std::string& text, int padding);
         Label(Point start, const std::string& text, Margin padding);
 
+        void set_text(const std::string& text);
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src);
         virtual void render() override;
+        virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
     };
 
     struct Button : public Label
@@ -182,6 +187,28 @@ namespace Controls
 
         void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         void render() override;
+    };
+
+    struct Spinner : public Label
+    {
+    protected:
+        int value;
+        Rect spin_up_hitbox;
+        Rect spin_dn_hitbox;
+
+    public:
+        int max_value;
+        int min_value;
+
+        Spinner(Point start, int value, int width, int height);
+        Spinner(Point start, int value, Margin padding);
+
+        void set_value(const int val);
+        int get_value() const;
+        void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
+        void on_key_ev(const event& key_ev, const bool key_held = false) override;
+
+        virtual void render() override;
     };
 
     // struct TextBox : public Label

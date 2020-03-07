@@ -83,7 +83,7 @@ namespace Controls
     friend class Scene;
     protected:
         bool _is_hovered, _is_focused, _is_held;
-        bool _is_resizable, _is_resizing;
+        bool _is_resizable, _is_resizing, _size_changed;
         bool _needs_visual_update;
 
         bool _is_dragging;
@@ -165,7 +165,7 @@ namespace Controls
         Label(Point start, const std::string& text, Margin padding);
 
         void set_text_fill_normal(const std::string& hex);
-        void set_font(const std::string& font_src, int font_size = 16);
+        void set_font(const std::string& font_src);
         virtual void render() override;
     };
 

@@ -57,14 +57,32 @@ void vmi()
 int main(int argc, char const *argv[])
 {
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
-    for (int i = 0; i < 7; i++)
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     int x = std::rand() % 400;
+    //     int y = std::rand() % 300;
+    //     int m_x = 10 + std::rand() % 20;
+    //     int m_y = 5 + std::rand() % 15;
+    //     Label* lbl1 = new Label(Point(x, y), "Text", 100, 30);
+    //     // lbl1->set_font("LiberationSans-Regular.ttf");
+    //     lbl1->set_font("BoschSans-Medium.ttf");
+    //     lbl1->is_hittest_visible = true;
+    //     // lbl1->is_draggable = false;
+    //     // lbl1->set_resizable(true);
+
+    //     // style_btn(lbl1);
+    //     s.add_control(lbl1);
+    // }
+
+    for (int i = 0; i < 3; i++)
     {
         int x = std::rand() % 400;
         int y = std::rand() % 300;
         int m_x = 10 + std::rand() % 20;
         int m_y = 5 + std::rand() % 15;
         Label* lbl1 = new Label(Point(x, y), "Text", 100, 30);
-        lbl1->set_font("LiberationSans-Regular.ttf");
+        lbl1->set_font("BoschSans-Medium.ttf");
+        // lbl1->set_font("LiberationSans-Regular.ttf");
         lbl1->is_hittest_visible = true;
         // lbl1->is_draggable = false;
         lbl1->set_resizable(true);
@@ -72,6 +90,23 @@ int main(int argc, char const *argv[])
         // style_btn(lbl1);
         s.add_control(lbl1);
     }
+
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     int x = std::rand() % 400;
+    //     int y = std::rand() % 300;
+    //     int m_x = 10 + std::rand() % 20;
+    //     int m_y = 5 + std::rand() % 15;
+    //     Label* lbl1 = new Label(Point(x, y), "Text", 100, 30);
+    //     lbl1->set_font("BoschSans-Medium.ttf");
+    //     // lbl1->set_font("LiberationSans-Regular.ttf");
+    //     lbl1->is_hittest_visible = true;
+    //     lbl1->is_draggable = false;
+    //     lbl1->set_resizable(true);
+
+    //     // style_btn(lbl1);
+    //     s.add_control(lbl1);
+    // }
 
     // for (int i = 0; i < 7; i++)
     // {

@@ -93,7 +93,8 @@ namespace Controls
           is_draggable(true),
           _is_dragging(false),
           _is_resizable(false),
-          _is_resizing(false)
+          _is_resizing(false),
+          _size_changed(false)
     {
     }
 
@@ -153,8 +154,8 @@ namespace Controls
 
     void Frame::reset_resize_hitbox()
     {
-        Point hb_start(width - 5, height - 5);
-        resize_hitbox = Rect(hb_start, 5, 5);
+        Point hb_start(width - 8, height - 8);
+        resize_hitbox = Rect(hb_start, 8, 8);
     }
 
     inline void Frame::set_color(color& target, const std::string& hex)
@@ -193,43 +194,49 @@ namespace Controls
         _needs_visual_update = true;
     }
 
-    void Frame::on_mouse_ev(const event& mouse, const bool btn_held)
+    void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
         if (!is_hittest_visible) return;
 
-        Point m(mouse.pos_x, mouse.pos_y);
-        Point size(width, height);
+        _is_hovered = intersects(m.pos_x, m.pos_y);
 
-        _is_hovered = intersects(m);
-
-        if (mouse.button == btn_left && !btn_held)
+        if (m.button == btn_left && !btn_held)
         {
             _is_focused = _is_hovered;
         }
 
-        _is_held = _is_focused && (mouse.button == btn_left || btn_held);
-        _is_resizing = _is_resizing || (_is_held && _is_resizable && resize_hitbox.intersects(m-start) && !_is_dragging);
+        _is_held = _is_focused && (m.button == btn_left || btn_held);
+
+        if (_is_held && _is_resizable)
+        {
+            Point rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
+            bool resize_hit = resize_hitbox.intersects(rel_mouse);
+
+            _is_resizing = _is_resizing || (m.button == btn_left && resize_hit);
+        }
         
         if (_is_resizing && _is_held)
         {
             Point m_limit;
-            m_limit.x = std::max(m.x, start.x + (int)min_width);
-            m_limit.y = std::max(m.y, start.y + (int)min_height);
+            m_limit.x = std::max(m.pos_x, start.x + (int)min_width);
+            m_limit.y = std::max(m.pos_y, start.y + (int)min_height);
 
-            Point diff = m_limit - start - size;
-            width += diff.x;
-            height += diff.y;
+            width  += m_limit.x - start.x - width;
+            height += m_limit.y - start.y - height;
         }
         else if (is_draggable && _is_held)
         {
             if (!_is_dragging)
             {
-                drag_center = m;
+                drag_center.x = m.pos_x;
+                drag_center.y = m.pos_y;
+
                 drag_start = start;
                 _is_dragging = true;
             }
 
-            start = drag_start + m - drag_center;
+            start.x = drag_start.x + m.pos_x - drag_center.x;
+            start.y = drag_start.y + m.pos_y - drag_center.y;
 
             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
@@ -241,11 +248,12 @@ namespace Controls
             if (_is_resizing)
             {
                 reset_resize_hitbox();
-
-                size = Point(std::max(width, min_width), std::max(height, min_height));
-                end = start + size;
+                end.x = start.x + width;
+                end.y = start.y + height;
 
                 rendered = canvas(width, height);
+                _size_changed = true;
+                
                 _is_resizing = false;
             }
             if (_is_dragging)
@@ -280,6 +288,13 @@ namespace Controls
         // std::cout << "Frame @ " << this << " updated\n";
         rendered << move_to(0, 0) << border << box(width, height)
                  << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
+
+        if (_is_resizable)
+        {
+            rendered << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
+                     << color(0, 0, 0)
+                     << box(resize_hitbox.width, resize_hitbox.height);
+        }
     }
 
     void Frame::draw(canvas& c)
@@ -344,14 +359,21 @@ namespace Controls
         set_color(text_fill_normal, hex);
     }
 
-    void Label::set_font(const std::string& font_src, int font_size)
+    void Label::set_font(const std::string& font_src)
     {
-        rendered.load_font(font_src, font_size);
+        rendered.load_font(font_src);
+        this->font_src = font_src;
     }
 
     void Label::render()
     {
         Frame::render();
+        if (_size_changed)
+        {
+            std::cout << "Reload font\n";
+            rendered.load_font(font_src);
+            _size_changed = false;
+        }
         if (_is_focused)
         {   
             rendered << move_to(text_x, text_y)
@@ -362,8 +384,6 @@ namespace Controls
             rendered << move_to(text_x, text_y)
                      << text_fill_normal << genv::text(text);
         }
-        rendered << move_to(width - 8, height - 8)
-                 << color(0, 0, 0) << box(8, 8);
     }
 
     // void Label::on_mouse_ev(const event& m)

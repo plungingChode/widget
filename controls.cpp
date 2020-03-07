@@ -8,6 +8,25 @@ namespace Controls
     Point::Point(int x, int y) : x(x), y(y) {};
     Point::Point() : x(0), y(0) {};
 
+    void Point::operator+=(const Point& rhs)
+    {
+        this->x += rhs.x;
+        this->y += rhs.y;
+    }
+    void Point::operator-=(const Point& rhs)
+    {
+        this->x -= rhs.x;
+        this->y += rhs.y;
+    }
+    Point operator+(const Point& lhs, const Point& rhs)
+    {
+        return Point(lhs.x + rhs.x, lhs.y + rhs.y);
+    }
+    Point operator-(const Point& lhs, const Point& rhs)
+    {
+        return Point(lhs.x - rhs.x, lhs.y - rhs.y);
+    }
+
     // Margin
     Margin::Margin(int top, int left, int bottom, int right)
         : top(top), left(left), bottom(bottom), right(right)
@@ -42,6 +61,9 @@ namespace Controls
           width(width), height(height)
     {}
 
+    Rect::Rect() : Rect(0, 0)
+    {}
+
     Point Rect::get_start() { return start; }
     Point Rect::get_end() { return end; }
     unsigned int Rect::get_width() { return width; }
@@ -68,7 +90,10 @@ namespace Controls
           _is_held(false),
           _needs_visual_update(true),
           is_hittest_visible(true),
-          is_draggable(true)
+          is_draggable(true),
+          _is_dragging(false),
+          _is_resizable(false),
+          _is_resizing(false)
     {
     }
 
@@ -108,7 +133,9 @@ namespace Controls
           focus_bg(DEFAULT_FOCUS),
           fill(DEFAULT_NORMAL), 
           border(DEFAULT_BORDER),
-          border_thickness(10)
+          border_thickness(10),
+          min_width(15),
+          min_height(15)
     {
         // std::cout << &rendered << '\n';
     }
@@ -118,11 +145,22 @@ namespace Controls
     {
     }
 
+    void Frame::set_resizable(const bool val)
+    {
+        _is_resizable = val;
+        reset_resize_hitbox();
+    }
+
+    void Frame::reset_resize_hitbox()
+    {
+        Point hb_start(width - 5, height - 5);
+        resize_hitbox = Rect(hb_start, 5, 5);
+    }
+
     inline void Frame::set_color(color& target, const std::string& hex)
     {
         target = hex_to_color(hex);
     }
-
 
     void Frame::set_normal_bg(const std::string& hex)
     {
@@ -149,50 +187,73 @@ namespace Controls
         set_color(border, hex);
     }
 
-    void Frame::set_border_thickness(const int thickness)
+    void Frame::set_border_thickness(const unsigned thickness)
     {
         border_thickness = thickness;
         _needs_visual_update = true;
     }
 
-    void Frame::on_mouse_ev(const event& m, const bool btn_held)
+    void Frame::on_mouse_ev(const event& mouse, const bool btn_held)
     {
         if (!is_hittest_visible) return;
 
-        _is_hovered = intersects(m.pos_x, m.pos_y);
+        Point m(mouse.pos_x, mouse.pos_y);
+        Point size(width, height);
 
-        if (m.button == btn_left && !btn_held)
+        _is_hovered = intersects(m);
+
+        if (mouse.button == btn_left && !btn_held)
         {
             _is_focused = _is_hovered;
         }
 
-        _is_held =  _is_focused && (m.button == btn_left || btn_held);
-
-        if (!is_draggable) return;
-
-        if (_is_held)
+        _is_held = _is_focused && (mouse.button == btn_left || btn_held);
+        _is_resizing = _is_resizing || (_is_held && _is_resizable && resize_hitbox.intersects(m-start) && !_is_dragging);
+        
+        if (_is_resizing && _is_held)
         {
-            if (drag_center.x == start.x)
-            {
-                drag_center.x = m.pos_x;
-                drag_center.y = m.pos_y;
+            Point m_limit;
+            m_limit.x = std::max(m.x, start.x + (int)min_width);
+            m_limit.y = std::max(m.y, start.y + (int)min_height);
 
+            Point diff = m_limit - start - size;
+            width += diff.x;
+            height += diff.y;
+        }
+        else if (is_draggable && _is_held)
+        {
+            if (!_is_dragging)
+            {
+                drag_center = m;
                 drag_start = start;
+                _is_dragging = true;
             }
 
-            start.x = drag_start.x + m.pos_x - drag_center.x;
-            start.y = drag_start.y + m.pos_y - drag_center.y;
+            start = drag_start + m - drag_center;
 
             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
-            
-            end.x = start.x + width;
-            end.y = start.y + height;
+
+            end = start + Point(width, height);
         }
         else
         {
+            if (_is_resizing)
+            {
+                reset_resize_hitbox();
+
+                size = Point(std::max(width, min_width), std::max(height, min_height));
+                end = start + size;
+
+                rendered = canvas(width, height);
+                _is_resizing = false;
+            }
+            if (_is_dragging)
+            {
+                drag_center = start;
+                _is_dragging = false;
+            }
             _is_held = false;
-            drag_center = start;
         }
     }
 
@@ -223,11 +284,20 @@ namespace Controls
 
     void Frame::draw(canvas& c)
     {
-        if (_needs_visual_update)
+        if (_is_resizing)
         {
-            render();
+            c << move_to(start.x, start.y)
+              << border 
+              << box(width, height);
         }
-        c << stamp(rendered, start.x, start.y);
+        else
+        {
+            if (_needs_visual_update)
+            {
+                render();
+            }
+            c << stamp(rendered, start.x, start.y);
+        }
         _needs_visual_update = false;
     }
 
@@ -536,6 +606,8 @@ namespace Controls
     int Scene::run(bool fullscreen)
     {
         gout.open(ENV_WIDTH, ENV_HEIGHT, fullscreen);
+        render(gout);
+        gout << refresh;
 
         event ev;
         while (gin >> ev)

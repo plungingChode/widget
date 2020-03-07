@@ -41,6 +41,11 @@ namespace Controls
         int x, y;
         Point(int x, int y);
         Point();
+        
+        void operator+=(const Point& rhs);
+        void operator-=(const Point& rhs);
+        friend Point operator-(const Point& lhs, const Point& rhs);
+        friend Point operator+(const Point& lhs, const Point& rhs);
     };
 
     struct Margin
@@ -54,14 +59,14 @@ namespace Controls
 
     struct Rect
     {
-    protected:
+    public:
         Point start, end;
         unsigned int width, height;
 
-    public:
         Rect(Point start, Point end);
         Rect(Point start, int width, int height);
         Rect(int width, int height);
+        Rect();
 
         Point get_start();
         Point get_end();
@@ -78,13 +83,18 @@ namespace Controls
     friend class Scene;
     protected:
         bool _is_hovered, _is_focused, _is_held;
+        bool _is_resizable, _is_resizing;
         bool _needs_visual_update;
+
+        bool _is_dragging;
 
         // Coordinates of the mouse event that started the drag
         Point drag_center;
 
         // Coordinates of the 'start' point when the drag begins
         Point drag_start;
+
+        Rect resize_hitbox;
 
         Control(Point drag_center, Point drag_start);
 
@@ -99,6 +109,8 @@ namespace Controls
         void update_visuals();
         bool updated() const;
 
+        virtual void set_resizable(const bool val) { _is_resizable = val; }
+        
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) = 0;
         virtual void on_key_ev(const event& key_ev, const bool key_held = false) = 0;
 
@@ -111,7 +123,8 @@ namespace Controls
     protected:
         color normal_bg, hover_bg, focus_bg, hold_bg;
         color fill, border;
-        int border_thickness;
+        unsigned int border_thickness;
+        unsigned int min_width, min_height;
 
         canvas rendered;
 
@@ -121,14 +134,15 @@ namespace Controls
         Frame(Point start, Point end);
         Frame(Point start, int width, int height);
 
+        void set_resizable(const bool val) override;
+        void reset_resize_hitbox();
         void set_normal_bg(const std::string& hex);
         void set_focus_bg(const std::string& hex);
         void set_hover_bg(const std::string& hex);
         void set_drag_bg(const std::string& hex);
         void set_border_color(const std::string& hex);
-        void set_border_thickness(const int thickness);
+        void set_border_thickness(const unsigned thickness);
 
-        // allow override
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         virtual void on_key_ev(const event& key_ev, const bool key_held = false) override {}
         virtual void render() override;
@@ -153,7 +167,6 @@ namespace Controls
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src, int font_size = 16);
         virtual void render() override;
-        // void on_mouse_ev(const event& mouse_ev, const int btn = 0) override;
     };
 
     struct Button : public Label

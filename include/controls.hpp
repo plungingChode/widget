@@ -10,19 +10,8 @@ using namespace genv;
 namespace Controls
 {
     // declare static here, define in .cpp??
-
-
-    static color hex_to_color(const std::string& h)
-    {
-        int n;
-        std::istringstream(h) >> std::hex >> n;
-        int b = n % 256;
-        n/= 256;
-        int g = n % 256;
-        n /= 256;
-        int r = n % 256;
-        return color(r, g, b);
-    }
+    static color hex_to_color(const std::string& h);
+    static canvas read_kep(const std::string& fname);
 
     const static color BLACK = hex_to_color("000000");
     const static color DEFAULT_BORDER = hex_to_color("718EA4");
@@ -152,6 +141,11 @@ namespace Controls
         virtual void draw(canvas& c) override;
     };
 
+    enum TextAlign
+    {
+        LEFT, CENTER, RIGHT
+    };
+
     struct Label : public Frame
     {
     protected:
@@ -162,10 +156,12 @@ namespace Controls
         int text_width, char_ascent, char_descent;
         int text_x, text_y;
 
+        TextAlign t_align;
+
     public:
-        Label(Point start, const std::string& text,int width, int height);
-        Label(Point start, const std::string& text, int padding);
-        Label(Point start, const std::string& text, Margin padding);
+        Label(Point start, const std::string& text,int width, int height, TextAlign align = LEFT);
+        Label(Point start, const std::string& text, int padding, TextAlign align = LEFT);
+        Label(Point start, const std::string& text, Margin padding, TextAlign align = LEFT);
 
         void set_text(const std::string& text);
         void set_text_fill_normal(const std::string& hex);
@@ -192,9 +188,20 @@ namespace Controls
     struct Spinner : public Label
     {
     protected:
+        enum ActiveSpin
+        {
+            NONE, BTN_UP, BTN_DOWN
+        };
+
+        ActiveSpin spin = NONE;
+
         int value;
+        color spin_color;
         Rect spin_up_hitbox;
         Rect spin_dn_hitbox;
+
+        canvas spin_up_icon;
+        canvas spin_dn_icon;
 
     public:
         int max_value;
@@ -203,6 +210,9 @@ namespace Controls
         Spinner(Point start, int value, int width, int height);
         Spinner(Point start, int value, Margin padding);
 
+        void set_spinner_hitboxes();
+
+        void set_spin_color(const std::string& hex);
         void set_value(const int val);
         int get_value() const;
         void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;

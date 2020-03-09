@@ -4,6 +4,45 @@ using namespace genv;
 
 namespace Controls
 {    
+    // static
+    color hex_to_color(const std::string& h)
+    {
+        int n;
+        std::istringstream(h) >> std::hex >> n;
+        int b = n % 256;
+        n/= 256;
+        int g = n % 256;
+        n /= 256;
+        int r = n % 256;
+        return color(r, g, b);
+    }
+
+    canvas read_kep(const std::string& fname)
+    {
+        std::ifstream f(fname);
+        int width, height;
+        f >> width >> std::ws;
+        f >> height >> std::ws;
+
+        canvas c(width, height); 
+
+        int x, y;
+        int r, g, b;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                f >> r >> g >> b;
+
+                c << move_to(x, y) 
+                << color(r, g, b) 
+                << dot;
+            }
+        }
+        c.transparent(true);
+        return c;
+    }
+
     // Point
     Point::Point(int x, int y) : x(x), y(y) {};
     Point::Point() : x(0), y(0) {};
@@ -325,7 +364,7 @@ namespace Controls
 
     // Label
     // default border thickness = 1
-    Label::Label(Point start, const std::string& text, Margin padding)
+    Label::Label(Point start, const std::string& text, Margin padding, TextAlign align)
         : text_fill_normal(DEFAULT_TEXT_NORMAL),
           text_fill_focused(DEFAULT_TEXT_FOCUS),
           text(text),
@@ -338,25 +377,23 @@ namespace Controls
           Frame(start,
             Point(start.x 
                     + padding.left + padding.right 
-                    + rendered.twidth(text) 
-                    + 2*2,
+                    + rendered.twidth(text),
                   start.y 
                     + padding.top  + padding.bottom 
-                    + rendered.cdescent() + rendered.cascent() 
-                    + 2*2))
+                    + rendered.cdescent() + rendered.cascent()))
     {
         Frame::border_thickness = 1;
         Control::is_hittest_visible = false;
     }
 
-    Label::Label(Point start, const std::string& text, int width, int height)
+    Label::Label(Point start, const std::string& text, int width, int height, TextAlign align)
         : Label(start, text, 
             Margin((width  - rendered.twidth(text)) / 2, 
                    (height - (rendered.cdescent() + rendered.cascent())) / 2))
     {
     }
 
-    Label::Label(Point start, const std::string& text, int padding)
+    Label::Label(Point start, const std::string& text, int padding, TextAlign align)
         : Label(start, text, Margin(padding))
     {
     }
@@ -488,10 +525,12 @@ namespace Controls
         : Label(start, std::to_string(value), width, height),
           min_value(INT_MIN),
           max_value(INT_MAX),
-          value(value)
+          value(value),
+          spin_color(DEFAULT_MOUSEDOWN)
     {
-        spin_up_hitbox = Rect(Point(width - 10, height), Point(width, height / 2));
-        //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
+        Control::is_draggable = false;
+        Frame::hold_bg = DEFAULT_FOCUS;
+        set_spinner_hitboxes();
     }
 
     Spinner::Spinner(Point start, int value, Margin padding)
@@ -499,9 +538,26 @@ namespace Controls
           min_value(INT_MIN),
           max_value(INT_MAX),
           value(value),
-          spin_up_hitbox(Point(width - 10, height), Point(width, height / 2))
-        //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
-    {}
+          spin_color(DEFAULT_MOUSEDOWN)
+    {
+        Control::is_draggable = false;
+        Frame::hold_bg = DEFAULT_FOCUS;
+        set_spinner_hitboxes();
+    }
+
+    void Spinner::set_spinner_hitboxes()
+    {
+        unsigned int& b = border_thickness;
+        spin_up_hitbox = Rect(Point(width - 17 - b, b), Point(width - b, height / 2));
+        spin_dn_hitbox = Rect(Point(width - 17 - b, height / 2), Point(width - b, height - b));
+        spin_up_icon = read_kep("uarrow.kep");
+        spin_dn_icon = read_kep("dnarrow.kep");
+    }
+
+    void Spinner::set_spin_color(const std::string& hex)
+    {
+        set_color(spin_color, hex);
+    }
 
     void Spinner::set_value(const int val)
     {     
@@ -517,16 +573,35 @@ namespace Controls
     void Spinner::on_mouse_ev(const event& m, const bool btn_held)
     {
         Label::on_mouse_ev(m, btn_held);
+
+        spin = NONE;
         if (_is_focused)
         {
+            int value_change = 0;
             if (m.button == btn_wheelup)
             {
-                set_value(value+1);
+                value_change = 1;
             }
             else if (m.button == btn_wheeldown)
             {
-                set_value(value-1);
+                value_change = -1;
             }
+            else if (m.button == btn_left)
+            {
+                // std::cout << "mbutton released\n";
+                Point mouse = Point(m.pos_x, m.pos_y) - start;
+                if (spin_up_hitbox.intersects(mouse))
+                {
+                    value_change = 1;
+                    spin = BTN_UP;
+                }
+                else if (spin_dn_hitbox.intersects(mouse))
+                {
+                    value_change = -1;
+                    spin = BTN_DOWN;
+                }
+            }
+            set_value(value+value_change);
         }
     }
 
@@ -562,16 +637,36 @@ namespace Controls
     void Spinner::render()
     {
         Label::render();
-        Rect& r = spin_up_hitbox;
-        std::cout << r.start.x << ':' << r.start.y << '\n';
-        rendered << move_to(r.start.x, r.start.y)
-                 << text_fill_normal
-                 << box(r.width, r.height);
+        color btn_border = text_fill_normal;
+        color btn_up_bg = normal_bg;
+        color btn_dn_bg = normal_bg;
 
-        // r = spin_dn_hitbox;
-        // rendered << move_to(r.start.x, r.start.y)
-        //          << border
-        //          << box(r.width, r.height);
+        if (spin == BTN_DOWN)
+        {
+            btn_dn_bg = spin_color;
+        }
+        else if (spin == BTN_UP)
+        {
+            btn_up_bg = spin_color;
+        }
+
+        Rect& r1 = spin_up_hitbox;
+        rendered << move_to(r1.start.x, r1.start.y)
+                 << btn_border
+                 << box(r1.width, r1.height)
+                 << move_to(r1.start.x + 1, r1.start.y + 1)
+                 << btn_up_bg
+                 << box(r1.width - 2, r1.height - 2)
+                 << stamp(spin_up_icon, r1.start.x + 3, r1.start.y + r1.height/2 - 3);
+
+        Rect& r2 = spin_dn_hitbox;
+        rendered << move_to(r2.start.x, r2.start.y)
+                 << btn_border
+                 << box(r2.width, r2.height)
+                 << move_to(r2.start.x + 1, r2.start.y + 1)
+                 << btn_dn_bg
+                 << box(r2.width - 2, r2.height - 2)
+                 << stamp(spin_dn_icon, r2.start.x + 3, r2.start.y + r2.height/2 - 3);
     }
 
     // // TextBox

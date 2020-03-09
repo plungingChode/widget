@@ -12,10 +12,10 @@
         },
         {
             "type": "shell",
-            "label": "g++ build active file",
+            "label": "g++ build widget.cpp",
             "command": "g++",
             "args": [
-                "${file}",
+                "${cwd}/widget.cpp",
                 "-std=c++0x",
                 "-L", "${cwd}/lib",
                 "-I", "${cwd}",
@@ -37,6 +37,35 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "shell",
+            "label": "g++ build active file",
+            "command": "g++",
+            "args": [
+                "${file}",
+                "-std=c++0x",
+                "-L", "${cwd}/lib",
+                "-I", "${cwd}",
+                "-I", "${cwd}/include",
+                "-l", "graphics",
+                "-l", "Controls",
+                "-l", "graphicsd",
+                "-l", "SDL",
+                "-l", "SDLmain",
+                "-l", "sdl_ttf"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group":"build"
+            // "group": {
+            //     "kind": "build",
+            //     "isDefault": true
+            // }
         },
         {
             "type": "shell",

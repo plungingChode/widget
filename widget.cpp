@@ -12,32 +12,6 @@ void print_one()
     std::cout << "+1\n";
 }
 
-canvas read_kep(const std::string& fname)
-{
-    std::ifstream f(fname);
-    int width, height;
-    f >> width >> std::ws;
-    f >> height >> std::ws;
-
-    canvas c(width, height); 
-
-    int x, y;
-    int r, g, b;
-    for (int y = 0; y < height; y++)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            f >> r >> g >> b;
-
-            c << move_to(x, y) 
-              << color(r, g, b) 
-              << dot;
-        }
-    }
-    c.transparent(true);
-    return c;
-}
-
 void style_btn(Button*& btn)
 {
     btn->set_border_color("E5D96E");
@@ -64,9 +38,9 @@ int main(int argc, char const *argv[])
         int y = std::rand() % 300;
         int m_x = 10 + std::rand() % 20;
         int m_y = 5 + std::rand() % 15;
-        Spinner* lbl1 = new Spinner(Point(x, y), std::rand() % 100, 100, 30);
-        // lbl1->set_font("LiberationSans-Regular.ttf");
-        lbl1->set_font("BoschSans-Medium.ttf");
+        Spinner* lbl1 = new Spinner(Point(x, y), std::rand() % 100, 100, 30 + std::rand() % 20);
+        lbl1->set_font("LiberationSans-Regular.ttf");
+        // lbl1->set_font("BoschSans-Medium.ttf");
         lbl1->is_hittest_visible = true;
         // lbl1->is_draggable = false;
         // lbl1->set_resizable(true);
@@ -103,10 +77,10 @@ int main(int argc, char const *argv[])
         int m_x = 10 + std::rand() % 20;
         int m_y = 5 + std::rand() % 15;
         Label* lbl1 = new Label(Point(x, y), "Text", 100, 30);
-        lbl1->set_font("BoschSans-Medium.ttf");
-        // lbl1->set_font("LiberationSans-Regular.ttf");
+        // lbl1->set_font("BoschSans-Medium.ttf");
+        lbl1->set_font("LiberationSans-Regular.ttf");
         lbl1->is_hittest_visible = true;
-        lbl1->is_draggable = false;
+        // lbl1->is_draggable = false;
         lbl1->set_resizable(true);
 
         // style_btn(lbl1);

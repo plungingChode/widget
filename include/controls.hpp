@@ -10,7 +10,7 @@ using namespace genv;
 namespace Controls
 {
     // declare static here, define in .cpp??
-
+    static canvas read_kep(const std::string& fname);
 
     static color hex_to_color(const std::string& h)
     {
@@ -192,9 +192,20 @@ namespace Controls
     struct Spinner : public Label
     {
     protected:
+        enum SpinAction
+        {
+            spin_none, spin_up, spin_down
+        };
+
         int value;
         Rect spin_up_hitbox;
         Rect spin_dn_hitbox;
+
+        canvas spin_up_icon;
+        canvas spin_dn_icon;
+
+        color spin_color;
+        SpinAction spin;
 
     public:
         int max_value;
@@ -203,6 +214,9 @@ namespace Controls
         Spinner(Point start, int value, int width, int height);
         Spinner(Point start, int value, Margin padding);
 
+        void set_spinner_hitboxes();
+
+        void set_spin_color(const std::string& hex);
         void set_value(const int val);
         int get_value() const;
         void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;

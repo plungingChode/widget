@@ -351,40 +351,21 @@ namespace Controls
 
     // Label
     // default border thickness = 1
-    Label::Label(Point start, const std::string& text, Margin padding)
+    Label::Label(Point start, const std::string& text, int width, int height, Point content_offset)
         : text_fill_normal(DEFAULT_TEXT_NORMAL),
           text_fill_focused(DEFAULT_TEXT_FOCUS),
           text(text),
-          text_width(rendered.twidth(text)),
-          char_ascent(rendered.cascent()),
-          char_descent(rendered.cdescent()),
-          text_x(width  / 2 - rendered.twidth(text) / 2),
-          text_y(height / 2 + rendered.cdescent() - rendered.cascent()),
-          padding(padding),
-          Frame(start,
-            Point(start.x 
-                    + padding.left + padding.right 
-                    + rendered.twidth(text) 
-                    + 2*2,
-                  start.y 
-                    + padding.top  + padding.bottom 
-                    + rendered.cdescent() + rendered.cascent() 
-                    + 2*2))
+          content_offset(content_offset),
+          Frame(start, width, height)
     {
         Frame::border_thickness = 1;
         Control::is_hittest_visible = false;
     }
 
-    Label::Label(Point start, const std::string& text, int width, int height)
-        : Label(start, text, 
-            Margin((width  - rendered.twidth(text)) / 2, 
-                   (height - (rendered.cdescent() + rendered.cascent())) / 2))
+    void Label::set_content_offset(Point p)
     {
-    }
-
-    Label::Label(Point start, const std::string& text, int padding)
-        : Label(start, text, Margin(padding))
-    {
+        content_offset = p;
+        update_visuals();
     }
 
     void Label::set_text(const std::string& text)
@@ -409,12 +390,12 @@ namespace Controls
         Frame::render();
         if (_is_focused)
         {   
-            rendered << move_to(text_x, text_y)
+            rendered << move_to(content_offset.x, content_offset.y)
                      << text_fill_focused << genv::text(text);
         }
         else
         {
-            rendered << move_to(text_x, text_y)
+            rendered << move_to(content_offset.x, content_offset.y)
                      << text_fill_normal << genv::text(text);
         }
     }
@@ -431,16 +412,8 @@ namespace Controls
 
     // Button
     // button is not draggable by default
-    Button::Button(Point start, const std::string& text, Margin padding, void (*action)())
-        : Label(start, text, padding), action(action)
-    {
-        Frame::rendered.transparent(true);
-        Control::is_draggable = false;
-        Control::is_hittest_visible = true;
-    }
-
-    Button::Button(Point start, const std::string& text, int width, int height, void (*action)())
-        : Label(start, text, width, height), action(action)
+    Button::Button(Point start, const std::string& text, void (*action)(), int width, int height, Point content_offset)
+        : Label(start, text, width, height, content_offset), action(action)
     {
         Frame::rendered.transparent(true);
         Control::is_draggable = false;
@@ -480,7 +453,8 @@ namespace Controls
             fill = normal_bg;
         }
 
-        int b = border_thickness;
+        unsigned int& b = border_thickness;
+        Point& o = content_offset;
 
         // leave gap for bevel effect
         rendered 
@@ -493,7 +467,7 @@ namespace Controls
             rendered 
                 << move_to(1, height-b) << border << box(width-1, b)
                 << move_to(width-b, 1) << border << box(b, height-1)
-                << move_to(text_x + b+1, text_y + b+1) << text_fill_normal << genv::text(text);
+                << move_to(o.x + b+1, o.y + b+1) << text_fill_normal << genv::text(text);
         }
         else
         {
@@ -501,7 +475,7 @@ namespace Controls
             rendered 
                 << move_to(0, 0) << border << box(width-b, b)
                 << move_to(0, 0) << border << box(b, height-b)
-                << move_to(text_x, text_y) << text_fill_normal << genv::text(text);
+                << move_to(o.x, o.y) << text_fill_normal << genv::text(text);
         }
         if(_is_resizable)
         {
@@ -510,20 +484,8 @@ namespace Controls
     }
 
     // Spinner
-    Spinner::Spinner(Point start, int value, int width, int height)
-        : Label(start, std::to_string(value), width, height),
-          min_value(INT_MIN),
-          max_value(INT_MAX),
-          value(value),
-          spin_color(DEFAULT_MOUSEDOWN)
-    {
-        Control::is_draggable = false;
-        Frame::hold_bg = DEFAULT_FOCUS;
-        set_spinner_hitboxes();
-    }
-
-    Spinner::Spinner(Point start, int value, Margin padding)
-        : Label(start, std::to_string(value), padding),
+    Spinner::Spinner(Point start, int value, int width, int height, Point content_offset)
+        : Label(start, std::to_string(value), width, height, content_offset),
           min_value(INT_MIN),
           max_value(INT_MAX),
           value(value),

@@ -90,9 +90,6 @@ namespace Controls
         // Coordinates of the mouse event that started the drag
         Point drag_center;
 
-        // // Coordinates of the 'start' point when the drag begins
-        // Point drag_start;
-
         Rect resize_hitbox;
 
         Control(Point drag_center, Point drag_start);
@@ -154,17 +151,14 @@ namespace Controls
     {
     protected:
         color text_fill_normal, text_fill_focused;
-        Margin padding;
+        Point content_offset;
 
         std::string text, font_src;
-        int text_width, char_ascent, char_descent;
-        int text_x, text_y;
 
     public:
-        Label(Point start, const std::string& text,int width, int height);
-        Label(Point start, const std::string& text, int padding);
-        Label(Point start, const std::string& text, Margin padding);
+        Label(Point start, const std::string& text,int width = 100, int height = 30, Point content_offset = Point(7, 7));
 
+        void set_content_offset(Point p);
         void set_text(const std::string& text);
         void set_text_fill_normal(const std::string& hex);
         void set_font(const std::string& font_src);
@@ -177,11 +171,9 @@ namespace Controls
     protected:
         void (*action)();
         canvas content;
-        // Point content_offset;
 
     public:
-        Button(Point start, const std::string& text, Margin padding, void (*action)());
-        Button(Point start, const std::string& text, int width, int height, void (*action)());
+        Button(Point start, const std::string& text, void (*action)(), int width = 100, int height = 30, Point content_offset = Point(7, 7));
 
         void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
         void render() override;
@@ -209,8 +201,7 @@ namespace Controls
         int max_value;
         int min_value;
 
-        Spinner(Point start, int value, int width, int height);
-        Spinner(Point start, int value, Margin padding);
+        Spinner(Point start, int value, int width = 100, int height = 30, Point content_offset = Point(7, 7));
 
         void set_spinner_hitboxes();
 

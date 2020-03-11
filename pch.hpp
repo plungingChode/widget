@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics.hpp"
+#include "controls.hpp"
 #include <vector>
 #include <map>
 #include <iostream>

@@ -21,7 +21,7 @@
                 "-I", "${cwd}",
                 "-I", "${cwd}/include",
                 "-l", "graphics",
-                "-l", "Controls",
+                "-l", "controls",
                 "-l", "graphicsd",
                 "-l", "SDL",
                 "-l", "SDLmain",
@@ -49,7 +49,7 @@
                 "-I", "${cwd}",
                 "-I", "${cwd}/include",
                 "-l", "graphics",
-                "-l", "Controls",
+                "-l", "controls",
                 "-l", "graphicsd",
                 "-l", "SDL",
                 "-l", "SDLmain",
@@ -118,11 +118,11 @@
             "command": "g++",
             "args": [
                 "-c", "${file}",
-                "-o", "${fileBasenameNoExtension}.o",
+                "-o", "obj\\${fileBasenameNoExtension}.o",
                 "-std=c++0x",
-                "-L", "${cwd}/lib",
-                "-I", "${cwd}",
-                "-I", "${cwd}/include",
+                "-L", "${cwd}\\lib",
+                // "-I", "${cwd}",
+                "-I", "${cwd}\\include",
                 "-l", "graphics",
                 "-l", "graphicsd",
                 "-l", "SDL",
@@ -130,7 +130,7 @@
                 "-l", "sdl_ttf"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"

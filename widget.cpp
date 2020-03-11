@@ -1,7 +1,6 @@
 #include "pch.hpp"
-#include "controls.cpp"
+#include <iostream>
 
-using namespace genv;
 using namespace Controls;
 
 const int SCREEN_WIDTH = 640;
@@ -60,7 +59,7 @@ int main(int argc, char const *argv[])
         TextBox* lbl1 = new TextBox(Point(x, y), "TextBox", 100, 30, Point(7,7));
         lbl1->set_font("LiberationSans-Regular.ttf");
         // lbl1->set_font("BoschSans-Medium.ttf");
-        lbl1->is_hittest_visible = true;
+        // lbl1->is_hittest_visible = true;
         lbl1->is_draggable = true;
         // lbl1->set_resizable(true);
 
@@ -101,5 +100,4 @@ int main(int argc, char const *argv[])
     //     s.add_control(lbl1);
     // }
     s.run();
-    gout << move_to(100, 100) << text("");
 }

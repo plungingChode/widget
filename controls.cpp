@@ -1,5 +1,4 @@
 #include "controls.hpp"
-#include <iostream>
 using namespace genv;
 
 namespace Controls
@@ -110,7 +109,6 @@ namespace Controls
     // Control (base)
     Control::Control(Point drag_center, Point drag_start)
         : drag_center(drag_center),
-          drag_start(drag_start),
           _is_hovered(false), 
           _is_focused(false), 
           _is_held(false),
@@ -255,15 +253,17 @@ namespace Controls
         {
             if (!_is_dragging)
             {
-                drag_center.x = m.pos_x;
-                drag_center.y = m.pos_y;
+                drag_center.x = m.pos_x - start.x;
+                drag_center.y = m.pos_y - start.y;
 
-                drag_start = start;
+                // drag_start = start;
                 _is_dragging = true;
             }
 
-            start.x = drag_start.x + m.pos_x - drag_center.x;
-            start.y = drag_start.y + m.pos_y - drag_center.y;
+            // start.x = drag_start.x + m.pos_x - drag_center.x;
+            // start.y = drag_start.y + m.pos_y - drag_center.y;
+            start.x = m.pos_x - drag_center.x;
+            start.y = m.pos_y - drag_center.y;
 
             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);

@@ -1,9 +1,7 @@
 #ifndef CONTROLS_INCLUDED
 #define CONTROLS_INCLUDED
 
-#include "graphics.hpp"
-#include <sstream>
-#include <vector>
+#include "pch.hpp"
 
 using namespace genv;
 
@@ -92,8 +90,8 @@ namespace Controls
         // Coordinates of the mouse event that started the drag
         Point drag_center;
 
-        // Coordinates of the 'start' point when the drag begins
-        Point drag_start;
+        // // Coordinates of the 'start' point when the drag begins
+        // Point drag_start;
 
         Rect resize_hitbox;
 

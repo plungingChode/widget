@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
         lbl1->set_font("LiberationSans-Regular.ttf");
         // lbl1->set_font("BoschSans-Medium.ttf");
         lbl1->is_hittest_visible = true;
-        // lbl1->is_draggable = false;
+        lbl1->is_draggable = true;
         // lbl1->set_resizable(true);
 
         lbl1->max_value = 100;

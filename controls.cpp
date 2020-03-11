@@ -388,13 +388,17 @@ namespace Controls
     void Label::render()
     {
         Frame::render();
+        if (text.empty()) return;
+
         if (_is_focused)
         {   
+            // std::cout << "rendering text '" << text << "'\n";
             rendered << move_to(content_offset.x, content_offset.y)
                      << text_fill_focused << genv::text(text);
         }
         else
         {
+            // std::cout << "rendering text '" << text << "'\n";
             rendered << move_to(content_offset.x, content_offset.y)
                      << text_fill_normal << genv::text(text);
         }
@@ -556,7 +560,7 @@ namespace Controls
         }
     }
 
-    void Spinner::on_key_ev(const event& k, const bool key_held)
+    void Spinner::on_key_ev(const event& k, const int key_held)
     {
         // std::cout << "Spin w/ key\n";
         if (_is_focused)
@@ -620,112 +624,60 @@ namespace Controls
                  << stamp(spin_dn_icon, r2.start.x + 3, r2.start.y + r2.height/2 - 3);
     }
 
-    // // Spinner
-    // Spinner::Spinner(Point start, int value, int width, int height)
-    //     : Label(start, std::to_string(value), width, height),
-    //       min_value(INT_MIN),
-    //       max_value(INT_MAX),
-    //       value(value)
-    // {
-    //     spin_up_hitbox = Rect(Point(width - 10, height), Point(width, height / 2));
-    //     //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
-    // }
+    // TextBox
+    TextBox::TextBox(Point start, const std::string& text, int width, int height, Point content_offset)
+        : Label(start, text, width, height, content_offset)
+    {
+        update_cursor();
+    }
 
-    // Spinner::Spinner(Point start, int value, Margin padding)
-    //     : Label(start, std::to_string(value), padding),
-    //       min_value(INT_MIN),
-    //       max_value(INT_MAX),
-    //       value(value),
-    //       spin_up_hitbox(Point(width - 10, height), Point(width, height / 2))
-    //     //   spin_dn_hitbox(Point(width - 10, height / 2), Point(width, height))
-    // {}
+    void TextBox::update_cursor()
+    {
+        cursor_pos.x = content_offset.x + rendered.twidth(text);
+        cursor_pos.y = content_offset.y;
+        cursor_height = rendered.cascent() + rendered.cdescent();
+    }
 
-    // void Spinner::set_value(const int val)
-    // {     
-    //     value = std::max(std::min(val, max_value), min_value);
-    //     set_text(std::to_string(value));
-    // }
+    void TextBox::set_font(const std::string& font_src)
+    {
+        Label::set_font(font_src);
+        update_cursor();
+    }
 
-    // int Spinner::get_value() const
-    // {
-    //     return value;
-    // }
-    
-    // void Spinner::on_mouse_ev(const event& m, const bool btn_held)
-    // {
-    //     Label::on_mouse_ev(m, btn_held);
-    //     if (_is_focused)
-    //     {
-    //         if (m.button == btn_wheelup)
-    //         {
-    //             set_value(value+1);
-    //         }
-    //         else if (m.button == btn_wheeldown)
-    //         {
-    //             set_value(value-1);
-    //         }
-    //     }
-    // }
+    void TextBox::on_key_ev(const event& key_ev, const int key_held)
+    {
+        char kc = key_held ? (char)key_held : (char)key_ev.keycode;
 
-    // void Spinner::on_key_ev(const event& k, const bool key_held)
-    // {
-    //     // std::cout << "Spin w/ key\n";
-    //     if (_is_focused)
-    //     {
-    //         switch (k.keycode)
-    //         {
-    //         case key_up:
-    //             set_value(value+1);
-    //             break;
+        if (kc >= 32 && 
+            kc <= 255 && 
+            rendered.twidth(text+kc) <= width - 2*content_offset.x)
+        {
+            // visible charcodes: 32 - 255
+            text += kc;
+            update_cursor();
+            update_visuals();
+        }
+        if (kc == key_backspace)
+        {
+            if (text.size() > 0)
+            {
+                text.resize(text.size() - 1);
+            }
+            update_cursor();
+            update_visuals();
+        }
+    }
 
-    //         case key_down:
-    //             set_value(value-1);
-    //             break;
-
-    //         case key_pgup:
-    //             set_value(value+10);
-    //             break;
-
-    //         case key_pgdn:
-    //             set_value(value-10);
-    //             break;
-
-    //         default:
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // void Spinner::render()
-    // {
-    //     Label::render();
-    //     Rect& r = spin_up_hitbox;
-    //     std::cout << r.start.x << ':' << r.start.y << '\n';
-    //     rendered << move_to(r.start.x, r.start.y)
-    //              << text_fill_normal
-    //              << box(r.width, r.height);
-
-    //     // r = spin_dn_hitbox;
-    //     // rendered << move_to(r.start.x, r.start.y)
-    //     //          << border
-    //     //          << box(r.width, r.height);
-    // }
-
-    // // TextBox
-    // TextBox::TextBox(Point start, const std::string& text, Margin padding)
-    //     : Label(start, text, padding)
-    // {
-    // }
-
-    // TextBox::TextBox(Point start, const std::string& text, int width, int height)
-    //     : Label(start, text, width, height)
-    // {
-    // }
-
-    // void TextBox::on_key_ev(const event& kev)
-    // {
-    //     // visible charcodes: 32 - 255
-    // }
+    void TextBox::render()
+    {
+        Label::render();
+        if (_is_focused)
+        {
+            rendered << move_to(cursor_pos.x + 2, cursor_pos.y)
+                     << text_fill_focused
+                     << line(0, cursor_height);
+        }
+    }
 
     // Scene
     // TODO share common background color
@@ -845,9 +797,20 @@ namespace Controls
 
     bool Scene::on_key_event(const event& kev)
     {
+        int kc = kev.keycode;
+        if (kc >= 0)
+        {
+            key_held = kc;
+        }
+        else
+        {
+            key_held = 0;
+            key_hold_delay = KEY_DELAY;
+        }
+        
         if (focused != nullptr)
         {
-            focused->on_key_ev(kev, false);
+            focused->on_key_ev(kev, key_held);
             return focused->updated();
         }
         return false;
@@ -873,11 +836,14 @@ namespace Controls
         render(gout);
         gout << refresh;
 
+        gin.timer(70);
+
         event ev;
         while (gin >> ev)
         {
             if (ev.type == ev_key)
             {
+                // needs_update = needs_update || on_key_event(ev);
                 if(on_key_event(ev))
                 {
                     render(gout);
@@ -892,11 +858,27 @@ namespace Controls
 
             if (ev.type == ev_mouse)
             {
+                // needs_update = needs_update || on_mouse_event(ev);
+                // std::cout << held << '\n';
                 if (on_mouse_event(ev))
                 {
                     render(gout);
                     gout << refresh;
                 }
+            }
+
+            if (ev.type == ev_timer && key_held)
+            {
+                if (key_hold_delay) key_hold_delay--;
+
+                if (focused && !key_hold_delay)
+                {
+                    if (key_held) focused->on_key_ev(ev, key_held);
+                    // if (mouse_held) focused->on_mouse_ev(ev, true);
+                }
+                render(gout);
+                gout << refresh;
+                // needs_update = false;
             }
         }
         return 0;

@@ -5,6 +5,8 @@
 
 using namespace genv;
 
+// TODO optimize w/ inline
+
 namespace Controls
 {
     // declare static here, define in .cpp??
@@ -108,7 +110,7 @@ namespace Controls
         virtual void set_resizable(const bool val) { _is_resizable = val; }
         
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) = 0;
-        virtual void on_key_ev(const event& key_ev, const bool key_held = false) = 0;
+        virtual void on_key_ev(const event& key_ev, const int key_held = 0) = 0;
 
         virtual void render() = 0;
         virtual void draw(canvas& c) = 0;
@@ -142,7 +144,7 @@ namespace Controls
         virtual void render_resize_area();
 
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
-        virtual void on_key_ev(const event& key_ev, const bool key_held = false) override {}
+        virtual void on_key_ev(const event& key_ev, const int key_held = 0) override {}
         virtual void render() override;
         virtual void draw(canvas& c) override;
     };
@@ -161,7 +163,7 @@ namespace Controls
         void set_content_offset(Point p);
         void set_text(const std::string& text);
         void set_text_fill_normal(const std::string& hex);
-        void set_font(const std::string& font_src);
+        virtual void set_font(const std::string& font_src);
         virtual void render() override;
         virtual void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
     };
@@ -209,45 +211,43 @@ namespace Controls
         void set_value(const int val);
         int get_value() const;
         void on_mouse_ev(const event& mouse_ev, const bool btn_held = false) override;
-        void on_key_ev(const event& key_ev, const bool key_held = false) override;
+        void on_key_ev(const event& key_ev, const int key_held = false) override;
 
         virtual void render() override;
     };
 
-    // struct TextBox : public Label
-    // {
-    // public:
-    //     TextBox(Point start, const std::string& text, Margin padding);
-    //     TextBox(Point start, const std::string& text, int width, int height);
-    //     // TextBox(Point start, Margin padding);
-    //     // TextBox(Point start, int width, int height);
+    struct TextBox : public Label
+    {
+    private:
+        Point cursor_pos;
+        unsigned int cursor_height;
 
-    //     void on_key_ev(const event& key_ev) override;
-    //     void render() override;
-    // };
+        void update_cursor();
 
-    // struct Spinner : public Label
-    // {
-    // protected:
-    //     void (*spin_up)(int& value);
-    //     void (*spin_dn)(int& value);
-    //     void (*spin_up_big)(int& value);
-    //     void (*spin_dn_big)(int& value);
+    public:
+        TextBox(Point start, const std::string& text, int width = 120, int height = 35, Point content_offset = Point(7, 7));
 
-
-    // };
-
+        void on_key_ev(const event& key_ev, const int key_held = 0) override;
+        void set_font(const std::string& font_src) override;
+        void render() override;
+    };
+    
     // struct ComboBox
     // {};
 
     struct Scene
     {
     private:
+        static const int KEY_DELAY = 7;
+        static const int REFRESH_RATE = 40;
+
         canvas background;
 
         std::vector<Control*> controls;
         int click_buffer = 0; 
         bool mouse_held = false;
+        int key_held = 0;
+        int key_hold_delay = KEY_DELAY;
         bool needs_update = true;
         Control* hovered = nullptr;
         Control* focused = nullptr;

@@ -1,5 +1,7 @@
 #include "pch.hpp"
 #include <iostream>
+#include "src/combobox.cpp"
+// #include "combobox.hpp"
 
 using namespace Controls;
 
@@ -28,62 +30,88 @@ void vmi()
     std::cout << "vmi\n";
 }
 
+struct ExampleItem : public ComboBoxItem
+{
+    std::string name;
+    int value;
+
+    ExampleItem(std::string name, int value) : name(name), value(value) {}
+
+    std::string to_string() const override
+    {
+        return name + " [" + std::to_string(value) + "]";
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
-    for (int i = 0; i < 3; i++)
-    {
-        int x = std::rand() % 400;
-        int y = std::rand() % 300;
-        int m_x = 10 + std::rand() % 20;
-        int m_y = 5 + std::rand() % 15;
-        Spinner* lbl1 = new Spinner(Point(x, y), std::rand() % 100, 100, 30, Point(7,7));
-        lbl1->set_font("LiberationSans-Regular.ttf");
-        // lbl1->set_font("BoschSans-Medium.ttf");
-        lbl1->is_hittest_visible = true;
-        // lbl1->is_draggable = true;
-        // lbl1->set_resizable(true);
 
-        lbl1->max_value = 100;
-        lbl1->min_value = 0;
+    std::vector<ComboBoxItem*> items = {
+        new ExampleItem("Sample name", 1000),
+        new ExampleItem("Example item", 2000),
+        new ExampleItem("Something else", 9000),
+        new ExampleItem("One more thing", 90),
+        new ExampleItem("Yeah, you heard me", 10),
+        new ExampleItem("what", 10)
+    };
+    ComboBox* combo = new ComboBox(Point(20, 20), items, 200);
+    combo->set_font("LiberationSans-Regular.ttf");
+    s.add_control(combo);
 
-        // style_btn(lbl1);
-        s.add_control(lbl1);
-    }
-    for (int i = 0; i < 3; i++)
-    {
-        int x = std::rand() % 400;
-        int y = std::rand() % 300;
-        int m_x = 10 + std::rand() % 20;
-        int m_y = 5 + std::rand() % 15;
-        TextBox* lbl1 = new TextBox(Point(x, y), "TextBox", 100, 30, Point(7,7));
-        lbl1->set_font("LiberationSans-Regular.ttf");
-        // lbl1->set_font("BoschSans-Medium.ttf");
-        // lbl1->is_hittest_visible = true;
-        lbl1->is_draggable = true;
-        // lbl1->set_resizable(true);
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     int x = std::rand() % 400;
+    //     int y = std::rand() % 300;
+    //     int m_x = 10 + std::rand() % 20;
+    //     int m_y = 5 + std::rand() % 15;
+    //     Spinner* lbl1 = new Spinner(Point(x, y), std::rand() % 100, 100, 50, Point(7,7));
+    //     lbl1->set_font("LiberationSans-Regular.ttf");
+    //     // lbl1->set_font("BoschSans-Medium.ttf");
+    //     lbl1->is_hittest_visible = true;
+    //     // lbl1->is_draggable = true;
+    //     // lbl1->set_resizable(true);
 
-        // style_btn(lbl1);
-        s.add_control(lbl1);
-    }
+    //     lbl1->max_value = 100;
+    //     lbl1->min_value = 0;
 
-    for (int i = 0; i < 3; i++)
-    {
-        int x = std::rand() % 400;
-        int y = std::rand() % 300;
-        int m_x = 10 + std::rand() % 20;
-        int m_y = 5 + std::rand() % 15;
-        Label* lbl1 = new Label(Point(x, y), "Label", 100, 30, Point(10, 10));
-        // lbl1->set_font("BoschSans-Medium.ttf");
-        lbl1->set_font("LiberationSans-Regular.ttf");
-        lbl1->set_content_offset(Point(7, 7));
-        lbl1->is_hittest_visible = true;
-        // lbl1->is_draggable = false;
-        lbl1->set_resizable(true);
+    //     // style_btn(lbl1);
+    //     s.add_control(lbl1);
+    // }
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     int x = std::rand() % 400;
+    //     int y = std::rand() % 300;
+    //     int m_x = 10 + std::rand() % 20;
+    //     int m_y = 5 + std::rand() % 15;
+    //     TextBox* lbl1 = new TextBox(Point(x, y), "TextBox", 100, 30, Point(7,7));
+    //     lbl1->set_font("LiberationSans-Regular.ttf");
+    //     // lbl1->set_font("BoschSans-Medium.ttf");
+    //     // lbl1->is_hittest_visible = true;
+    //     lbl1->is_draggable = true;
+    //     // lbl1->set_resizable(true);
 
-        // style_btn(lbl1);
-        s.add_control(lbl1);
-    }
+    //     // style_btn(lbl1);
+    //     s.add_control(lbl1);
+    // }
+
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     int x = std::rand() % 400;
+    //     int y = std::rand() % 300;
+    //     int m_x = 10 + std::rand() % 20;
+    //     int m_y = 5 + std::rand() % 15;
+    //     Label* lbl1 = new Label(Point(x, y), "Label", 100, 30, Point(10, 10));
+    //     // lbl1->set_font("BoschSans-Medium.ttf");
+    //     lbl1->set_font("LiberationSans-Regular.ttf");
+    //     lbl1->set_content_offset(Point(7, 7));
+    //     lbl1->is_hittest_visible = true;
+    //     // lbl1->is_draggable = false;
+    //     lbl1->set_resizable(true);
+
+    //     // style_btn(lbl1);
+    //     s.add_control(lbl1);
+    // }
 
     // for (int i = 0; i < 3; i++)
     // {

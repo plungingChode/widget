@@ -16,16 +16,15 @@
             "command": "g++",
             "args": [
                 "${cwd}/widget.cpp",
+                "-o", "./a",
                 "-std=c++0x",
-                "-L", "${cwd}/lib",
+                "-L", "./lib",
                 "-I", "${cwd}",
-                "-I", "${cwd}/include",
+                "-I", "./include",
                 "-l", "graphics",
                 "-l", "controls",
-                "-l", "graphicsd",
                 "-l", "SDL",
-                "-l", "SDLmain",
-                "-l", "sdl_ttf"
+                "-l", "SDL_ttf"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

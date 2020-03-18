@@ -1,4 +1,5 @@
 #include "spinner.hpp"
+#include <climits>
 
 using namespace genv;
 

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "controls.hpp"
 #include <vector>
 #include <map>

@@ -107,7 +107,7 @@ namespace Controls
             << move_to(list.width-b-thumb.width, 0) << border << line(0, list.height);
 
         int from = selected_index ? selected_index-1 : selected_index;
-        int to = std::min(items.size(), items_visible);
+        int to = std::min(items.size(), (size_t)items_visible);
 
         for (int i = from; i < to; i++)
         {

@@ -1,5 +1,9 @@
 {
     "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "problemMatcher": "$gcc", 
     "tasks": [
         {
             "type": "shell",
@@ -16,21 +20,13 @@
             "command": "g++",
             "args": [
                 "${cwd}/widget.cpp",
-                "-o", "./a",
                 "-std=c++0x",
                 "-L", "./lib",
-                "-I", "${cwd}",
                 "-I", "./include",
-                "-l", "graphics",
                 "-l", "controls",
+                "-l", "graphics",
                 "-l", "SDL",
                 "-l", "SDL_ttf"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
             ],
             "group": {
                 "kind": "build",
@@ -44,21 +40,12 @@
             "args": [
                 "${file}",
                 "-std=c++0x",
-                "-L", "${cwd}/lib",
-                "-I", "${cwd}",
-                "-I", "${cwd}/include",
-                "-l", "graphics",
+                "-L", "./lib",
+                "-I", "./include",
                 "-l", "controls",
-                "-l", "graphicsd",
+                "-l", "graphics",
                 "-l", "SDL",
-                "-l", "SDLmain",
-                "-l", "sdl_ttf"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+                "-l", "SDL_ttf"
             ],
             "group": "build"
         },
@@ -67,23 +54,14 @@
             "label": "g++ build for debug",
             "command": "g++",
             "args": [
-                "-g", 
-                "${file}",
+                "-g", "${file}",
                 "-std=c++0x",
-                "-L", "${cwd}/lib",
-                "-I", "${cwd}",
-                "-I", "${cwd}/include",
+                "-L", "./lib",
+                "-I", "./include",
+                "-l", "controls",
                 "-l", "graphics",
-                "-l", "graphicsd",
                 "-l", "SDL",
-                "-l", "SDLmain",
-                "-l", "sdl_ttf"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+                "-l", "SDL_ttf"
             ],
             "group": "build"
         },
@@ -94,20 +72,12 @@
             "args": [
                 "-c", "${file}",
                 "-std=c++0x",
-                "-L", "${cwd}/lib",
-                "-I", "${cwd}",
-                "-I", "${cwd}/include",
+                "-L", "./lib",
+                "-I", "./include",
+                "-l", "controls",
                 "-l", "graphics",
-                "-l", "graphicsd",
                 "-l", "SDL",
-                "-l", "SDLmain",
-                "-l", "sdl_ttf"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+                "-l", "SDL_ttf"
             ],
             "group": "build"
         },
@@ -117,22 +87,14 @@
             "command": "g++",
             "args": [
                 "-c", "${file}",
-                "-o", "obj\\${fileBasenameNoExtension}.o",
+                "-o", "./obj/${fileBasenameNoExtension}.o",
                 "-std=c++0x",
-                "-L", "${cwd}\\lib",
-                // "-I", "${cwd}",
-                "-I", "${cwd}\\include",
+                "-L", "./lib",
+                "-I", "./include",
+                "-l", "controls",
                 "-l", "graphics",
-                "-l", "graphicsd",
                 "-l", "SDL",
-                "-l", "SDLmain",
-                "-l", "sdl_ttf"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
+                "-l", "SDL_ttf"
             ],
             "group": "build"
         },
@@ -142,14 +104,8 @@
             "command": "ar",
             "args": [
                 "rvs",
-                "lib/lib${fileBasenameNoExtension}.a",
+                "./lib/lib${fileBasenameNoExtension}.a",
                 "${file}"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
             ],
             "group": "build"
         },

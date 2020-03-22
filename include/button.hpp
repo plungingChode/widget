@@ -1,9 +1,7 @@
 #ifndef BUTTON_HPP_INCLUDED
 #define BUTTON_HPP_INCLUDED
 
-// #include "point.hpp"
 #include "label.hpp"
-// #include "graphics.hpp"
 
 namespace Controls
 {

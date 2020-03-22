@@ -7,7 +7,7 @@ namespace Controls
 {
     Frame::Frame(vec2 start, int width, int height)
         : rect(start, width, height),
-          Control(start, start),
+          Control(start),
           rendered(width, height),
           normal_bg(DEFAULT_NORMAL), 
           hover_bg(DEFAULT_HOVER),
@@ -20,11 +20,6 @@ namespace Controls
           min_height(15)
     {
         // std::cout << &rendered << '\n';
-    }
-
-    Frame::Frame(vec2 start, vec2 end)
-        : Frame(start, end.x - start.x, end.y - start.y)
-    {
     }
 
     void Frame::set_resizable(const bool val)
@@ -113,27 +108,20 @@ namespace Controls
                 drag_center.x = m.pos_x - start.x;
                 drag_center.y = m.pos_y - start.y;
 
-                // drag_start = start;
                 _is_dragging = true;
             }
 
-            // start.x = drag_start.x + m.pos_x - drag_center.x;
-            // start.y = drag_start.y + m.pos_y - drag_center.y;
             start.x = m.pos_x - drag_center.x;
             start.y = m.pos_y - drag_center.y;
 
             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
-
-            end = start + vec2(width, height);
         }
         else
         {
             if (_is_resizing)
             {
                 reset_resize_hitbox();
-                end.x = start.x + width;
-                end.y = start.y + height;
 
                 rendered = canvas(width, height);
                 _size_changed = true;

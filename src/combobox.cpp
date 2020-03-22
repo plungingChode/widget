@@ -19,13 +19,13 @@ namespace Controls
         Control::_is_resizable = false;
 
         unsigned int& b = border_thickness;
-        btn_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height - b));
+        // btn_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height - b));
         btn_icon = read_kep("dnarrow.kep");
 
         list_hitbox = rect(width, items_visible*height);
         expanded_render = canvas(width, items_visible*height);
 
-        thumb_hitbox = rect(vec2(list_hitbox.end.x-btn_hitbox.width, 0), btn_hitbox.width, 40);
+        // thumb_hitbox = rect(vec2(list_hitbox.end.x-btn_hitbox.width, 0), btn_hitbox.width, 40);
 
         if (items.size() && items[0])
         {

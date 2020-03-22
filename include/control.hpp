@@ -1,7 +1,7 @@
 #ifndef CONTROL_HPP_INCLUDED
 #define CONTROL_HPP_INCLUDED
 
-#include "point.hpp"
+#include "vec2.hpp"
 #include "rect.hpp"
 #include "control_common.hpp"
 
@@ -22,7 +22,7 @@ namespace Controls
 
         rect resize_hitbox;
 
-        Control(vec2 drag_center, vec2 drag_start);
+        Control(vec2 drag_center);
 
     public:
         bool is_hittest_visible;

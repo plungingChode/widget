@@ -8,11 +8,16 @@ namespace Controls
         int x, y;
         vec2(int x, int y);
         vec2();
+
+        double len() const;
         
-        void operator+=(const vec2& rhs);
-        void operator-=(const vec2& rhs);
+        vec2& operator+=(const vec2& rhs);
+        vec2& operator-=(const vec2& rhs);
+        vec2& operator*=(int scalar);
         friend vec2 operator-(const vec2& lhs, const vec2& rhs);
         friend vec2 operator+(const vec2& lhs, const vec2& rhs);
+        friend vec2 operator*(const vec2& v, int scalar);
+        friend vec2 operator*(int scalar, const vec2& v);
     };
 }
 

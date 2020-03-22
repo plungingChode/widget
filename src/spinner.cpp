@@ -20,8 +20,8 @@ namespace Controls
     void Spinner::set_spinner_hitboxes()
     {
         unsigned int& b = border_thickness;
-        spin_up_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height / 2));
-        spin_dn_hitbox = rect(vec2(width - 17 - b, height / 2), vec2(width - b, height - b));
+        spin_up_hitbox = rect(vec2(width - 17 - b, b), width - b, height / 2);
+        spin_dn_hitbox = rect(vec2(width - 17 - b, height / 2), width - b, height - b);
         spin_up_icon = read_kep("uarrow.kep");
         spin_dn_icon = read_kep("dnarrow.kep");
     }

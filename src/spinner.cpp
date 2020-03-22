@@ -5,7 +5,7 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(Point start, int value, int width, int height, Point content_offset)
+    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 content_offset)
         : Label(start, std::to_string(value), width, height, content_offset),
           min_value(INT_MIN),
           max_value(INT_MAX),
@@ -20,8 +20,8 @@ namespace Controls
     void Spinner::set_spinner_hitboxes()
     {
         unsigned int& b = border_thickness;
-        spin_up_hitbox = Rect(Point(width - 17 - b, b), Point(width - b, height / 2));
-        spin_dn_hitbox = Rect(Point(width - 17 - b, height / 2), Point(width - b, height - b));
+        spin_up_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height / 2));
+        spin_dn_hitbox = rect(vec2(width - 17 - b, height / 2), vec2(width - b, height - b));
         spin_up_icon = read_kep("uarrow.kep");
         spin_dn_icon = read_kep("dnarrow.kep");
     }
@@ -61,7 +61,7 @@ namespace Controls
             else if (m.button == btn_left)
             {
                 // std::cout << "mbutton released\n";
-                Point mouse = Point(m.pos_x, m.pos_y) - start;
+                vec2 mouse = vec2(m.pos_x, m.pos_y) - start;
                 if (spin_up_hitbox.intersects(mouse))
                 {
                     value_change = 1;
@@ -122,7 +122,7 @@ namespace Controls
             btn_up_bg = spin_color;
         }
 
-        Rect& r1 = spin_up_hitbox;
+        rect& r1 = spin_up_hitbox;
         rendered << move_to(r1.start.x, r1.start.y)
                  << btn_border
                  << box(r1.width, r1.height)
@@ -131,7 +131,7 @@ namespace Controls
                  << box(r1.width - 2, r1.height - 2)
                  << stamp(spin_up_icon, r1.start.x + 3, r1.start.y + r1.height/2 - 3);
 
-        Rect& r2 = spin_dn_hitbox;
+        rect& r2 = spin_dn_hitbox;
         rendered << move_to(r2.start.x, r2.start.y)
                  << btn_border
                  << box(r2.width, r2.height)

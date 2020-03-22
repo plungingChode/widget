@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
         new ExampleItem("Yeah, you heard me", 10),
         new ExampleItem("what", 10)
     };
-    ComboBox* combo = new ComboBox(Point(20, 20), items, 200);
+    ComboBox* combo = new ComboBox(vec2(20, 20), items, 200);
     combo->set_font("LiberationSans-Regular.ttf");
     s.add_control(combo);
 

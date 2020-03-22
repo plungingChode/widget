@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    ComboBox::ComboBox(Point start, std::vector<ComboBoxItem*> items, 
-        int width, int height, Point content_offset)
+    ComboBox::ComboBox(vec2 start, std::vector<ComboBoxItem*> items, 
+        int width, int height, vec2 content_offset)
             : 
             Label(start, "", width, height, content_offset),   
             items(items),
@@ -19,13 +19,13 @@ namespace Controls
         Control::_is_resizable = false;
 
         unsigned int& b = border_thickness;
-        btn_hitbox = Rect(Point(width - 17 - b, b), Point(width - b, height - b));
+        btn_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height - b));
         btn_icon = read_kep("dnarrow.kep");
 
-        list_hitbox = Rect(width, items_visible*height);
+        list_hitbox = rect(width, items_visible*height);
         expanded_render = canvas(width, items_visible*height);
 
-        thumb_hitbox = Rect(Point(list_hitbox.end.x-btn_hitbox.width, 0), btn_hitbox.width, 40);
+        thumb_hitbox = rect(vec2(list_hitbox.end.x-btn_hitbox.width, 0), btn_hitbox.width, 40);
 
         if (items.size() && items[0])
         {
@@ -53,7 +53,7 @@ namespace Controls
         
         if (_is_focused)
         {
-            Point m_rel(m.pos_x - start.x, m.pos_y - start.y);
+            vec2 m_rel(m.pos_x - start.x, m.pos_y - start.y);
             // if (is_expanded && list_hitbox.intersects(m_rel))
             // {
             //     _is_hovered = true;
@@ -98,8 +98,8 @@ namespace Controls
     void ComboBox::render_list()
     {
         unsigned int& b = border_thickness;
-        Rect& list = list_hitbox;
-        Rect& thumb = thumb_hitbox;
+        rect& list = list_hitbox;
+        rect& thumb = thumb_hitbox;
 
         expanded_render
             << move_to(0, 0) << border << box(list_hitbox.width, list_hitbox.height)
@@ -128,7 +128,7 @@ namespace Controls
     {
         Label::render();
 
-        Rect& xp = btn_hitbox;
+        rect& xp = btn_hitbox;
         rendered << move_to(xp.start.x, xp.start.y)
                  << text_fill_normal
                  << box(xp.width, xp.height)
@@ -136,6 +136,7 @@ namespace Controls
                  << normal_bg
                  << box(xp.width - 2, xp.height - 2)
                  << stamp(btn_icon, xp.start.x + 3, xp.start.y + xp.height/2 - 3);
+
         render_list();
     }
 

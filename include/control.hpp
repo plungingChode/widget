@@ -18,11 +18,11 @@ namespace Controls
         bool _is_dragging;
 
         // Coordinates of the mouse event that started the drag
-        Point drag_center;
+        vec2 drag_center;
 
-        Rect resize_hitbox;
+        rect resize_hitbox;
 
-        Control(Point drag_center, Point drag_start);
+        Control(vec2 drag_center, vec2 drag_start);
 
     public:
         bool is_hittest_visible;

@@ -4,7 +4,7 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(Point start, const std::string& text, int width, int height, Point content_offset)
+    TextBox::TextBox(vec2 start, const std::string& text, int width, int height, vec2 content_offset)
         : Label(start, text, width, height, content_offset)
     {
         Control::is_hittest_visible = true;

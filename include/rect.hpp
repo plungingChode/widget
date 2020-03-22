@@ -5,23 +5,23 @@
 
 namespace Controls
 {
-    struct Rect
+    struct rect
     {
     public:
-        Point start, end;
+        vec2 start, end;
         unsigned int width, height;
 
-        Rect(Point start, Point end);
-        Rect(Point start, int width, int height);
-        Rect(int width, int height);
-        Rect();
+        rect(vec2 start, vec2 end);
+        rect(vec2 start, int width, int height);
+        rect(int width, int height);
+        rect();
 
-        Point get_start();
-        Point get_end();
+        vec2 get_start();
+        vec2 get_end();
         unsigned int get_width();
         unsigned int get_height();
 
-        bool intersects(Point p) const;
+        bool intersects(vec2 p) const;
         bool intersects(int x, int y) const;
     };
 }

@@ -4,7 +4,7 @@ using namespace genv;
 
 namespace Controls
 {
-    Label::Label(Point start, const std::string& text, int width, int height, Point content_offset)
+    Label::Label(vec2 start, const std::string& text, int width, int height, vec2 content_offset)
         : text_fill_normal(DEFAULT_TEXT_NORMAL),
           text_fill_focused(DEFAULT_TEXT_FOCUS),
           text(text),
@@ -15,7 +15,7 @@ namespace Controls
         Control::is_hittest_visible = false;
     }
 
-    void Label::set_content_offset(Point p)
+    void Label::set_content_offset(vec2 p)
     {
         content_offset = p;
         update_visuals();

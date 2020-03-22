@@ -2,7 +2,7 @@
 
 namespace Controls
 {
-    Control::Control(Point drag_center, Point drag_start)
+    Control::Control(vec2 drag_center, vec2 drag_start)
         : drag_center(drag_center),
           _is_hovered(false), 
           _is_focused(false), 

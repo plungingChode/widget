@@ -7,7 +7,7 @@
 
 namespace Controls
 {
-    struct Frame : public Control, public Rect
+    struct Frame : public Control, public rect
     {
     protected:
         genv::color normal_bg, hover_bg, focus_bg, hold_bg;
@@ -20,8 +20,8 @@ namespace Controls
         void set_color(genv::color& target, const std::string& hex);
 
     public:
-        Frame(Point start, Point end);
-        Frame(Point start, int width, int height);
+        Frame(vec2 start, vec2 end);
+        Frame(vec2 start, int width, int height);
 
         void set_resizable(const bool val) override;
         void reset_resize_hitbox();

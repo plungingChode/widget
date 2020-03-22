@@ -17,8 +17,8 @@ namespace Controls
         SpinAction spin;
 
         int value;
-        Rect spin_up_hitbox;
-        Rect spin_dn_hitbox;
+        rect spin_up_hitbox;
+        rect spin_dn_hitbox;
 
         genv::canvas spin_up_icon;
         genv::canvas spin_dn_icon;
@@ -29,7 +29,7 @@ namespace Controls
         int max_value;
         int min_value;
 
-        Spinner(Point start, int value, int width = 100, int height = 30, Point content_offset = Point(7, 7));
+        Spinner(vec2 start, int value, int width = 100, int height = 30, vec2 content_offset = vec2(7, 7));
 
         void set_spinner_hitboxes();
 

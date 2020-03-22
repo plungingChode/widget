@@ -22,19 +22,19 @@ namespace Controls
         ComboBoxItem* selected_item;
         std::vector<ComboBoxItem*> items;
 
-        Rect btn_hitbox;
+        rect btn_hitbox;
         genv::canvas btn_icon;
 
-        Rect listitem_hitbox;
-        Rect list_hitbox;
+        rect listitem_hitbox;
+        rect list_hitbox;
 
         bool is_scrolling;
-        Point thumb_drag_center;
-        Rect thumb_hitbox;
+        vec2 thumb_drag_center;
+        rect thumb_hitbox;
 
         genv::canvas expanded_render;
 
-        ComboBox(Point start, std::vector<ComboBoxItem*> items, int width = 100, int height = 30, Point content_offset = Point(7, 7));
+        ComboBox(vec2 start, std::vector<ComboBoxItem*> items, int width = 100, int height = 30, vec2 content_offset = vec2(7, 7));
         void set_selected(const int item);
         void render_list();
         // void set_expand_btn_hitbox();

@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(Point start, int width, int height)
-        : Rect(start, width, height),
+    Frame::Frame(vec2 start, int width, int height)
+        : rect(start, width, height),
           Control(start, start),
           rendered(width, height),
           normal_bg(DEFAULT_NORMAL), 
@@ -22,7 +22,7 @@ namespace Controls
         // std::cout << &rendered << '\n';
     }
 
-    Frame::Frame(Point start, Point end)
+    Frame::Frame(vec2 start, vec2 end)
         : Frame(start, end.x - start.x, end.y - start.y)
     {
     }
@@ -35,8 +35,8 @@ namespace Controls
 
     void Frame::reset_resize_hitbox()
     {
-        Point hb_start(width - 8, height - 8);
-        resize_hitbox = Rect(hb_start, 8, 8);
+        vec2 hb_start(width - 8, height - 8);
+        resize_hitbox = rect(hb_start, 8, 8);
     }
 
     void Frame::set_color(color& target, const std::string& hex)
@@ -91,7 +91,7 @@ namespace Controls
 
         if (_is_held && _is_resizable)
         {
-            Point rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
+            vec2 rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
             bool resize_hit = resize_hitbox.intersects(rel_mouse);
 
             _is_resizing = _is_resizing || (m.button == btn_left && resize_hit);
@@ -99,7 +99,7 @@ namespace Controls
         
         if (_is_resizing && _is_held)
         {
-            Point m_limit;
+            vec2 m_limit;
             m_limit.x = std::max(m.pos_x, start.x + (int)min_width);
             m_limit.y = std::max(m.pos_y, start.y + (int)min_height);
 
@@ -125,7 +125,7 @@ namespace Controls
             start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
             start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
 
-            end = start + Point(width, height);
+            end = start + vec2(width, height);
         }
         else
         {

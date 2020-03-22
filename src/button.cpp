@@ -4,7 +4,7 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(Point start, const std::string& text, void (*action)(), int width, int height, Point content_offset)
+    Button::Button(vec2 start, const std::string& text, void (*action)(), int width, int height, vec2 content_offset)
         : Label(start, text, width, height, content_offset), action(action)
     {
         Frame::rendered.transparent(true);
@@ -46,7 +46,7 @@ namespace Controls
         }
 
         unsigned int& b = border_thickness;
-        Point& o = content_offset;
+        vec2& o = content_offset;
 
         // leave gap for bevel effect
         rendered 

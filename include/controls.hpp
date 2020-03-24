@@ -1,5 +1,3 @@
-#pragma once
-
 #include "control_common.hpp"
 #include "vec2.hpp"
 #include "rect.hpp"

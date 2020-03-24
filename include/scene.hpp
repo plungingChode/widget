@@ -9,8 +9,8 @@ namespace Controls
    struct Scene
     {
     private:
-        static const int KEY_DELAY = 7;
-        static const int REFRESH_RATE = 40;
+        const int KEY_DELAY = 7;
+        const int REFRESH_RATE = 40;
 
         genv::canvas background;
 

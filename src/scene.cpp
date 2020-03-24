@@ -48,7 +48,7 @@ namespace Controls
                     {
                         if (hovered != nullptr)
                         {
-                            hovered->_is_hovered = false;
+                            hovered->is_hovered_ = false;
                             hovered->update_visuals();
                         }
                         hovered = c;
@@ -60,7 +60,7 @@ namespace Controls
                     {
                         if (focused != nullptr)
                         {
-                            focused->_is_focused = false;
+                            focused->is_focused_ = false;
                             focused->update_visuals();
                         }
                         focused = hovered;
@@ -78,7 +78,7 @@ namespace Controls
         
         if (hovered != nullptr && !hovered->is_hovered())
         {
-            hovered->_is_hovered = false;
+            hovered->is_hovered_ = false;
             hovered->update_visuals();
             hovered = nullptr;
         }
@@ -86,7 +86,7 @@ namespace Controls
         // check for click outside of control
         if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
-            focused->_is_focused = false;
+            focused->is_focused_ = false;
             focused->update_visuals();
             focused = nullptr;
         }

@@ -15,12 +15,12 @@ namespace Controls
     void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
         // std::cout << "held: " << _is_held << "btn: " << m.button <<  '\n';
-        if (m.button == -btn_left && _is_held && _is_hovered)
+        if (m.button == -btn_left && is_held_ && is_hovered_)
         {
             action();
         }
         Label::on_mouse_ev(m, btn_held);
-        if (_size_changed)
+        if (size_changed_)
         {
             rendered.transparent(true);
         }
@@ -28,15 +28,15 @@ namespace Controls
 
     void Button::render()
     {
-        if (_is_held)
+        if (is_held_)
         {
             fill = hold_bg;
         }
-        else if (_is_focused)
+        else if (is_focused_)
         {
             fill = focus_bg;
         }
-        else if (_is_hovered)
+        else if (is_hovered_)
         {
             fill = hover_bg;
         }
@@ -53,7 +53,7 @@ namespace Controls
             << move_to(0, 0) << BLACK << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
-        if (_is_held)
+        if (is_held_)
         {
             // bevel on the bottom right, push in text
             rendered 
@@ -69,7 +69,7 @@ namespace Controls
                 << move_to(0, 0) << border << box(b, height-b)
                 << move_to(o.x, o.y) << text_fill_normal << genv::text(text);
         }
-        if(_is_resizable)
+        if(is_resizable_)
         {
             render_resize_area();
         }

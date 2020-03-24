@@ -1,9 +1,7 @@
 #ifndef LABEL_HPP_INCLUDED
 #define LABEL_HPP_INCLUDED
 
-// #include "point.hpp"
 #include "frame.hpp"
-// #include "graphics.hpp"
 
 namespace Controls
 {

@@ -51,7 +51,7 @@ namespace Controls
     void TextBox::render()
     {
         Label::render();
-        if (_is_focused)
+        if (is_focused_)
         {
             rendered << move_to(cursor_pos.x + 2, cursor_pos.y)
                      << text_fill_focused

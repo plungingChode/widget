@@ -16,7 +16,7 @@ namespace Controls
     {
         Control::is_hittest_visible = true;
         Control::is_draggable = false;
-        Control::_is_resizable = false;
+        Control::is_resizable_ = false;
 
         unsigned int& b = border_thickness;
         // btn_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height - b));
@@ -51,7 +51,7 @@ namespace Controls
     {
         Label::on_mouse_ev(m, btn_held);
         
-        if (_is_focused)
+        if (is_focused_)
         {
             vec2 m_rel(m.pos_x - start.x, m.pos_y - start.y);
             // if (is_expanded && list_hitbox.intersects(m_rel))
@@ -70,7 +70,7 @@ namespace Controls
                 is_expanded = !is_expanded;
 
                 is_scrolling = false;
-                _needs_visual_update = true;
+                needs_visual_update_ = true;
             }
             else if (thumb_hitbox.intersects(m_rel))
             {

@@ -11,11 +11,11 @@ namespace Controls
     {
     friend class Scene;
     protected:
-        bool _is_hovered, _is_focused, _is_held;
-        bool _is_resizable, _is_resizing, _size_changed;
-        bool _needs_visual_update;
+        bool is_hovered_, is_focused_, is_held_;
+        bool is_resizable_, is_resizing_, size_changed_;
+        bool needs_visual_update_;
 
-        bool _is_dragging;
+        bool is_dragging_;
 
         // Coordinates of the mouse event that started the drag
         vec2 drag_center;
@@ -35,7 +35,7 @@ namespace Controls
         void update_visuals();
         bool updated() const;
 
-        virtual void set_resizable(const bool val) { _is_resizable = val; }
+        virtual void set_resizable(const bool val) { is_resizable_ = val; }
         
         virtual void on_mouse_ev(const genv::event& mouse_ev, const bool btn_held = false) = 0;
         virtual void on_key_ev(const genv::event& key_ev, const int key_held = 0) = 0;

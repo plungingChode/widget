@@ -24,7 +24,7 @@ namespace Controls
 
     void Frame::set_resizable(const bool val)
     {
-        _is_resizable = val;
+        is_resizable_ = val;
         reset_resize_hitbox();
     }
 
@@ -67,32 +67,32 @@ namespace Controls
     void Frame::set_border_thickness(const unsigned thickness)
     {
         border_thickness = thickness;
-        _needs_visual_update = true;
+        needs_visual_update_ = true;
     }
 
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
         if (!is_hittest_visible) return;
-        if (_size_changed) _size_changed = false; // assume change was handled
+        if (size_changed_) size_changed_ = false; // assume change was handled
 
-        _is_hovered = intersects(m.pos_x, m.pos_y);
+        is_hovered_ = intersects(m.pos_x, m.pos_y);
 
         if (m.button == btn_left && !btn_held)
         {
-            _is_focused = _is_hovered;
+            is_focused_ = is_hovered_;
         }
 
-        _is_held = _is_focused && (m.button == btn_left || btn_held);
+        is_held_ = is_focused_ && (m.button == btn_left || btn_held);
 
-        if (_is_held && _is_resizable)
+        if (is_held_ && is_resizable_)
         {
             vec2 rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
             bool resize_hit = resize_hitbox.intersects(rel_mouse);
 
-            _is_resizing = _is_resizing || (m.button == btn_left && resize_hit);
+            is_resizing_ = is_resizing_ || (m.button == btn_left && resize_hit);
         }
         
-        if (_is_resizing && _is_held)
+        if (is_resizing_ && is_held_)
         {
             vec2 m_limit;
             m_limit.x = std::max(m.pos_x, start.x + (int)min_width);
@@ -101,14 +101,14 @@ namespace Controls
             width  += m_limit.x - start.x - width;
             height += m_limit.y - start.y - height;
         }
-        else if (is_draggable && _is_held)
+        else if (is_draggable && is_held_)
         {
-            if (!_is_dragging)
+            if (!is_dragging_)
             {
                 drag_center.x = m.pos_x - start.x;
                 drag_center.y = m.pos_y - start.y;
 
-                _is_dragging = true;
+                is_dragging_ = true;
             }
 
             start.x = m.pos_x - drag_center.x;
@@ -119,21 +119,21 @@ namespace Controls
         }
         else
         {
-            if (_is_resizing)
+            if (is_resizing_)
             {
                 reset_resize_hitbox();
 
                 rendered = canvas(width, height);
-                _size_changed = true;
+                size_changed_ = true;
                 
-                _is_resizing = false;
-                _is_held = false;
+                is_resizing_ = false;
+                is_held_ = false;
             }
-            if (_is_dragging)
+            if (is_dragging_)
             {
                 drag_center = start;
-                _is_dragging = false;
-                _is_held = false;
+                is_dragging_ = false;
+                is_held_ = false;
             }
         }
     }
@@ -147,15 +147,15 @@ namespace Controls
 
     void Frame::render()
     {
-        if (_is_held)
+        if (is_held_)
         {
             fill = hold_bg;
         }
-        else if (_is_focused)
+        else if (is_focused_)
         {
             fill = focus_bg;
         }
-        else if (_is_hovered)
+        else if (is_hovered_)
         {
             fill = hover_bg;
         }
@@ -169,7 +169,7 @@ namespace Controls
         rendered << move_to(0, 0) << border << box(width, height)
                  << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
 
-        if (_is_resizable)
+        if (is_resizable_)
         {
             render_resize_area();
         }
@@ -177,7 +177,7 @@ namespace Controls
 
     void Frame::draw(canvas& c)
     {
-        if (_is_resizing)
+        if (is_resizing_)
         {
             c << move_to(start.x, start.y)
               << border 
@@ -185,12 +185,12 @@ namespace Controls
         }
         else
         {
-            if (_needs_visual_update)
+            if (needs_visual_update_)
             {
                 render();
             }
             c << stamp(rendered, start.x, start.y);
         }
-        _needs_visual_update = false;
+        needs_visual_update_ = false;
     }
 }

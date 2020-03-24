@@ -1,9 +1,7 @@
 #ifndef SPINNER_HPP_INCLUDED
 #define SPINNER_HPP_INCLUDED
 
-// #include "point.hpp"
 #include "label.hpp"
-// #include "graphics.hpp"
 
 namespace Controls
 {

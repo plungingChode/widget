@@ -43,7 +43,7 @@ namespace Controls
         Frame::render();
         if (text.empty()) return;
 
-        if (_is_focused)
+        if (is_focused_)
         {   
             // std::cout << "rendering text '" << text << "'\n";
             rendered << move_to(content_offset.x, content_offset.y)
@@ -60,7 +60,7 @@ namespace Controls
     void Label::on_mouse_ev(const event& m, const bool btn_held)
     {
         Frame::on_mouse_ev(m, btn_held);
-        if (_size_changed)
+        if (size_changed_)
         {
             // std::cout << "Reload font\n";
             rendered.load_font(font_src);

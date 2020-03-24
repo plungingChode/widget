@@ -64,73 +64,73 @@ int main(int argc, char const *argv[])
     combo->set_font("LiberationSans-Regular.ttf");
     s.add_control(combo);
 
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     int x = std::rand() % 400;
-    //     int y = std::rand() % 300;
-    //     int m_x = 10 + std::rand() % 20;
-    //     int m_y = 5 + std::rand() % 15;
-    //     Spinner* lbl1 = new Spinner(Point(x, y), std::rand() % 100, 100, 50, Point(7,7));
-    //     lbl1->set_font("LiberationSans-Regular.ttf");
-    //     // lbl1->set_font("BoschSans-Medium.ttf");
-    //     lbl1->is_hittest_visible = true;
-    //     // lbl1->is_draggable = true;
-    //     // lbl1->set_resizable(true);
+    for (int i = 0; i < 3; i++)
+    {
+        int x = std::rand() % 400;
+        int y = std::rand() % 300;
+        int m_x = 10 + std::rand() % 20;
+        int m_y = 5 + std::rand() % 15;
+        Spinner* lbl1 = new Spinner(vec2(x, y), std::rand() % 100, 100, 50, vec2(7,7));
+        lbl1->set_font("LiberationSans-Regular.ttf");
+        // lbl1->set_font("BoschSans-Medium.ttf");
+        lbl1->is_hittest_visible = true;
+        // lbl1->is_draggable = true;
+        // lbl1->set_resizable(true);
 
-    //     lbl1->max_value = 100;
-    //     lbl1->min_value = 0;
+        lbl1->max_value = 100;
+        lbl1->min_value = 0;
 
-    //     // style_btn(lbl1);
-    //     s.add_control(lbl1);
-    // }
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     int x = std::rand() % 400;
-    //     int y = std::rand() % 300;
-    //     int m_x = 10 + std::rand() % 20;
-    //     int m_y = 5 + std::rand() % 15;
-    //     TextBox* lbl1 = new TextBox(Point(x, y), "TextBox", 100, 30, Point(7,7));
-    //     lbl1->set_font("LiberationSans-Regular.ttf");
-    //     // lbl1->set_font("BoschSans-Medium.ttf");
-    //     // lbl1->is_hittest_visible = true;
-    //     lbl1->is_draggable = true;
-    //     // lbl1->set_resizable(true);
+        // style_btn(lbl1);
+        s.add_control(lbl1);
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        int x = std::rand() % 400;
+        int y = std::rand() % 300;
+        int m_x = 10 + std::rand() % 20;
+        int m_y = 5 + std::rand() % 15;
+        TextBox* lbl1 = new TextBox(vec2(x, y), "TextBox", 100, 30, vec2(7,7));
+        lbl1->set_font("LiberationSans-Regular.ttf");
+        // lbl1->set_font("BoschSans-Medium.ttf");
+        // lbl1->is_hittest_visible = true;
+        lbl1->is_draggable = true;
+        // lbl1->set_resizable(true);
 
-    //     // style_btn(lbl1);
-    //     s.add_control(lbl1);
-    // }
+        // style_btn(lbl1);
+        s.add_control(lbl1);
+    }
 
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     int x = std::rand() % 400;
-    //     int y = std::rand() % 300;
-    //     int m_x = 10 + std::rand() % 20;
-    //     int m_y = 5 + std::rand() % 15;
-    //     Label* lbl1 = new Label(Point(x, y), "Label", 100, 30, Point(10, 10));
-    //     // lbl1->set_font("BoschSans-Medium.ttf");
-    //     lbl1->set_font("LiberationSans-Regular.ttf");
-    //     lbl1->set_content_offset(Point(7, 7));
-    //     lbl1->is_hittest_visible = true;
-    //     // lbl1->is_draggable = false;
-    //     lbl1->set_resizable(true);
+    for (int i = 0; i < 3; i++)
+    {
+        int x = std::rand() % 400;
+        int y = std::rand() % 300;
+        int m_x = 10 + std::rand() % 20;
+        int m_y = 5 + std::rand() % 15;
+        Label* lbl1 = new Label(vec2(x, y), "Label", 100, 30, vec2(10, 10));
+        // lbl1->set_font("BoschSans-Medium.ttf");
+        lbl1->set_font("LiberationSans-Regular.ttf");
+        lbl1->set_content_offset(vec2(7, 7));
+        lbl1->is_hittest_visible = true;
+        // lbl1->is_draggable = false;
+        lbl1->set_resizable(true);
 
-    //     // style_btn(lbl1);
-    //     s.add_control(lbl1);
-    // }
+        // style_btn(lbl1);
+        s.add_control(lbl1);
+    }
 
-    // for (int i = 0; i < 3; i++)
-    // {
-    //     int x = std::rand() % 400;
-    //     int y = std::rand() % 300;
-    //     int m_x = 10 + std::rand() % 20;
-    //     int m_y = 5 + std::rand() % 15;
-    //     Button* lbl1 = new Button(Point(x, y), "Text", vmi, 100, 35, Point(30, 9));
-    //     // lbl1->is_hittest_visible = true;
-    //     // lbl1->is_draggable = true;
-    //     // lbl1->set_resizable(true);
+    for (int i = 0; i < 3; i++)
+    {
+        int x = std::rand() % 400;
+        int y = std::rand() % 300;
+        int m_x = 10 + std::rand() % 20;
+        int m_y = 5 + std::rand() % 15;
+        Button* lbl1 = new Button(vec2(x, y), "Text", vmi, 100, 35, vec2(30, 9));
+        // lbl1->is_hittest_visible = true;
+        // lbl1->is_draggable = true;
+        // lbl1->set_resizable(true);
 
-    //     style_btn(lbl1);
-    //     s.add_control(lbl1);
-    // }
+        style_btn(lbl1);
+        s.add_control(lbl1);
+    }
     s.run();
 }

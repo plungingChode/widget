@@ -47,7 +47,7 @@ namespace Controls
         Label::on_mouse_ev(m, btn_held);
 
         spin = spin_none;
-        if (_is_focused)
+        if (is_focused_)
         {
             int value_change = 0;
             if (m.button == btn_wheelup)
@@ -80,7 +80,7 @@ namespace Controls
     void Spinner::on_key_ev(const event& k, const int key_held)
     {
         // std::cout << "Spin w/ key\n";
-        if (_is_focused)
+        if (is_focused_)
         {
             switch (k.keycode)
             {

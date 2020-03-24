@@ -4,41 +4,41 @@ namespace Controls
 {
     Control::Control(vec2 drag_center)
         : drag_center(drag_center),
-          _is_hovered(false), 
-          _is_focused(false), 
-          _is_held(false),
-          _needs_visual_update(true),
+          is_hovered_(false), 
+          is_focused_(false), 
+          is_held_(false),
+          needs_visual_update_(true),
           is_hittest_visible(true),
           is_draggable(true),
-          _is_dragging(false),
-          _is_resizable(false),
-          _is_resizing(false),
-          _size_changed(false)
+          is_dragging_(false),
+          is_resizable_(false),
+          is_resizing_(false),
+          size_changed_(false)
     {
     }
 
     void Control::update_visuals()
     {
-        _needs_visual_update = true;
+        needs_visual_update_ = true;
     }
 
     bool Control::is_focused() const
     {
-        return _is_focused;
+        return is_focused_;
     }
 
     bool Control::is_hovered() const
     {
-        return _is_hovered;
+        return is_hovered_;
     }
 
     bool Control::is_held() const
     {
-        return _is_held;
+        return is_held_;
     }
 
     bool Control::updated() const
     {
-        return _needs_visual_update;
+        return needs_visual_update_;
     }
 }

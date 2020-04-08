@@ -89,6 +89,7 @@
                 "-c", "${file}",
                 "-o", "./obj/${fileBasenameNoExtension}.o",
                 "-std=c++0x",
+                "-Wall",
                 "-L", "./lib",
                 "-I", "./include",
                 "-l", "controls",

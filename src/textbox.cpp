@@ -4,58 +4,41 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(vec2 start, const std::string& text, int width, int height, vec2 content_offset)
-        : Label(start, text, width, height, content_offset)
+    TextBox::TextBox(vec2 start, const std::string& text, int width, int height, vec2 padding)
+        : Label(start, text, width, height, padding)
     {
         Control::is_hittest_visible = true;
-        update_cursor();
-    }
-
-    void TextBox::update_cursor()
-    {
-        cursor_pos.x = content_offset.x + rendered.twidth(text);
-        cursor_pos.y = content_offset.y;
-        cursor_height = rendered.cascent() + rendered.cdescent();
-    }
-
-    void TextBox::set_font(const std::string& font_src)
-    {
-        Label::set_font(font_src);
-        update_cursor();
     }
 
     void TextBox::on_key_ev(const event& key_ev, const int key_held)
     {
         char kc = key_held ? (char)key_held : (char)key_ev.keycode;
 
-        if (kc >= 32 && 
-            kc <= 255 && 
-            rendered.twidth(text+kc) <= width - 2*content_offset.x)
+        if (kc >= 32 && kc <= 255 && 
+            rendered.twidth(text+kc) <= (int)width - 2*padding.x)
         {
             // visible charcodes: 32 - 255
             text += kc;
-            update_cursor();
-            update_visuals();
+            schedule_update();
         }
-        if (kc == key_backspace)
+        if (kc == key_backspace && text.size() > 0)
         {
-            if (text.size() > 0)
-            {
-                text.resize(text.size() - 1);
-            }
-            update_cursor();
-            update_visuals();
+            text.pop_back();
+            schedule_update();
         }
     }
 
     void TextBox::render()
     {
         Label::render();
-        if (is_focused_)
+        if (focused)
         {
-            rendered << move_to(cursor_pos.x + 2, cursor_pos.y)
+            int cursor_x = padding.x + rendered.twidth(text) + 2;
+            int cursor_y = padding.y;
+
+            rendered << move_to(cursor_x, cursor_y)
                      << text_fill_focused
-                     << line(0, cursor_height);
+                     << line(0, rendered.cascent() + rendered.cdescent());
         }
     }
 }

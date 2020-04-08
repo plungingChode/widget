@@ -8,7 +8,7 @@ namespace Controls
     struct rect
     {
         vec2 start;
-        unsigned int width, height;
+        unsigned width, height;
 
         rect(vec2 start, int width, int height);
         rect(int width, int height);

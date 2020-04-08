@@ -34,11 +34,10 @@ namespace Controls
 
         genv::canvas expanded_render;
 
-        ComboBox(vec2 start, std::vector<ComboBoxItem*> items, int width = 100, int height = 30, vec2 content_offset = vec2(7, 7));
+        ComboBox(vec2 start, std::vector<ComboBoxItem*> items, int width = 100, int height = 30, vec2 padding = vec2(7, 7));
         void set_selected(const int item);
         void render_list();
         // void set_expand_btn_hitbox();
-        void set_font(const std::string& font_src) override;
         void on_mouse_ev(const genv::event& mouse_ev, const bool btn_held = false) override;
         void render() override;
         void draw(genv::canvas& c) override;

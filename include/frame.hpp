@@ -2,6 +2,7 @@
 #define FRAME_HPP_INCLUDED
 
 #include "control.hpp"
+#include "control_common.hpp"
 // #include "rect.hpp"
 // #include "graphics.hpp"
 
@@ -10,18 +11,21 @@ namespace Controls
     struct Frame : public Control, public rect
     {
     protected:
-        genv::color normal_bg, hover_bg, focus_bg, hold_bg;
-        genv::color fill, border;
-        unsigned int border_thickness;
-        unsigned int min_width, min_height;
+        genv::color normal_bg = DEFAULT_NORMAL;
+        genv::color hover_bg  = DEFAULT_HOVER;
+        genv::color focus_bg  = DEFAULT_FOCUS;
+        genv::color hold_bg   = DEFAULT_MOUSEDOWN;
+        genv::color border    = DEFAULT_BORDER;
+        genv::color fill;
+        unsigned border_thickness;
+        unsigned min_width, min_height;
 
         genv::canvas rendered;
 
         void set_color(genv::color& target, const std::string& hex);
 
     public:
-        Frame(vec2 start, vec2 end);
-        Frame(vec2 start, int width, int height);
+        Frame(vec2 start, unsigned width, unsigned height);
 
         void set_resizable(const bool val) override;
         void reset_resize_hitbox();

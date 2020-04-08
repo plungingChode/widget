@@ -5,12 +5,11 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 content_offset)
-        : Label(start, std::to_string(value), width, height, content_offset),
-          min_value(INT_MIN),
-          max_value(INT_MAX),
+    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding)
+        : Label(start, std::to_string(value), width, height, padding),
           value(value),
-          spin_color(DEFAULT_MOUSEDOWN)
+          min_value(INT_MIN),
+          max_value(INT_MAX)
     {
         Control::is_draggable = false;
         Frame::hold_bg = DEFAULT_FOCUS;
@@ -19,11 +18,12 @@ namespace Controls
 
     void Spinner::set_spinner_hitboxes()
     {
-        unsigned int& b = border_thickness;
-        spin_up_hitbox = rect(vec2(width - 17 - b, b), width - b, height / 2);
-        spin_dn_hitbox = rect(vec2(width - 17 - b, height / 2), width - b, height - b);
+        unsigned &b = border_thickness;
+        spin_up_hitbox = rect(vec2(width-17-b, b), 17, height/2-b);
+        spin_dn_hitbox = rect(vec2(width-17-b, height/2), 17, height/2-b);
         spin_up_icon = read_kep("uarrow.kep");
         spin_dn_icon = read_kep("dnarrow.kep");
+
     }
 
     void Spinner::set_spin_color(const std::string& hex)
@@ -31,10 +31,19 @@ namespace Controls
         set_color(spin_color, hex);
     }
 
-    void Spinner::set_value(const int val)
+    void Spinner::set_value(int val)
     {     
         value = std::max(std::min(val, max_value), min_value);
         set_text(std::to_string(value));
+    }
+
+    void Spinner::mod_value(int d)
+    {
+        set_value(value+d);
+
+        if (d > 0) spin = spin_up;
+        else if (d < 0) spin = spin_down;
+        else spin = spin_none;
     }
 
     int Spinner::get_value() const
@@ -42,66 +51,55 @@ namespace Controls
         return value;
     }
     
-    void Spinner::on_mouse_ev(const event& m, const bool btn_held)
+    void Spinner::on_mouse_ev(const event& m, bool btn_held)
     {
         Label::on_mouse_ev(m, btn_held);
 
         spin = spin_none;
-        if (is_focused_)
+        if (focused)
         {
-            int value_change = 0;
-            if (m.button == btn_wheelup)
+            vec2 mouse = vec2(m.pos_x, m.pos_y) - start;
+            if (m.button == btn_wheelup || 
+               (m.button == btn_left && spin_up_hitbox.intersects(mouse)))
             {
-                value_change = 1;
+                mod_value(+1);
             }
-            else if (m.button == btn_wheeldown)
+            else if (m.button == btn_wheeldown || 
+                    (m.button == btn_left && spin_dn_hitbox.intersects(mouse)))
             {
-                value_change = -1;
+                mod_value(-1);
             }
-            else if (m.button == btn_left)
-            {
-                // std::cout << "mbutton released\n";
-                vec2 mouse = vec2(m.pos_x, m.pos_y) - start;
-                if (spin_up_hitbox.intersects(mouse))
-                {
-                    value_change = 1;
-                    spin = spin_up;
-                }
-                else if (spin_dn_hitbox.intersects(mouse))
-                {
-                    value_change = -1;
-                    spin = spin_down;
-                }
-            }
-            set_value(value+value_change);
         }
     }
 
-    void Spinner::on_key_ev(const event& k, const int key_held)
+    void Spinner::on_key_ev(const event& k, int key_held)
     {
-        // std::cout << "Spin w/ key\n";
-        if (is_focused_)
+        int kc = key_held ? key_held : k.keycode;
+
+        if (focused)
         {
-            switch (k.keycode)
+            switch (kc)
             {
             case key_up:
-                set_value(value+1);
+                mod_value(+1);
                 break;
 
             case key_down:
-                set_value(value-1);
+                mod_value(-1);
                 break;
 
             case key_pgup:
-                set_value(value+10);
+                mod_value(+10);
                 break;
 
             case key_pgdn:
-                set_value(value-10);
+                mod_value(-10);
                 break;
 
             default:
-                break;
+                spin = spin_none;
+                schedule_update();
+                break;  
             }
         }
     }
@@ -122,22 +120,22 @@ namespace Controls
             btn_up_bg = spin_color;
         }
 
-        rect& r1 = spin_up_hitbox;
-        rendered << move_to(r1.start.x, r1.start.y)
+        rect &up = spin_up_hitbox;
+        rendered << move_to(up.start.x, up.start.y)
                  << btn_border
-                 << box(r1.width, r1.height)
-                 << move_to(r1.start.x + 1, r1.start.y + 1)
+                 << box(up.width, up.height)
+                 << move_to(up.start.x + 1, up.start.y + 1)
                  << btn_up_bg
-                 << box(r1.width - 2, r1.height - 2)
-                 << stamp(spin_up_icon, r1.start.x + 3, r1.start.y + r1.height/2 - 3);
+                 << box(up.width - 2, up.height - 2)
+                 << stamp(spin_up_icon, up.start.x + 3, up.start.y + up.height/2 - 3);
 
-        rect& r2 = spin_dn_hitbox;
-        rendered << move_to(r2.start.x, r2.start.y)
+        rect &dn = spin_dn_hitbox;
+        rendered << move_to(dn.start.x, dn.start.y)
                  << btn_border
-                 << box(r2.width, r2.height)
-                 << move_to(r2.start.x + 1, r2.start.y + 1)
+                 << box(dn.width, dn.height)
+                 << move_to(dn.start.x + 1, dn.start.y + 1)
                  << btn_dn_bg
-                 << box(r2.width - 2, r2.height - 2)
-                 << stamp(spin_dn_icon, r2.start.x + 3, r2.start.y + r2.height/2 - 3);
+                 << box(dn.width - 2, dn.height - 2)
+                 << stamp(spin_dn_icon, dn.start.x + 3, dn.start.y + dn.height/2 - 3);
     }
 }

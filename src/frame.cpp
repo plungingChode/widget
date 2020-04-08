@@ -5,26 +5,20 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(vec2 start, int width, int height)
-        : rect(start, width, height),
-          Control(start),
-          rendered(width, height),
-          normal_bg(DEFAULT_NORMAL), 
-          hover_bg(DEFAULT_HOVER),
-          hold_bg(DEFAULT_MOUSEDOWN), 
-          focus_bg(DEFAULT_FOCUS),
-          fill(DEFAULT_NORMAL), 
-          border(DEFAULT_BORDER),
+    Frame::Frame(vec2 start, unsigned width, unsigned height)
+        : Control(start),
+          rect(start, width, height),
+          fill(normal_bg),
           border_thickness(10),
-          min_width(15),
-          min_height(15)
-    {
-        // std::cout << &rendered << '\n';
+          min_width(15), 
+          min_height(15),
+          rendered(width, height)
+    { 
     }
 
     void Frame::set_resizable(const bool val)
     {
-        is_resizable_ = val;
+        resizable = val;
         reset_resize_hitbox();
     }
 
@@ -67,32 +61,32 @@ namespace Controls
     void Frame::set_border_thickness(const unsigned thickness)
     {
         border_thickness = thickness;
-        needs_visual_update_ = true;
+        needs_update = true;
     }
 
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
         if (!is_hittest_visible) return;
-        if (size_changed_) size_changed_ = false; // assume change was handled
+        if (size_changed) size_changed = false; // assume change was handled
 
-        is_hovered_ = intersects(m.pos_x, m.pos_y);
+        hovered = intersects(m.pos_x, m.pos_y);
 
         if (m.button == btn_left && !btn_held)
         {
-            is_focused_ = is_hovered_;
+            focused = hovered;
         }
 
-        is_held_ = is_focused_ && (m.button == btn_left || btn_held);
+        held = focused && (m.button == btn_left || btn_held);
 
-        if (is_held_ && is_resizable_)
+        if (held && resizable)
         {
             vec2 rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
             bool resize_hit = resize_hitbox.intersects(rel_mouse);
 
-            is_resizing_ = is_resizing_ || (m.button == btn_left && resize_hit);
+            resizing = resizing || (m.button == btn_left && resize_hit);
         }
         
-        if (is_resizing_ && is_held_)
+        if (resizing && held)
         {
             vec2 m_limit;
             m_limit.x = std::max(m.pos_x, start.x + (int)min_width);
@@ -101,14 +95,14 @@ namespace Controls
             width  += m_limit.x - start.x - width;
             height += m_limit.y - start.y - height;
         }
-        else if (is_draggable && is_held_)
+        else if (is_draggable && held)
         {
-            if (!is_dragging_)
+            if (!is_dragged)
             {
                 drag_center.x = m.pos_x - start.x;
                 drag_center.y = m.pos_y - start.y;
 
-                is_dragging_ = true;
+                is_dragged = true;
             }
 
             start.x = m.pos_x - drag_center.x;
@@ -119,21 +113,21 @@ namespace Controls
         }
         else
         {
-            if (is_resizing_)
+            if (resizing)
             {
                 reset_resize_hitbox();
 
                 rendered = canvas(width, height);
-                size_changed_ = true;
+                size_changed = true;
                 
-                is_resizing_ = false;
-                is_held_ = false;
+                resizing = false;
+                held = false;
             }
-            if (is_dragging_)
+            if (is_dragged)
             {
                 drag_center = start;
-                is_dragging_ = false;
-                is_held_ = false;
+                is_dragged = false;
+                held = false;
             }
         }
     }
@@ -147,15 +141,15 @@ namespace Controls
 
     void Frame::render()
     {
-        if (is_held_)
+        if (held)
         {
             fill = hold_bg;
         }
-        else if (is_focused_)
+        else if (focused)
         {
             fill = focus_bg;
         }
-        else if (is_hovered_)
+        else if (hovered)
         {
             fill = hover_bg;
         }
@@ -169,7 +163,7 @@ namespace Controls
         rendered << move_to(0, 0) << border << box(width, height)
                  << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
 
-        if (is_resizable_)
+        if (resizable)
         {
             render_resize_area();
         }
@@ -177,7 +171,7 @@ namespace Controls
 
     void Frame::draw(canvas& c)
     {
-        if (is_resizing_)
+        if (resizing)
         {
             c << move_to(start.x, start.y)
               << border 
@@ -185,12 +179,12 @@ namespace Controls
         }
         else
         {
-            if (needs_visual_update_)
+            if (needs_update)
             {
                 render();
             }
             c << stamp(rendered, start.x, start.y);
         }
-        needs_visual_update_ = false;
+        needs_update = false;
     }
 }

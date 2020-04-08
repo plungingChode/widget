@@ -4,8 +4,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(vec2 start, const std::string& text, void (*action)(), int width, int height, vec2 content_offset)
-        : Label(start, text, width, height, content_offset), action(action)
+    Button::Button(vec2 start, const std::string& text, void (*action)(), int width, int height, vec2 padding)
+        : Label(start, text, width, height, padding), action(action)
     {
         Frame::rendered.transparent(true);
         Control::is_draggable = false;
@@ -15,12 +15,12 @@ namespace Controls
     void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
         // std::cout << "held: " << _is_held << "btn: " << m.button <<  '\n';
-        if (m.button == -btn_left && is_held_ && is_hovered_)
+        if (m.button == -btn_left && held && hovered)
         {
             action();
         }
         Label::on_mouse_ev(m, btn_held);
-        if (size_changed_)
+        if (size_changed)
         {
             rendered.transparent(true);
         }
@@ -28,15 +28,15 @@ namespace Controls
 
     void Button::render()
     {
-        if (is_held_)
+        if (held)
         {
             fill = hold_bg;
         }
-        else if (is_focused_)
+        else if (focused)
         {
             fill = focus_bg;
         }
-        else if (is_hovered_)
+        else if (hovered)
         {
             fill = hover_bg;
         }
@@ -46,14 +46,14 @@ namespace Controls
         }
 
         unsigned int& b = border_thickness;
-        vec2& o = content_offset;
+        vec2& o = padding;
 
         // leave gap for bevel effect
         rendered 
             << move_to(0, 0) << BLACK << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
 
-        if (is_held_)
+        if (held)
         {
             // bevel on the bottom right, push in text
             rendered 
@@ -69,7 +69,7 @@ namespace Controls
                 << move_to(0, 0) << border << box(b, height-b)
                 << move_to(o.x, o.y) << text_fill_normal << genv::text(text);
         }
-        if(is_resizable_)
+        if(resizable)
         {
             render_resize_area();
         }

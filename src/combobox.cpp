@@ -6,9 +6,9 @@ using namespace genv;
 namespace Controls
 {
     ComboBox::ComboBox(vec2 start, std::vector<ComboBoxItem*> items, 
-        int width, int height, vec2 content_offset)
+        int width, int height, vec2 padding)
             : 
-            Label(start, "", width, height, content_offset),   
+            Label(start, "", width, height, padding),   
             items(items),
             items_visible(5),
             hover_pos(-1),
@@ -16,7 +16,7 @@ namespace Controls
     {
         Control::is_hittest_visible = true;
         Control::is_draggable = false;
-        Control::is_resizable_ = false;
+        Control::resizable = false;
 
         unsigned int& b = border_thickness;
         // btn_hitbox = rect(vec2(width - 17 - b, b), vec2(width - b, height - b));
@@ -33,13 +33,7 @@ namespace Controls
             set_selected(0);
         }
     }
-
-    void ComboBox::set_font(const std::string& font_src)
-    {
-        Label::set_font(font_src);
-        expanded_render.load_font(font_src);
-    }
-
+    
     void ComboBox::set_selected(const int index)
     {
         selected_index = index;
@@ -51,7 +45,7 @@ namespace Controls
     {
         Label::on_mouse_ev(m, btn_held);
         
-        if (is_focused_)
+        if (focused)
         {
             vec2 m_rel(m.pos_x - start.x, m.pos_y - start.y);
             // if (is_expanded && list_hitbox.intersects(m_rel))
@@ -70,7 +64,7 @@ namespace Controls
                 is_expanded = !is_expanded;
 
                 is_scrolling = false;
-                needs_visual_update_ = true;
+                needs_update = true;
             }
             else if (thumb_hitbox.intersects(m_rel))
             {
@@ -112,7 +106,7 @@ namespace Controls
         for (int i = from; i < to; i++)
         {
             expanded_render 
-                << move_to(content_offset.x, i*height + content_offset.y) 
+                << move_to(padding.x, i*height + padding.y) 
                 << text_fill_normal 
                 << genv::text(items[i]->to_string());
         }

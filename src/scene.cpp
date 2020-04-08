@@ -48,11 +48,11 @@ namespace Controls
                     {
                         if (hovered != nullptr)
                         {
-                            hovered->is_hovered_ = false;
-                            hovered->update_visuals();
+                            hovered->hovered = false;
+                            hovered->schedule_update();
                         }
                         hovered = c;
-                        c->update_visuals();
+                        c->schedule_update();
                     }
 
                     // check to assign focus
@@ -60,11 +60,11 @@ namespace Controls
                     {
                         if (focused != nullptr)
                         {
-                            focused->is_focused_ = false;
-                            focused->update_visuals();
+                            focused->focused = false;
+                            focused->schedule_update();
                         }
                         focused = hovered;
-                        c->update_visuals();
+                        c->schedule_update();
                     }
                     break;
                 }
@@ -78,16 +78,16 @@ namespace Controls
         
         if (hovered != nullptr && !hovered->is_hovered())
         {
-            hovered->is_hovered_ = false;
-            hovered->update_visuals();
+            hovered->hovered = false;
+            hovered->schedule_update();
             hovered = nullptr;
         }
 
         // check for click outside of control
         if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
-            focused->is_focused_ = false;
-            focused->update_visuals();
+            focused->focused = false;
+            focused->schedule_update();
             focused = nullptr;
         }
     
@@ -98,11 +98,11 @@ namespace Controls
             if (focused->is_held())
             {
                 held = focused;
-                held->update_visuals();
+                held->schedule_update();
             }
             else if (held != nullptr)
             {
-                held->update_visuals();
+                held->schedule_update();
                 held = nullptr;
             }
         }

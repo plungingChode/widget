@@ -4,10 +4,22 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(vec2 start, const std::string& text, int width, int height, vec2 padding)
-        : Label(start, text, width, height, padding)
+    TextBox::TextBox(vec2 start, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
+        : Label(start, text, width, height, padding, font, font_size)
     {
-        Control::is_hittest_visible = true;
+        Control::hittest_visible = true;
+    }
+
+    TextBox::TextBox(vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
+        : Label(start, text, width, padding, font, font_size)
+    {
+        Control::hittest_visible = true;
+    }
+
+    TextBox::TextBox(vec2 start, std::string text, int width, std::string font, int font_size)
+        : Label(start, text, width, font, font_size)
+    {
+        Control::hittest_visible = true;
     }
 
     void TextBox::on_key_ev(const event& key_ev, const int key_held)
@@ -28,9 +40,9 @@ namespace Controls
         }
     }
 
-    void TextBox::render()
+    void TextBox::update()
     {
-        Label::render();
+        Label::update();
         if (focused)
         {
             int cursor_x = padding.x + rendered.twidth(text) + 2;

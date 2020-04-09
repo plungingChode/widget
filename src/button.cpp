@@ -4,13 +4,30 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(vec2 start, const std::string& text, void (*action)(), int width, int height, vec2 padding)
-        : Label(start, text, width, height, padding), action(action)
+    Button::Button(vec2 start, void (*action)(), std::string text, int width, int height, vec2 padding, std::string font, int font_size)
+        : Label(start, text, width, height, padding, font, font_size), action(action)
+    {
+        // Frame::rendered.transparent(true);
+        Control::draggable = false;
+        Control::hittest_visible = true;
+    }
+
+    Button::Button(vec2 start, void (*action)(), std::string text, int width, vec2 padding, std::string font, int font_size)
+        : Label(start, text, width, padding, font, font_size), action(action)
+    {
+        // Frame::rendered.transparent(true);
+        Control::draggable = false;
+        Control::hittest_visible = true;
+    }
+
+    Button::Button(vec2 start, void (*action)(), std::string text, int width, std::string font, int font_size)
+        : Label(start, text, width, font, font_size), action(action)
     {
         Frame::rendered.transparent(true);
-        Control::is_draggable = false;
-        Control::is_hittest_visible = true;
+        Control::draggable = false;
+        Control::hittest_visible = true;
     }
+
 
     void Button::on_mouse_ev(const event& m, const bool btn_held)
     {
@@ -26,7 +43,7 @@ namespace Controls
         }
     }
 
-    void Button::render()
+    void Button::update()
     {
         if (held)
         {
@@ -45,13 +62,15 @@ namespace Controls
             fill = normal_bg;
         }
 
-        unsigned int& b = border_thickness;
-        vec2& o = padding;
+        unsigned &b = border_thickness;
 
         // leave gap for bevel effect
         rendered 
             << move_to(0, 0) << BLACK << box(width, height)
             << move_to(0, 0) << fill << box(width - b, height - b);
+
+        int baseline = padding.y;
+        if (font.empty()) baseline += rendered.cascent();
 
         if (held)
         {
@@ -59,7 +78,7 @@ namespace Controls
             rendered 
                 << move_to(1, height-b) << border << box(width-1, b)
                 << move_to(width-b, 1) << border << box(b, height-1)
-                << move_to(o.x + b+1, o.y + b+1) << text_fill_normal << genv::text(text);
+                << move_to(padding.x+1, baseline+1) << text_fill_normal << genv::text(text);
         }
         else
         {
@@ -67,7 +86,7 @@ namespace Controls
             rendered 
                 << move_to(0, 0) << border << box(width-b, b)
                 << move_to(0, 0) << border << box(b, height-b)
-                << move_to(o.x, o.y) << text_fill_normal << genv::text(text);
+                << move_to(padding.x, baseline) << text_fill_normal << genv::text(text);
         }
         if(resizable)
         {

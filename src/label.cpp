@@ -11,19 +11,25 @@ namespace Controls
     {
         set_font(font, font_size);
         Frame::border_thickness = 1;
-        Control::is_hittest_visible = false;
+        Control::hittest_visible = false;
     }
 
-    Label::Label(vec2 start, std::string text, int width, std::string font, int font_size)
+    Label::Label(vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
         : Frame(start, width, 0),
-          padding(vec2(5, 5)),
+          padding(padding),
           text(text)
     {
         set_font(font, font_size);
         Frame::border_thickness = 1;
         Frame::height = rendered.cascent() + rendered.cdescent() + 10;
         rendered.open(Frame::width, Frame::height);
-        Control::is_hittest_visible = false;
+        Control::hittest_visible = false;
+    }
+
+
+    Label::Label(vec2 start, std::string text, int width, std::string font, int font_size)
+        : Label(start, text, width, vec2(5, 5), font, font_size)
+    {
     }
 
     void Label::set_content_offset(vec2 p)
@@ -47,6 +53,7 @@ namespace Controls
     {
         if (!font.empty())
         {
+            // printf("loading font %s\n", font.c_str());
             rendered.load_font(font, font_size);
             this->font = font;
             this->font_size = font_size;
@@ -59,20 +66,22 @@ namespace Controls
         schedule_update();
     }
 
-    void Label::render()
+    void Label::update()
     {
-        // printf("rendering @ %p\n", (void*)this);
-        Frame::render();
+        Frame::update();
         if (text.empty()) return;
+
+        int baseline = padding.y;
+        if (font.empty()) baseline += rendered.cascent();
 
         if (focused)
         {   
-            rendered << move_to(padding.x, padding.y)
+            rendered << move_to(padding.x, baseline)
                      << text_fill_focused << genv::text(text);
         }
         else
         {
-            rendered << move_to(padding.x, padding.y)
+            rendered << move_to(padding.x, baseline)
                      << text_fill_normal << genv::text(text);
         }
     }

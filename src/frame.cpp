@@ -66,7 +66,7 @@ namespace Controls
 
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
-        if (!is_hittest_visible) return;
+        if (!hittest_visible) return;
         if (size_changed) size_changed = false; // assume change was handled
 
         hovered = intersects(m.pos_x, m.pos_y);
@@ -95,7 +95,7 @@ namespace Controls
             width  += m_limit.x - start.x - width;
             height += m_limit.y - start.y - height;
         }
-        else if (is_draggable && held)
+        else if (draggable && held)
         {
             if (!is_dragged)
             {
@@ -139,7 +139,7 @@ namespace Controls
                  << box(resize_hitbox.width, resize_hitbox.height);
     }
 
-    void Frame::render()
+    void Frame::update()
     {
         if (held)
         {
@@ -169,7 +169,7 @@ namespace Controls
         }
     }
 
-    void Frame::draw(canvas& c)
+    void Frame::render(canvas& c)
     {
         if (resizing)
         {
@@ -181,7 +181,7 @@ namespace Controls
         {
             if (needs_update)
             {
-                render();
+                update();
             }
             c << stamp(rendered, start.x, start.y);
         }

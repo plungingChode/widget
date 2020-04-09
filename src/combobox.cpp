@@ -14,8 +14,8 @@ namespace Controls
             hover_pos(-1),
             selected_item(nullptr)
     {
-        Control::is_hittest_visible = true;
-        Control::is_draggable = false;
+        Control::hittest_visible = true;
+        Control::draggable = false;
         Control::resizable = false;
 
         unsigned int& b = border_thickness;
@@ -118,9 +118,9 @@ namespace Controls
              << move_to(thumb.start.x, thumb.start.y) << border << box(thumb.width, thumb.height);
     }
 
-    void ComboBox::render()
+    void ComboBox::update()
     {
-        Label::render();
+        Label::update();
 
         rect& xp = btn_hitbox;
         rendered << move_to(xp.start.x, xp.start.y)
@@ -134,9 +134,9 @@ namespace Controls
         render_list();
     }
 
-    void ComboBox::draw(canvas& c)
+    void ComboBox::render(canvas& c)
     {
-        Frame::draw(c);
+        Frame::render(c);
         if (is_expanded)
         {
             c << stamp(expanded_render, start.x, start.y+height);

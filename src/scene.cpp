@@ -41,7 +41,7 @@ namespace Controls
             {
                 c->on_mouse_ev(m, mouse_held);
 
-                if (c->is_hittest_visible && c->is_hovered())
+                if (c->hittest_visible && c->is_hovered())
                 {
                     // check first hover
                     if (hovered != c)
@@ -141,10 +141,11 @@ namespace Controls
 
     void Scene::render(canvas& c)
     {
-        c << stamp(background, 0, 0);
+        c << move_to(0, 0) << BACKGROUND_COLOR << box(ENV_WIDTH, ENV_HEIGHT);
+        // c << stamp(background, 0, 0);
         for (int i = controls.size() - 1; i >= 0; i--)
         {
-            controls[i]->draw(c);
+            controls[i]->render(c);
         }
     }
 

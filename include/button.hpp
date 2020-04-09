@@ -11,11 +11,14 @@ namespace Controls
         void (*action)();
         genv::canvas content;
 
-    public:
-        Button(vec2 start, const std::string& text, void (*action)(), int width = 100, int height = 30, vec2 padding = vec2(7, 7));
+        void update() override;
 
-        void on_mouse_ev(const genv::event& mouse_ev, const bool btn_held = false) override;
-        void render() override;
+    public:
+        Button(vec2 start, void (*action)(), std::string text, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
+        Button(vec2 start, void (*action)(), std::string text, int width, vec2 padding, std::string font = "", int font_size = 16);
+        Button(vec2 start, void (*action)(), std::string text, int width, std::string font = "", int font_size = 16);
+
+        void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) override;
     };
 }
 

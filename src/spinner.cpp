@@ -5,25 +5,39 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding)
-        : Label(start, std::to_string(value), width, height, padding),
+    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
+        : Label(start, std::to_string(value), width, height, padding, font, font_size),
+          spin(spin_none),
           value(value),
           min_value(INT_MIN),
           max_value(INT_MAX)
     {
-        Control::is_draggable = false;
+        Control::draggable = false;
+        Control::hittest_visible = true;
+        Frame::hold_bg = DEFAULT_FOCUS;
+        set_spinner_hitboxes();
+    }
+
+    Spinner::Spinner(vec2 start, int value, int width, std::string font, int font_size)
+        : Label(start, std::to_string(value), width, font, font_size),
+          spin(spin_none),
+          value(value),
+          min_value(INT_MIN),
+          max_value(INT_MAX)
+    {
+        Control::draggable = false;
+        Control::hittest_visible = true;
         Frame::hold_bg = DEFAULT_FOCUS;
         set_spinner_hitboxes();
     }
 
     void Spinner::set_spinner_hitboxes()
     {
-        unsigned &b = border_thickness;
+        unsigned b = border_thickness;
         spin_up_hitbox = rect(vec2(width-17-b, b), 17, height/2-b);
         spin_dn_hitbox = rect(vec2(width-17-b, height/2), 17, height/2-b);
         spin_up_icon = read_kep("uarrow.kep");
         spin_dn_icon = read_kep("dnarrow.kep");
-
     }
 
     void Spinner::set_spin_color(const std::string& hex)
@@ -49,6 +63,13 @@ namespace Controls
     int Spinner::get_value() const
     {
         return value;
+    }
+
+    void Spinner::set_border_thickness(unsigned int thickness)
+    {
+        Frame::set_border_thickness(thickness);
+        set_spinner_hitboxes();
+        schedule_update();
     }
     
     void Spinner::on_mouse_ev(const event& m, bool btn_held)
@@ -104,12 +125,12 @@ namespace Controls
         }
     }
 
-    void Spinner::render()
+    void Spinner::update()
     {
-        Label::render();
-        genv::color btn_border = text_fill_normal;
-        genv::color btn_up_bg = normal_bg;
-        genv::color btn_dn_bg = normal_bg;
+        Label::update();
+        color btn_border = text_fill_normal;
+        color btn_up_bg = normal_bg;
+        color btn_dn_bg = normal_bg;
 
         if (spin == spin_down)
         {
@@ -120,22 +141,22 @@ namespace Controls
             btn_up_bg = spin_color;
         }
 
-        rect &up = spin_up_hitbox;
+        const rect &up = spin_up_hitbox;
         rendered << move_to(up.start.x, up.start.y)
                  << btn_border
                  << box(up.width, up.height)
-                 << move_to(up.start.x + 1, up.start.y + 1)
+                 << move_to(up.start.x+1, up.start.y+1)
                  << btn_up_bg
-                 << box(up.width - 2, up.height - 2)
-                 << stamp(spin_up_icon, up.start.x + 3, up.start.y + up.height/2 - 3);
+                 << box(up.width-2, up.height-2)
+                 << stamp(spin_up_icon, up.start.x+3, up.start.y + (up.height/2)-3);
 
-        rect &dn = spin_dn_hitbox;
+        const rect &dn = spin_dn_hitbox;
         rendered << move_to(dn.start.x, dn.start.y)
                  << btn_border
                  << box(dn.width, dn.height)
-                 << move_to(dn.start.x + 1, dn.start.y + 1)
+                 << move_to(dn.start.x+1, dn.start.y+1)
                  << btn_dn_bg
-                 << box(dn.width - 2, dn.height - 2)
-                 << stamp(spin_dn_icon, dn.start.x + 3, dn.start.y + dn.height/2 - 3);
+                 << box(dn.width-2, dn.height-2)
+                 << stamp(spin_dn_icon, dn.start.x+3, dn.start.y + (dn.height/2)-3);
     }
 }

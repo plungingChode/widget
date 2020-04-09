@@ -39,8 +39,8 @@ namespace Controls
         void render_list();
         // void set_expand_btn_hitbox();
         void on_mouse_ev(const genv::event& mouse_ev, const bool btn_held = false) override;
-        void render() override;
-        void draw(genv::canvas& c) override;
+        void update() override;
+        void render(genv::canvas& c) override;
     };
 }
 

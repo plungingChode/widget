@@ -12,8 +12,8 @@ namespace Controls
           needs_update(true),
           is_dragged(false),
           drag_center(drag_center),
-          is_hittest_visible(true),
-          is_draggable(true)
+          hittest_visible(true),
+          draggable(true)
     {
     }
 }

@@ -29,20 +29,24 @@ namespace Controls
 
         genv::color spin_color = DEFAULT_MOUSEDOWN;
 
+        void update() override;
+
     public:
         int min_value;
         int max_value;
 
-        Spinner(vec2 start, int value, int width = 100, int height = 30, vec2 padding = vec2(7, 7));
+        Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
+        Spinner(vec2 start, int value, int width, std::string font = "", int font_size = 16);
 
         void set_spin_color(const std::string& hex);
+        void set_border_thickness(unsigned thickness) override;
+
         void set_value(int val);
         void mod_value(int d);
         int get_value() const;
+        
         void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
         void on_key_ev(const genv::event &key_ev, int key_held = false) override;
-
-        virtual void render() override;
     };
 }
 

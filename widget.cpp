@@ -41,6 +41,12 @@ struct Entry : public ListBoxItem
     }
 };
 
+ListBox *lb;
+void remove_selected()
+{
+    lb->remove_item(lb->get_selected_index());
+}
+
 void add_sample(Scene &s)
 {
     // Frame
@@ -91,17 +97,21 @@ void add_sample(Scene &s)
     s.add_control(s2);
 
     // ListBox
-    ListBox *lb = new ListBox(vec2(180, 200), 120, 6, FONT, 16);
+    lb = new ListBox(vec2(180, 200), 150, 6, FONT, 18);
     lb->set_hover_bg("ffffff");
     lb->set_focus_bg("ffffff");
     lb->set_hold_bg("ffffff");
     lb->set_border_color("999999");
+    lb->set_border_thickness(1);
     s.add_control(lb);
 
     for (int i = 0; i < 70; i++)
     {
         lb->add_item(new Entry("entry", i));
     }
+
+    Button *rm = new Button(vec2(180, 330), remove_selected, "Remove selected", 150, FONT);
+    s.add_control(rm);
 }
 
 int main(int argc, char const *argv[])

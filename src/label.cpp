@@ -46,7 +46,7 @@ namespace Controls
 
     void Label::set_font(std::string font, int font_size)
     {
-        if (!font.empty() && rendered.load_font(font, font_size))
+        if (rendered.load_font(font, font_size))
         {
             this->font = font;
             this->font_size = font_size;

@@ -90,7 +90,6 @@ namespace Controls
             {
                 reset_resize_hitbox();
 
-                rendered = canvas(width, height);
                 size_changed = true;
                 
                 resizing = false;
@@ -115,6 +114,11 @@ namespace Controls
 
     void Frame::update()
     {
+        if (size_changed)
+        {
+            rendered = canvas(width, height);
+        }
+
         // draw border
         rendered 
             << move_to(0, 0) 

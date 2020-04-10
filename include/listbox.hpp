@@ -50,7 +50,6 @@ namespace Controls
         ListBox(vec2 start, int width, int items_visible, std::string font = "", int font_size = 16);
 
         void add_item(ListBoxItem *item);
-        void remove_item(ListBoxItem *item);
         void remove_item(int index);
         void set_font(std::string font, int font_size = 16);
 

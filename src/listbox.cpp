@@ -41,16 +41,20 @@ namespace Controls
     {
         items.push_back(item);
         adjust_thumb();
+        schedule_update();
     }
-
-    void ListBox::remove_item(ListBoxItem *item)
-    {
-        // TODO
-    }
-
+    
     void ListBox::remove_item(int index)
     {
-        // TODO
+        items.erase(items.begin() + index);
+        
+        if (selected_index > items.size()-1)
+        {
+            selected_index = items.size()-1;
+        }
+
+        adjust_thumb();
+        schedule_update();
     }
 
     void ListBox::update()
@@ -114,9 +118,8 @@ namespace Controls
 
     void ListBox::set_font(std::string font, int font_size)
     {
-        if (!font.empty())
+        if (rendered.load_font(font, font_size))
         {
-            rendered.load_font(font, font_size);
             this->font = font;
             this->font_size = font_size;
         }
@@ -183,9 +186,9 @@ namespace Controls
                 if ((unsigned)m_rel.x < width-border_thickness-thumb.width-1 &&
                     (unsigned)m_rel.x > border_thickness)
                 {
-                    float thumb_pos = m_rel.y / float(height-2*border_thickness+item_padding);
+                    float mouse_pos = m_rel.y / float(height-2*border_thickness+item_padding);
 
-                    selected_index = show_from+(thumb_pos*items_visible);
+                    selected_index = show_from+(mouse_pos*items_visible);
                     selected_item = items[selected_index];
                 }
                 else if ((unsigned)m_rel.x > width-border_thickness-thumb.width &&

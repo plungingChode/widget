@@ -5,12 +5,12 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
+    Spinner::Spinner(vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font, int font_size)
         : Label(start, std::to_string(value), width, height, padding, font, font_size),
           spin(spin_none),
           value(value),
-          min_value(INT_MIN),
-          max_value(INT_MAX)
+          min_value(min_value),
+          max_value(max_value)
     {
         Control::draggable = false;
         Control::hittest_visible = true;
@@ -18,26 +18,37 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(vec2 start, int value, int width, std::string font, int font_size)
+    Spinner::Spinner(vec2 start, int value, int min_value, int max_value, int width, std::string font, int font_size)
         : Label(start, std::to_string(value), width, font, font_size),
           spin(spin_none),
           value(value),
-          min_value(INT_MIN),
-          max_value(INT_MAX)
+          min_value(min_value),
+          max_value(max_value)
     {
         Control::draggable = false;
         Control::hittest_visible = true;
         Frame::hold_bg = DEFAULT_FOCUS;
         set_spinner_hitboxes();
+    }
+
+    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
+        : Spinner(start, value, INT_MIN, INT_MAX, width, height, padding, font, font_size)
+    {
+    }
+
+    Spinner::Spinner(vec2 start, int value, int width, std::string font, int font_size)
+        : Spinner(start, value, INT_MIN, INT_MAX, width, font, font_size)
+    {
     }
 
     void Spinner::set_spinner_hitboxes()
     {
-        unsigned b = border_thickness;
-        spin_up_hitbox = rect(vec2(width-17-b, b), 17, height/2-b);
-        spin_dn_hitbox = rect(vec2(width-17-b, height/2), 17, height/2-b);
-        spin_up_icon = read_kep("uarrow.kep");
-        spin_dn_icon = read_kep("dnarrow.kep");
+        const int hb_width  = 17;
+        const int hb_height = height/2-border_thickness;
+        const int hb_x = width-hb_width-border_thickness;
+
+        spin_up_hitbox = rect(vec2(hb_x, border_thickness), hb_width, hb_height-1);
+        spin_dn_hitbox = rect(vec2(hb_x, height/2), hb_width, hb_height);
     }
 
     void Spinner::set_spin_color(const std::string& hex)
@@ -58,6 +69,8 @@ namespace Controls
         if (d > 0) spin = spin_up;
         else if (d < 0) spin = spin_down;
         else spin = spin_none;
+
+        schedule_update();
     }
 
     int Spinner::get_value() const
@@ -79,16 +92,17 @@ namespace Controls
         spin = spin_none;
         if (focused)
         {
-            vec2 mouse = vec2(m.pos_x, m.pos_y) - start;
+            vec2 m_rel = vec2(m.pos_x-start.x, m.pos_y-start.y);
+
             if (m.button == btn_wheelup || 
-               (m.button == btn_left && spin_up_hitbox.intersects(mouse)))
+               (m.button == btn_left && spin_up_hitbox.intersects(m_rel)))
             {
-                mod_value(+1);
+                mod_value(+diff_small);
             }
             else if (m.button == btn_wheeldown || 
-                    (m.button == btn_left && spin_dn_hitbox.intersects(mouse)))
+                    (m.button == btn_left && spin_dn_hitbox.intersects(m_rel)))
             {
-                mod_value(-1);
+                mod_value(-diff_small);
             }
         }
     }
@@ -102,19 +116,19 @@ namespace Controls
             switch (kc)
             {
             case key_up:
-                mod_value(+1);
+                mod_value(+diff_small);
                 break;
 
             case key_down:
-                mod_value(-1);
+                mod_value(-diff_small);
                 break;
 
             case key_pgup:
-                mod_value(+10);
+                mod_value(+diff_big);
                 break;
 
             case key_pgdn:
-                mod_value(-10);
+                mod_value(-diff_big);
                 break;
 
             default:
@@ -128,35 +142,30 @@ namespace Controls
     void Spinner::update()
     {
         Label::update();
-        color btn_border = text_fill_normal;
-        color btn_up_bg = normal_bg;
-        color btn_dn_bg = normal_bg;
-
-        if (spin == spin_down)
-        {
-            btn_dn_bg = spin_color;
-        }
-        else if (spin == spin_up)
-        {
-            btn_up_bg = spin_color;
-        }
 
         const rect &up = spin_up_hitbox;
-        rendered << move_to(up.start.x, up.start.y)
-                 << btn_border
-                 << box(up.width, up.height)
-                 << move_to(up.start.x+1, up.start.y+1)
-                 << btn_up_bg
-                 << box(up.width-2, up.height-2)
-                 << stamp(spin_up_icon, up.start.x+3, up.start.y + (up.height/2)-3);
-
         const rect &dn = spin_dn_hitbox;
-        rendered << move_to(dn.start.x, dn.start.y)
-                 << btn_border
-                 << box(dn.width, dn.height)
-                 << move_to(dn.start.x+1, dn.start.y+1)
-                 << btn_dn_bg
-                 << box(dn.width-2, dn.height-2)
-                 << stamp(spin_dn_icon, dn.start.x+3, dn.start.y + (dn.height/2)-3);
+
+        // button borders
+        rendered 
+            << border
+            << move_to(up.start.x-1, 0)
+            << line(0, height)
+            << move_to(dn.start.x, dn.start.y-1)
+            << line(dn.width, 0);
+
+        // up btn content
+        rendered 
+            << move_to(up.start.x, up.start.y)
+            << (spin == spin_up ? spin_color : normal_bg)
+            << box(up.width, up.height)
+            << stamp(spin_up_icon, up.start.x+3, up.start.y+(up.height/2)-3);
+
+        // down btn content
+        rendered 
+            << move_to(dn.start.x, dn.start.y)
+            << (spin == spin_down ? spin_color : normal_bg)
+            << box(dn.width, dn.height)
+            << stamp(spin_dn_icon, dn.start.x+3, dn.start.y+(dn.height/2)-3);
     }
 }

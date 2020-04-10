@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "listbox.hpp"
 
 using namespace Controls;
 
@@ -25,6 +26,21 @@ void switch_background()
         Controls::BACKGROUND_COLOR = pink;
     }
 }
+
+struct Entry : public ListBoxItem
+{
+    std::string name;
+    int value;
+
+    Entry(std::string name, int value) : name(name), value(value) {}
+
+    std::string to_string() override
+    {
+        std::stringstream ss;
+        ss << name << " [" << value << "]";
+        return ss.str();
+    }
+};
 
 void add_sample(Scene &s)
 {
@@ -62,7 +78,7 @@ void add_sample(Scene &s)
     b2->set_normal_bg("6c6c6c");
     b2->set_hover_bg("7c7c7c");
     b2->set_focus_bg("7c7c7c");
-    b2->set_drag_bg("8c8c8c");
+    b2->set_hold_bg("8c8c8c");
     s.add_control(b2);
 
     // Spinner
@@ -74,8 +90,20 @@ void add_sample(Scene &s)
     s2->min_value = 1;
     s2->max_value = 9;
     s.add_control(s2);
-}
 
+    // ListBox
+    ListBox *lb = new ListBox(vec2(180, 200), 120, 6, FONT, 16);
+    lb->set_hover_bg("ffffff");
+    lb->set_focus_bg("ffffff");
+    lb->set_hold_bg("ffffff");
+    lb->set_border_color("999999");
+    s.add_control(lb);
+
+    for (int i = 0; i < 70; i++)
+    {
+        lb->add_item(new Entry("entry", i));
+    }
+}
 
 int main(int argc, char const *argv[])
 {

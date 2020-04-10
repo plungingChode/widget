@@ -18,7 +18,7 @@ for f in $1/*.cpp; do
     o=${o##*/}
     o="./obj/$o.o"
     obj="$obj $o"
-    if ! g++ -c $f -o $o -I ./include $libs; then
+    if ! g++ -c $f -o $o -Wall -I ./include $libs; then
         echo 'Compilation unsuccessful. Aborting...'
         exit 1
     fi

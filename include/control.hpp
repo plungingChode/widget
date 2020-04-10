@@ -9,12 +9,12 @@ namespace Controls
 {
     struct Control
     {
-    friend class Scene;
+    // friend class Scene;
     protected:
         bool hovered, focused, held;
         bool resizable, resizing, size_changed;
         bool needs_update;
-        bool is_dragged;
+        bool dragged;
 
         // Coordinates of the mouse event that started the drag
         vec2 drag_center;
@@ -28,6 +28,9 @@ namespace Controls
     public:
         bool hittest_visible;
         bool draggable;
+
+        void set_focus(bool val) { focused = val; schedule_update(); }
+        void set_hover(bool val) { hovered = val; schedule_update(); }
 
         bool is_focused() const { return focused; }
         bool is_hovered() const { return hovered; }

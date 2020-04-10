@@ -15,14 +15,18 @@ namespace Controls
         genv::canvas background;
 
         std::vector<Control*> controls;
+        std::vector<void(*)(genv::event)> listeners;
+
         int click_buffer = 0; 
         bool mouse_held = false;
+
         int key_held = 0;
         int key_hold_delay = KEY_DELAY;
-        bool needs_update = true;
+
         Control* hovered = nullptr;
         Control* focused = nullptr;
         Control* held = nullptr;
+        size_t focused_index = -1;
 
         void render_background();
         bool on_mouse_event(const genv::event& mev);
@@ -34,6 +38,7 @@ namespace Controls
         ~Scene();
 
         void add_control(Control* c);
+        void add_listener(void(*listener)(genv::event));
 
         int run(bool fullscreen = false);
     };

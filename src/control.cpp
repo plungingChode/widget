@@ -10,7 +10,7 @@ namespace Controls
           resizing(false),
           size_changed(false),
           needs_update(true),
-          is_dragged(false),
+          dragged(false),
           drag_center(drag_center),
           hittest_visible(true),
           draggable(true)

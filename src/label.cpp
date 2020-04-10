@@ -49,6 +49,11 @@ namespace Controls
         set_color(text_fill_normal, hex);
     }
 
+    void Label::set_text_fill_focused(const std::string& hex)
+    {
+        set_color(text_fill_focused, hex);
+    }
+
     void Label::set_font(std::string font, int font_size)
     {
         if (!font.empty())

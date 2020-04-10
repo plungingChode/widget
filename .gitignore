@@ -33,3 +33,9 @@
 
 # Font files
 *.ttf
+
+# Text files
+*.txt
+
+# Personal
+beadando/**

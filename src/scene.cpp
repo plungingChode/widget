@@ -37,8 +37,10 @@ namespace Controls
         // hover unchanged -> ignore others
         if (held == nullptr)
         {
-            for (Control*& c : controls)
+            for (size_t i = 0; i < controls.size(); i++)
             {
+                Control *c = controls[i];
+
                 c->on_mouse_ev(m, mouse_held);
 
                 if (c->hittest_visible && c->is_hovered())
@@ -48,8 +50,9 @@ namespace Controls
                     {
                         if (hovered != nullptr)
                         {
-                            hovered->hovered = false;
-                            hovered->schedule_update();
+                            // hovered->hovered = false;
+                            // hovered->schedule_update();
+                            hovered->set_hover(false);
                         }
                         hovered = c;
                         c->schedule_update();
@@ -60,10 +63,12 @@ namespace Controls
                     {
                         if (focused != nullptr)
                         {
-                            focused->focused = false;
-                            focused->schedule_update();
+                            // focused->focused = false;
+                            // focused->schedule_update();
+                            focused->set_focus(false);
                         }
                         focused = hovered;
+                        focused_index = i;
                         c->schedule_update();
                     }
                     break;
@@ -72,23 +77,26 @@ namespace Controls
         }
         else
         {
-            // something held -> update hold state
+            // something held --> update hold state
             held->on_mouse_ev(m, mouse_held);
         }
         
         if (hovered != nullptr && !hovered->is_hovered())
         {
-            hovered->hovered = false;
-            hovered->schedule_update();
+            // hovered->hovered = false;
+            // hovered->schedule_update();
+            hovered->set_hover(false);
             hovered = nullptr;
         }
 
         // check for click outside of control
         if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
-            focused->focused = false;
-            focused->schedule_update();
+            // focused->focused = false;
+            // focused->schedule_update();
+            focused->set_focus(false);
             focused = nullptr;
+            focused_index = -1;
         }
     
 // TODO on drag end: check for hover!
@@ -130,6 +138,34 @@ namespace Controls
             key_held = 0;
             key_hold_delay = KEY_DELAY;
         }
+
+        if (kc == key_tab)
+        {
+            ++focused_index;
+            if (focused_index > controls.size()-1)
+            {
+                focused_index = 0;
+            }
+
+            if (held)
+            {
+                held = nullptr;
+                held->schedule_update();
+            }
+
+            if (focused)
+            {
+                focused->set_focus(false);
+                // focused->focused = false;
+                // focused->schedule_update();
+
+                focused = controls[focused_index];
+                // focused->focused = true;
+                // focused->schedule_update();
+                focused->set_focus(true);
+                return true;
+            }
+        }
         
         if (focused != nullptr)
         {
@@ -154,6 +190,11 @@ namespace Controls
         controls.push_back(c);
     }
 
+    void Scene::add_listener(void(*listener)(event))
+    {
+        listeners.push_back(listener);
+    }
+
     int Scene::run(bool fullscreen)
     {
         gout.open(ENV_WIDTH, ENV_HEIGHT, fullscreen);
@@ -165,6 +206,11 @@ namespace Controls
         event ev;
         while (gin >> ev)
         {
+            for (void(*l)(event) : listeners)
+            {
+                l(ev);
+            }
+
             if (ev.type == ev_key)
             {
                 // needs_update = needs_update || on_key_event(ev);
@@ -182,8 +228,6 @@ namespace Controls
 
             if (ev.type == ev_mouse)
             {
-                // needs_update = needs_update || on_mouse_event(ev);
-                // std::cout << held << '\n';
                 if (on_mouse_event(ev))
                 {
                     render(gout);
@@ -202,7 +246,6 @@ namespace Controls
                 }
                 render(gout);
                 gout << refresh;
-                // needs_update = false;
             }
         }
         return 0;

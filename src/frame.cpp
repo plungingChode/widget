@@ -5,10 +5,9 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(vec2 start, unsigned width, unsigned height)
+    Frame::Frame(vec2 start, int width, int height)
         : Control(start),
           rect(start, width, height),
-          fill(normal_bg),
           border_thickness(10),
           min_width(15), 
           min_height(15),
@@ -48,7 +47,7 @@ namespace Controls
         set_color(hover_bg, hex);
     }
 
-    void Frame::set_drag_bg(const std::string& hex)
+    void Frame::set_hold_bg(const std::string& hex)
     {
         set_color(hold_bg, hex);
     }
@@ -97,12 +96,12 @@ namespace Controls
         }
         else if (draggable && held)
         {
-            if (!is_dragged)
+            if (!dragged)
             {
                 drag_center.x = m.pos_x - start.x;
                 drag_center.y = m.pos_y - start.y;
 
-                is_dragged = true;
+                dragged = true;
             }
 
             start.x = m.pos_x - drag_center.x;
@@ -123,10 +122,10 @@ namespace Controls
                 resizing = false;
                 held = false;
             }
-            if (is_dragged)
+            if (dragged)
             {
                 drag_center = start;
-                is_dragged = false;
+                dragged = false;
                 held = false;
             }
         }
@@ -141,27 +140,26 @@ namespace Controls
 
     void Frame::update()
     {
+        rendered << move_to(0, 0) << border << box(width, height);
+
         if (held)
         {
-            fill = hold_bg;
+            rendered << hold_bg;
         }
         else if (focused)
         {
-            fill = focus_bg;
+            rendered << focus_bg;
         }
         else if (hovered)
         {
-            fill = hover_bg;
+            rendered << hover_bg;
         }
         else
         {
-            fill = normal_bg;
+            rendered << normal_bg;
         }
-
         int b = border_thickness;
-        // std::cout << "Frame @ " << this << " updated\n";
-        rendered << move_to(0, 0) << border << box(width, height)
-                 << move_to(b, b) << fill << box(width - 2*b, height - 2*b);
+        rendered << move_to(b, b) << box(width - 2*b, height - 2*b);
 
         if (resizable)
         {
@@ -182,9 +180,9 @@ namespace Controls
             if (needs_update)
             {
                 update();
+                needs_update = false;
             }
             c << stamp(rendered, start.x, start.y);
         }
-        needs_update = false;
     }
 }

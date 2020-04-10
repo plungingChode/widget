@@ -45,29 +45,29 @@ namespace Controls
 
     void Button::update()
     {
+        rendered << move_to(0, 0) << BLACK << box(width, height);
+
         if (held)
         {
-            fill = hold_bg;
+            rendered << hold_bg;
         }
         else if (focused)
         {
-            fill = focus_bg;
+            rendered << focus_bg;
         }
         else if (hovered)
         {
-            fill = hover_bg;
+            rendered << hover_bg;
         }
         else
         {
-            fill = normal_bg;
+            rendered << normal_bg;
         }
 
-        unsigned &b = border_thickness;
+        unsigned int b = border_thickness;
 
         // leave gap for bevel effect
-        rendered 
-            << move_to(0, 0) << BLACK << box(width, height)
-            << move_to(0, 0) << fill << box(width - b, height - b);
+        rendered  << move_to(0, 0) << box(width - b, height - b);
 
         int baseline = padding.y;
         if (font.empty()) baseline += rendered.cascent();

@@ -29,23 +29,26 @@ namespace Controls
     }
 
 
-    void Button::on_mouse_ev(const event& m, const bool btn_held)
+    void Button::on_mouse_ev(const event& m, bool btn_held)
     {
-        // std::cout << "held: " << _is_held << "btn: " << m.button <<  '\n';
         if (m.button == -btn_left && held && hovered)
         {
             action();
         }
         Label::on_mouse_ev(m, btn_held);
-        if (size_changed)
-        {
-            rendered.transparent(true);
-        }
     }
 
     void Button::update()
     {
-        rendered << move_to(0, 0) << BLACK << box(width, height);
+        if (size_changed)
+        {
+            rendered.transparent(true);
+        }
+
+        rendered 
+            << move_to(0, 0) 
+            << BLACK 
+            << box(width, height);
 
         if (held)
         {
@@ -66,28 +69,34 @@ namespace Controls
 
         unsigned int b = border_thickness;
 
-        // leave gap for bevel effect
-        rendered  << move_to(0, 0) << box(width - b, height - b);
+        // draw background
+        rendered 
+            << move_to(0, 0) 
+            << box(width-b, height-b);
 
         int baseline = padding.y;
         if (font.empty()) baseline += rendered.cascent();
 
+        rendered << border;
         if (held)
         {
-            // bevel on the bottom right, push in text
+            // bevel on bottom right, push in text
             rendered 
-                << move_to(1, height-b) << border << box(width-1, b)
-                << move_to(width-b, 1) << border << box(b, height-1)
-                << move_to(padding.x+1, baseline+1) << text_fill_normal << genv::text(text);
+                << move_to(1, height-b) << box(width-1, b)
+                << move_to(width-b, 1) << box(b, height-1)
+                << move_to(padding.x+1, baseline+1) 
+                << text_fill_normal << genv::text(text);
         }
         else
         {
-            // bevel on the top left
+            // bevel on top left
             rendered 
-                << move_to(0, 0) << border << box(width-b, b)
-                << move_to(0, 0) << border << box(b, height-b)
-                << move_to(padding.x, baseline) << text_fill_normal << genv::text(text);
+                << move_to(0, 0) << box(width-b, b)
+                << move_to(0, 0) << box(b, height-b)
+                << move_to(padding.x, baseline) 
+                << text_fill_normal << genv::text(text);
         }
+
         if(resizable)
         {
             render_resize_area();

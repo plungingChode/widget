@@ -44,22 +44,10 @@ namespace Controls
         schedule_update();
     }
 
-    void Label::set_text_fill_normal(const std::string& hex)
-    {
-        set_color(text_fill_normal, hex);
-    }
-
-    void Label::set_text_fill_focused(const std::string& hex)
-    {
-        set_color(text_fill_focused, hex);
-    }
-
     void Label::set_font(std::string font, int font_size)
     {
-        if (!font.empty())
+        if (!font.empty() && rendered.load_font(font, font_size))
         {
-            // printf("loading font %s\n", font.c_str());
-            rendered.load_font(font, font_size);
             this->font = font;
             this->font_size = font_size;
         }
@@ -72,8 +60,14 @@ namespace Controls
     }
 
     void Label::update()
-    {
+    {        
         Frame::update();
+
+        if (size_changed)
+        {
+            set_font(font, font_size);
+        }
+        
         if (text.empty()) return;
 
         int baseline = padding.y;
@@ -81,22 +75,15 @@ namespace Controls
 
         if (focused)
         {   
-            rendered << move_to(padding.x, baseline)
-                     << text_fill_focused << genv::text(text);
+            rendered << text_fill_focused;
         }
         else
         {
-            rendered << move_to(padding.x, baseline)
-                     << text_fill_normal << genv::text(text);
+            rendered << text_fill_normal;
         }
-    }
 
-    void Label::on_mouse_ev(const event& m, const bool btn_held)
-    {
-        Frame::on_mouse_ev(m, btn_held);
-        if (size_changed)
-        {
-            rendered.load_font(font, font_size);
-        }
+        rendered 
+            << move_to(padding.x, baseline)
+            << genv::text(text);
     }
 }

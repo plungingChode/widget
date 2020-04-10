@@ -2,8 +2,8 @@
 
 namespace Controls
 {
-    vec2::vec2(int x, int y) : x(x), y(y) {};
-    vec2::vec2() : x(0), y(0) {};
+    vec2::vec2(int x, int y) : x(x), y(y) {}
+    vec2::vec2() : x(0), y(0) {}
 
     vec2& vec2::operator+=(const vec2& rhs)
     {
@@ -29,6 +29,7 @@ namespace Controls
         this->y /= scalar;
         return *this;
     }
+
     vec2 operator+(const vec2& lhs, const vec2& rhs)
     {
         return vec2(lhs.x + rhs.x, lhs.y + rhs.y);

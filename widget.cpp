@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "listbox.hpp"
 
 using namespace Controls;
 
@@ -109,5 +108,5 @@ int main(int argc, char const *argv[])
 {
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
     add_sample(s);
-    s.run();
+    return s.run();
 }

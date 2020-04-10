@@ -12,7 +12,7 @@ namespace Controls
           min_width(15), 
           min_height(15),
           rendered(width, height)
-    { 
+    {
     }
 
     void Frame::set_resizable(const bool val)
@@ -30,43 +30,19 @@ namespace Controls
     void Frame::set_color(color& target, const std::string& hex)
     {
         target = hex_to_color(hex);
-    }
-
-    void Frame::set_normal_bg(const std::string& hex)
-    {
-        set_color(normal_bg, hex);
-    }
-
-    void Frame::set_focus_bg(const std::string& hex)
-    {
-        set_color(focus_bg, hex);
-    }
-
-    void Frame::set_hover_bg(const std::string& hex)
-    {
-        set_color(hover_bg, hex);
-    }
-
-    void Frame::set_hold_bg(const std::string& hex)
-    {
-        set_color(hold_bg, hex);
-    }
-
-    void Frame::set_border_color(const std::string& hex)
-    {
-        set_color(border, hex);
+        schedule_update();
     }
 
     void Frame::set_border_thickness(const unsigned thickness)
     {
         border_thickness = thickness;
-        needs_update = true;
+        schedule_update();
     }
 
     void Frame::on_mouse_ev(const event& m, const bool btn_held)
     {
         if (!hittest_visible) return;
-        if (size_changed) size_changed = false; // assume change was handled
+        size_changed = false; // assume change was handled
 
         hovered = intersects(m.pos_x, m.pos_y);
 
@@ -79,18 +55,19 @@ namespace Controls
 
         if (held && resizable)
         {
-            vec2 rel_mouse(m.pos_x - start.x, m.pos_y - start.y);
-            bool resize_hit = resize_hitbox.intersects(rel_mouse);
+            vec2 m_rel(m.pos_x - start.x, m.pos_y - start.y);
+            bool resize_hit = resize_hitbox.intersects(m_rel);
 
             resizing = resizing || (m.button == btn_left && resize_hit);
         }
         
         if (resizing && held)
         {
-            vec2 m_limit;
-            m_limit.x = std::max(m.pos_x, start.x + (int)min_width);
-            m_limit.y = std::max(m.pos_y, start.y + (int)min_height);
-
+            vec2 m_limit(
+                std::max(m.pos_x, start.x + (int)min_width),
+                std::max(m.pos_y, start.y + (int)min_height)
+            );
+            
             width  += m_limit.x - start.x - width;
             height += m_limit.y - start.y - height;
         }
@@ -104,11 +81,8 @@ namespace Controls
                 dragged = true;
             }
 
-            start.x = m.pos_x - drag_center.x;
-            start.y = m.pos_y - drag_center.y;
-
-            start.x = std::min(std::max(start.x, 0), ENV_WIDTH - (int)width);
-            start.y = std::min(std::max(start.y, 0), ENV_HEIGHT - (int)height);
+            start.x = minmax(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
+            start.y = minmax(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
         }
         else
         {
@@ -133,15 +107,20 @@ namespace Controls
 
     void Frame::render_resize_area()
     {
-        rendered << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
-                 << DEFAULT_TEXT_NORMAL
-                 << box(resize_hitbox.width, resize_hitbox.height);
+        rendered 
+            << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
+            << DEFAULT_TEXT_NORMAL
+            << box(resize_hitbox.width, resize_hitbox.height);
     }
 
     void Frame::update()
     {
-        rendered << move_to(0, 0) << border << box(width, height);
+        // draw border
+        rendered 
+            << move_to(0, 0) 
+            << border << box(width, height);
 
+        // draw interior
         if (held)
         {
             rendered << hold_bg;
@@ -158,9 +137,12 @@ namespace Controls
         {
             rendered << normal_bg;
         }
-        int b = border_thickness;
-        rendered << move_to(b, b) << box(width - 2*b, height - 2*b);
+        
+        rendered 
+            << move_to(border_thickness, border_thickness) 
+            << box(width-2*border_thickness, height-2*border_thickness);
 
+        // draw resize marker
         if (resizable)
         {
             render_resize_area();

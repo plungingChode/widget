@@ -24,11 +24,9 @@ namespace Controls
 
         void set_content_offset(vec2 p);
         void set_text(std::string text);
-        void set_text_fill_normal(const std::string &hex);
-        void set_text_fill_focused(const std::string &hex);
+        void set_text_fill_normal(const std::string &hex) { set_color(text_fill_normal, hex); }
+        void set_text_fill_focused(const std::string &hex) { set_color(text_fill_focused, hex); }
         virtual void set_font(std::string font, int font_size = 16);
-
-        virtual void on_mouse_ev(const genv::event &mouse_ev, const bool btn_held = false) override;
     };
 }
 

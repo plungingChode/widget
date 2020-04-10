@@ -9,7 +9,6 @@ namespace Controls
 {
     struct Control
     {
-    // friend class Scene;
     protected:
         bool hovered, focused, held;
         bool resizable, resizing, size_changed;

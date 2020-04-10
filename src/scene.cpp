@@ -4,20 +4,10 @@ using namespace genv;
 
 namespace Controls
 {
-    void Scene::render_background()
-    {
-        background 
-            << move_to(0, 0) 
-            << BACKGROUND_COLOR
-            << box(ENV_WIDTH, ENV_HEIGHT);
-    }
-
     Scene::Scene(int width, int height)
-        : background(width, height)
     {
         ENV_WIDTH = width;
         ENV_HEIGHT = height;
-        render_background();
     }
 
     Scene::~Scene()
@@ -33,7 +23,7 @@ namespace Controls
         click_buffer += m.button;
         mouse_held = (click_buffer != 0 && m.button == 0);
 
-        // something is being held -> ignore others
+        // something is held -> ignore others
         // hover unchanged -> ignore others
         if (held == nullptr)
         {
@@ -50,8 +40,6 @@ namespace Controls
                     {
                         if (hovered != nullptr)
                         {
-                            // hovered->hovered = false;
-                            // hovered->schedule_update();
                             hovered->set_hover(false);
                         }
                         hovered = c;
@@ -63,8 +51,6 @@ namespace Controls
                     {
                         if (focused != nullptr)
                         {
-                            // focused->focused = false;
-                            // focused->schedule_update();
                             focused->set_focus(false);
                         }
                         focused = hovered;
@@ -77,14 +63,12 @@ namespace Controls
         }
         else
         {
-            // something held --> update hold state
+            // something is held --> update hold state
             held->on_mouse_ev(m, mouse_held);
         }
         
         if (hovered != nullptr && !hovered->is_hovered())
         {
-            // hovered->hovered = false;
-            // hovered->schedule_update();
             hovered->set_hover(false);
             hovered = nullptr;
         }
@@ -92,8 +76,6 @@ namespace Controls
         // check for click outside of control
         if (m.button == btn_left && focused != nullptr && hovered == nullptr)
         {
-            // focused->focused = false;
-            // focused->schedule_update();
             focused->set_focus(false);
             focused = nullptr;
             focused_index = -1;
@@ -156,12 +138,8 @@ namespace Controls
             if (focused)
             {
                 focused->set_focus(false);
-                // focused->focused = false;
-                // focused->schedule_update();
 
                 focused = controls[focused_index];
-                // focused->focused = true;
-                // focused->schedule_update();
                 focused->set_focus(true);
                 return true;
             }
@@ -177,8 +155,10 @@ namespace Controls
 
     void Scene::render(canvas& c)
     {
-        c << move_to(0, 0) << BACKGROUND_COLOR << box(ENV_WIDTH, ENV_HEIGHT);
-        // c << stamp(background, 0, 0);
+        c << move_to(0, 0) 
+          << BACKGROUND_COLOR 
+          << box(ENV_WIDTH, ENV_HEIGHT);
+
         for (int i = controls.size() - 1; i >= 0; i--)
         {
             controls[i]->render(c);
@@ -188,6 +168,7 @@ namespace Controls
     void Scene::add_control(Control* c)
     {
         controls.push_back(c);
+        needs_update = true;
     }
 
     void Scene::add_listener(void(*listener)(event))
@@ -204,45 +185,30 @@ namespace Controls
         gin.timer(70);
 
         event ev;
-        while (gin >> ev)
+        while (gin >> ev && ev.keycode != key_escape)
         {
             for (void(*l)(event) : listeners)
             {
                 l(ev);
             }
 
-            if (ev.type == ev_key)
+            if (ev.type == ev_key && on_key_event(ev))
             {
-                // needs_update = needs_update || on_key_event(ev);
-                if(on_key_event(ev))
-                {
-                    render(gout);
-                    gout << refresh;
-                }
-                
-                if (ev.keycode == key_escape)
-                {
-                    return 0;
-                }
-            }
-
-            if (ev.type == ev_mouse)
+                render(gout);              
+                gout << refresh;
+            } 
+            else if (ev.type == ev_mouse && on_mouse_event(ev))
             {
-                if (on_mouse_event(ev))
-                {
-                    render(gout);
-                    gout << refresh;
-                }
+                render(gout);
+                gout << refresh;
             }
-
-            if (ev.type == ev_timer && key_held)
+            else if (ev.type == ev_timer && key_held)
             {
                 if (key_hold_delay) key_hold_delay--;
 
                 if (focused && !key_hold_delay)
                 {
                     if (key_held) focused->on_key_ev(ev, key_held);
-                    // if (mouse_held) focused->on_mouse_ev(ev, true);
                 }
                 render(gout);
                 gout << refresh;

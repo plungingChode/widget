@@ -2,8 +2,6 @@
 
 using namespace genv;
 
-#define minmax(val, lbound, ubound) std::max(std::min(val, ubound), lbound)
-
 namespace Controls
 {
     ListBox::ListBox(vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font, int font_size)

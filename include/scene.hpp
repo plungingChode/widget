@@ -12,8 +12,6 @@ namespace Controls
         const int KEY_DELAY = 7;
         const int REFRESH_RATE = 40;
 
-        genv::canvas background;
-
         std::vector<Control*> controls;
         std::vector<void(*)(genv::event)> listeners;
 
@@ -28,7 +26,8 @@ namespace Controls
         Control* held = nullptr;
         size_t focused_index = -1;
 
-        void render_background();
+        bool needs_update = false;
+
         bool on_mouse_event(const genv::event& mev);
         bool on_key_event(const genv::event& kev);
         void render(genv::canvas& c);

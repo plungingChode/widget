@@ -22,7 +22,7 @@ namespace Controls
         Label(vec2 start, std::string text, int width, vec2 padding, std::string font = "", int font_size = 16);
         Label(vec2 start, std::string text, int width, std::string font = "", int font_size = 16);
 
-        void set_content_offset(vec2 p);
+        void set_padding(vec2 p);
         void set_text(std::string text);
         void set_text_fill_normal(const std::string &hex) { set_color(text_fill_normal, hex); }
         void set_text_fill_focused(const std::string &hex) { set_color(text_fill_focused, hex); }

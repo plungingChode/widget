@@ -18,7 +18,7 @@ namespace Controls
         Button(vec2 start, void (*action)(), std::string text, int width, vec2 padding, std::string font = "", int font_size = 16);
         Button(vec2 start, void (*action)(), std::string text, int width, std::string font = "", int font_size = 16);
 
-        void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) override;
+        virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) override;
     };
 }
 

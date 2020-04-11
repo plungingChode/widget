@@ -32,7 +32,7 @@ namespace Controls
     {
     }
 
-    void Label::set_content_offset(vec2 p)
+    void Label::set_padding(vec2 p)
     {
         padding = p;
         schedule_update();

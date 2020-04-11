@@ -13,7 +13,7 @@ namespace Controls
         Frame::border_thickness = 1;
         set_font(font, font_size);
 
-        thumb = rect(vec2(width-border_thickness-15, 0), 15, -1);
+        thumb = rect(vec2(width-1-15, 0), 15, -1);
         adjust_thumb();
     }
 
@@ -24,16 +24,21 @@ namespace Controls
 
     void ListBox::adjust_thumb()
     {
-        if (items.size() < 3)
+        if ((int)items.size() < items_visible)
         {
             thumb.height = height;
         }
         else
         {
-            thumb.height = height / (items.size() / 3);
+            thumb.height = height * items_visible / (float)items.size();
 
-            scroll_diff = std::max(1u, thumb.height/2);
+            scroll_diff = minmax(thumb.height/2, 1u, 8u);
             thumb.height = std::max(10u, thumb.height);
+        }
+
+        if (thumb.start.y+thumb.height > height)
+        {
+            thumb.start.y = height-thumb.height;
         }
     }
 
@@ -46,15 +51,22 @@ namespace Controls
     
     void ListBox::remove_item(int index)
     {
-        items.erase(items.begin() + index);
-        
-        if (selected_index > items.size()-1)
+        if (index >= 0 && index < (int)items.size())
         {
-            selected_index = items.size()-1;
-        }
+            delete items[index];
+            items.erase(items.begin() + index);
 
-        adjust_thumb();
-        schedule_update();
+            show_from = minmax(show_from, 0, (int)items.size()-items_visible);
+
+            if (index == selected_index)
+            {
+                selected_item = nullptr;
+                selected_index = -1;
+            }
+
+            adjust_thumb();
+            schedule_update();
+        }
     }
 
     void ListBox::update()
@@ -63,7 +75,7 @@ namespace Controls
 
         // draw separator
         rendered
-            << move_to(width-border_thickness-thumb.width-1, 0)
+            << move_to(width-1-thumb.width-1, 0)
             << border << line(0, height);
 
         // draw thumb
@@ -94,7 +106,7 @@ namespace Controls
             int index = show_from+i;
             if (index == selected_index)
             {
-                rendered << move_to(border_thickness, i*item_height+border_thickness);
+                rendered << move_to(1, i*item_height+1);
                 if (focused)
                 {
                     rendered << selection_bg;
@@ -103,7 +115,7 @@ namespace Controls
                 {
                     rendered << unfocused_selection_bg;
                 }
-                rendered << box(width-thumb.width-2*border_thickness, item_height);
+                rendered << box(width-thumb.width-2*1, item_height);
                 rendered << selection_fg;
             }
             else
@@ -111,7 +123,7 @@ namespace Controls
                 rendered << foreground;
             }
             rendered 
-                << move_to(5+border_thickness, i*item_height+border_thickness+baseline_offs)
+                << move_to(5+1, i*item_height+1+baseline_offs)
                 << text(items[index]->to_string());
         }
     }
@@ -183,16 +195,16 @@ namespace Controls
 
             if (!thumb_hovered && mouse_ev.button == btn_left)
             {
-                if ((unsigned)m_rel.x < width-border_thickness-thumb.width-1 &&
-                    (unsigned)m_rel.x > border_thickness)
+                if ((unsigned)m_rel.x < width-1-thumb.width-1 &&
+                    (unsigned)m_rel.x > 1)
                 {
-                    float mouse_pos = m_rel.y / float(height-2*border_thickness+item_padding);
+                    float mouse_pos = m_rel.y / float(height-2+item_padding);
 
                     selected_index = show_from+(mouse_pos*items_visible);
                     selected_item = items[selected_index];
                 }
-                else if ((unsigned)m_rel.x > width-border_thickness-thumb.width &&
-                         (unsigned)m_rel.x < width-border_thickness)
+                else if ((unsigned)m_rel.x > width-1-thumb.width &&
+                         (unsigned)m_rel.x < width-1)
                 {
                     thumb.start.y = m_rel.y - thumb.height/2;
                     thumb_moved = true;
@@ -203,8 +215,9 @@ namespace Controls
             {
                 thumb.start.y = minmax(thumb.start.y, 0, int(height-thumb.height));
 
-                show_from = (thumb.start.y / ((float)height-thumb.height))*items.size();
+                show_from = (thumb.start.y / float(height-thumb.height)) * items.size();
                 show_from = minmax(show_from, 0, (int)items.size()-items_visible);
+
                 schedule_update();
             }
         }    

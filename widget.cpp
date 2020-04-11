@@ -47,6 +47,11 @@ void remove_selected()
     lb->remove_item(lb->get_selected_index());
 }
 
+void add_entry()
+{
+    lb->add_item(new Entry("entry", std::rand()%100));
+}
+
 void add_sample(Scene &s)
 {
     // Frame
@@ -105,13 +110,16 @@ void add_sample(Scene &s)
     lb->set_border_thickness(1);
     s.add_control(lb);
 
-    for (int i = 0; i < 70; i++)
+    for (int i = 0; i < 10; i++)
     {
         lb->add_item(new Entry("entry", i));
     }
 
     Button *rm = new Button(vec2(180, 330), remove_selected, "Remove selected", 150, FONT);
     s.add_control(rm);
+
+    Button *add = new Button(vec2(180, 360), add_entry, "Add random", 150, FONT);
+    s.add_control(add);
 }
 
 int main(int argc, char const *argv[])

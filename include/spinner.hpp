@@ -5,7 +5,7 @@
 
 namespace Controls
 {
-    struct Spinner : public Label
+    class Spinner : public Label
     {
     private:
         void set_spinner_hitboxes();
@@ -45,7 +45,7 @@ namespace Controls
         Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
         Spinner(vec2 start, int value, int width, std::string font = "", int font_size = 16);
 
-        void set_spin_color(const std::string& hex);
+        void set_spin_color(int hex);
         void set_border_thickness(unsigned thickness) override;
 
         int get_value() const;

@@ -7,7 +7,7 @@
 
 namespace Controls
 {
-    struct Control
+    class Control
     {
     protected:
         bool hovered, focused, held;

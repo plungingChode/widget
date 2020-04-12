@@ -159,7 +159,7 @@ namespace Controls
         needs_update = true;
     }
 
-    void Scene::add_listener(void(*listener)(event))
+    void Scene::add_listener(listener_t listener)
     {
         listeners.push_back(listener);
     }
@@ -200,9 +200,9 @@ namespace Controls
         event ev;
         while (gin >> ev && ev.keycode != key_escape)
         {
-            for (void(*l)(event) : listeners)
+            for (listener_t f : listeners)
             {
-                l(ev);
+                f(ev);
             }
 
             if (ev.type == ev_key && on_key_event(ev))

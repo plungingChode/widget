@@ -3,17 +3,20 @@
 
 #include "control.hpp"
 #include <vector>
+#include <functional>
 
 namespace Controls
 {
-    struct Scene
+    typedef std::function<void(const genv::event&)> listener_t;
+
+    class Scene
     {
     protected:
         const int KEY_DELAY = 7;
         const int REFRESH_RATE = 40;
 
         std::vector<Control*> controls;
-        std::vector<void(*)(genv::event)> listeners;
+        std::vector<listener_t> listeners;
 
         int click_buffer = 0; 
         bool mouse_held = false;
@@ -37,9 +40,15 @@ namespace Controls
         ~Scene();
 
         void add_control(Control *c);
-        void add_listener(void(*listener)(genv::event));
+        void add_listener(listener_t f);  
         void focus(Control *c);
         void focus(int index);
+
+        template<typename T>
+        void add_listener(void(T::*f)(const genv::event&), T *owner)
+        {
+            listeners.push_back(std::bind(f, owner, std::placeholders::_1));
+        }
 
         int run(bool fullscreen = false);
     };

@@ -5,7 +5,7 @@
 
 namespace Controls
 {
-    struct TextBox : public Label
+    class TextBox : public Label
     {
     protected:
         void update() override;

@@ -7,14 +7,15 @@
 
 namespace Controls
 {
-    struct ListBoxItem
+    class ListBoxItem
     {
+    public:
         virtual ~ListBoxItem() = default;
         virtual std::string to_string() = 0;
     };
 
 
-    struct ListBox : public Frame
+    class ListBox : public Frame
     {
     private:
         int scroll_diff = 1;
@@ -38,7 +39,7 @@ namespace Controls
         int thumb_drag_y = -1;
 
         genv::color foreground = DEFAULT_TEXT_NORMAL;
-        genv::color unfocused_selection_bg = hex_to_color("bbbbbb");
+        genv::color unfocused_selection_bg = hex_to_color(0xbbbbbb);
         genv::color selection_bg = DEFAULT_BORDER;
         genv::color selection_fg = DEFAULT_TEXT_FOCUS;
 

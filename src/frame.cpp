@@ -27,7 +27,7 @@ namespace Controls
         resize_hitbox = rect(hb_start, 8, 8);
     }
 
-    void Frame::set_color(color& target, const std::string& hex)
+    void Frame::set_color(color& target, int hex)
     {
         target = hex_to_color(hex);
         schedule_update();

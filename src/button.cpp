@@ -4,7 +4,7 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(vec2 start, void (*action)(), std::string text, int width, int height, vec2 padding, std::string font, int font_size)
+    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
         : Label(start, text, width, height, padding, font, font_size), action(action)
     {
         // Frame::rendered.transparent(true);
@@ -12,7 +12,7 @@ namespace Controls
         Control::hittest_visible = true;
     }
 
-    Button::Button(vec2 start, void (*action)(), std::string text, int width, vec2 padding, std::string font, int font_size)
+    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, vec2 padding, std::string font, int font_size)
         : Label(start, text, width, padding, font, font_size), action(action)
     {
         // Frame::rendered.transparent(true);
@@ -20,7 +20,7 @@ namespace Controls
         Control::hittest_visible = true;
     }
 
-    Button::Button(vec2 start, void (*action)(), std::string text, int width, std::string font, int font_size)
+    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, std::string font, int font_size)
         : Label(start, text, width, font, font_size), action(action)
     {
         Frame::rendered.transparent(true);

@@ -57,15 +57,13 @@ namespace Controls
         return c;
     }
 
-    color hex_to_color(const std::string& h)
+    color hex_to_color(int h)
     {
-        int n;
-        std::istringstream(h) >> std::hex >> n;
-        int b = n % 256;
-        n/= 256;
-        int g = n % 256;
-        n /= 256;
-        int r = n % 256;
+        int b = h % 256;
+        h /= 256;
+        int g = h % 256;
+        h /= 256;
+        int r = h % 256;
         return color(r, g, b);
     }
 

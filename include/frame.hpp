@@ -8,7 +8,7 @@
 
 namespace Controls
 {
-    struct Frame : public Control, public rect
+    class Frame : public Control, public rect
     {
     protected:
         genv::color normal_bg = DEFAULT_NORMAL;
@@ -21,7 +21,7 @@ namespace Controls
 
         genv::canvas rendered;
 
-        void set_color(genv::color& target, const std::string& hex);        
+        void set_color(genv::color& target, int hex);        
         void reset_resize_hitbox();
         virtual void render_resize_area();
         virtual void update() override;
@@ -30,11 +30,11 @@ namespace Controls
         Frame(vec2 start, int width, int height);
 
         void set_resizable(bool val) override;
-        void set_normal_bg(const std::string& hex) { set_color(normal_bg, hex); }
-        void set_focus_bg(const std::string& hex) { set_color(focus_bg, hex); }
-        void set_hover_bg(const std::string& hex) { set_color(hover_bg, hex); }
-        void set_hold_bg(const std::string& hex) { set_color(hold_bg, hex); }
-        void set_border_color(const std::string& hex) { set_color(border, hex); }
+        void set_normal_bg(int hex) { set_color(normal_bg, hex); }
+        void set_focus_bg(int hex) { set_color(focus_bg, hex); }
+        void set_hover_bg(int hex) { set_color(hover_bg, hex); }
+        void set_hold_bg(int hex) { set_color(hold_bg, hex); }
+        void set_border_color(int hex) { set_color(border, hex); }
         
         virtual void set_border_thickness(unsigned int thickness);
         void set_min_width(unsigned int w) { min_width = w; }

@@ -56,6 +56,8 @@ namespace Controls
         ListBoxItem* get_selected_item() const { return selected_item; }
         int get_selected_index() const { return selected_index; }
 
+        const std::vector<ListBoxItem*>& get_items() const { return items; }
+
         virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
         virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override;
     };

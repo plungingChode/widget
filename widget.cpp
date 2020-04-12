@@ -119,7 +119,7 @@ void add_sample(Scene &s)
     Button *rm = new Button(vec2(180, 330), remove_selected, "Remove selected", 150, FONT);
     s.add_control(rm);
 
-    Button *add = new Button(vec2(180, 360), add_entry, "Add random", 150, FONT);
+    Button *add = new Button(vec2(180, 360), add_entry, "Add random", 150);
     s.add_control(add);
 }
 

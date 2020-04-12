@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <functional>
 
 using namespace Controls;
 
@@ -13,7 +14,7 @@ const std::string FONT = "LiberationSans-Regular.ttf";
 
 bool bg = true;
 genv::color gray = genv::color(60, 60, 60);
-genv::color pink = hex_to_color("ff9999");
+genv::color pink = hex_to_color(0xff9999);
 void switch_background()
 {
     if (bg = !bg)
@@ -40,6 +41,17 @@ struct Entry : public ListBoxItem
         return ss.str();
     }
 };
+
+ListBox *lb;
+void remove_selected()
+{
+    lb->remove_item(lb->get_selected_index());
+}
+
+void add_entry()
+{
+    lb->add_item(new Entry("entry", std::rand()%100));
+}
 
 void add_sample(Scene &s)
 {
@@ -72,12 +84,12 @@ void add_sample(Scene &s)
     s.add_control(b1);
 
     Button *b2 = new Button(vec2(20, 140), switch_background, "Styled button", 150, FONT, 16);
-    b2->set_border_color("e5d96e");
-    b2->set_text_fill_normal("e5d96e");
-    b2->set_normal_bg("6c6c6c");
-    b2->set_hover_bg("7c7c7c");
-    b2->set_focus_bg("7c7c7c");
-    b2->set_hold_bg("8c8c8c");
+    b2->set_border_color(0xe5d96e);
+    b2->set_text_fill_normal(0xe5d96e);
+    b2->set_normal_bg(0x6c6c6c);
+    b2->set_hover_bg(0x7c7c7c);
+    b2->set_focus_bg(0x7c7c7c);
+    b2->set_hold_bg(0x8c8c8c);
     s.add_control(b2);
 
     // Spinner
@@ -91,22 +103,45 @@ void add_sample(Scene &s)
     s.add_control(s2);
 
     // ListBox
-    ListBox *lb = new ListBox(vec2(180, 200), 120, 6, FONT, 16);
-    lb->set_hover_bg("ffffff");
-    lb->set_focus_bg("ffffff");
-    lb->set_hold_bg("ffffff");
-    lb->set_border_color("999999");
+    lb = new ListBox(vec2(180, 200), 150, 6, FONT, 18);
+    lb->set_hover_bg(0xffffff);
+    lb->set_focus_bg(0xffffff);
+    lb->set_hold_bg(0xffffff);
+    lb->set_border_color(0x999999);
+    lb->set_border_thickness(1);
     s.add_control(lb);
 
-    for (int i = 0; i < 70; i++)
+    for (int i = 0; i < 10; i++)
     {
         lb->add_item(new Entry("entry", i));
     }
+
+    Button *rm = new Button(vec2(180, 330), remove_selected, "Remove selected", 150, FONT);
+    s.add_control(rm);
+
+    Button *add = new Button(vec2(180, 360), add_entry, "Add random", 150);
+    s.add_control(add);
 }
+
+class Sample
+{
+public:
+    void f(const genv::event &ev)
+    {
+        if (ev.keycode == 'c')
+        {
+            printf("hello\n");
+        }
+    }
+};
 
 int main(int argc, char const *argv[])
 {
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
     add_sample(s);
+
+    Sample smp;
+    s.add_listener(&Sample::f, &smp);
+    
     return s.run();
 }

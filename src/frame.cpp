@@ -27,7 +27,7 @@ namespace Controls
         resize_hitbox = rect(hb_start, 8, 8);
     }
 
-    void Frame::set_color(color& target, const std::string& hex)
+    void Frame::set_color(color& target, int hex)
     {
         target = hex_to_color(hex);
         schedule_update();
@@ -81,8 +81,8 @@ namespace Controls
                 dragged = true;
             }
 
-            start.x = minmax(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
-            start.y = minmax(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
+            start.x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
+            start.y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
         }
         else
         {
@@ -90,7 +90,6 @@ namespace Controls
             {
                 reset_resize_hitbox();
 
-                rendered = canvas(width, height);
                 size_changed = true;
                 
                 resizing = false;
@@ -115,6 +114,11 @@ namespace Controls
 
     void Frame::update()
     {
+        if (size_changed)
+        {
+            rendered = canvas(width, height);
+        }
+
         // draw border
         rendered 
             << move_to(0, 0) 

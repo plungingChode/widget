@@ -51,7 +51,7 @@ namespace Controls
         spin_dn_hitbox = rect(vec2(hb_x, height/2), hb_width, hb_height);
     }
 
-    void Spinner::set_spin_color(const std::string& hex)
+    void Spinner::set_spin_color(int hex)
     {
         set_color(spin_color, hex);
     }

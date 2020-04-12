@@ -5,7 +5,7 @@
 
 namespace Controls
 {
-    struct Spinner : public Label
+    class Spinner : public Label
     {
     private:
         void set_spinner_hitboxes();
@@ -29,9 +29,9 @@ namespace Controls
 
         genv::color spin_color = DEFAULT_MOUSEDOWN;
 
-        void update() override;
-        void set_value(int val);
-        void mod_value(int d);
+        virtual void update() override;
+        virtual void set_value(int val);
+        virtual void mod_value(int d);
         
     public:
         int min_value;
@@ -45,13 +45,13 @@ namespace Controls
         Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
         Spinner(vec2 start, int value, int width, std::string font = "", int font_size = 16);
 
-        void set_spin_color(const std::string& hex);
+        void set_spin_color(int hex);
         void set_border_thickness(unsigned thickness) override;
 
         int get_value() const;
         
-        void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
-        void on_key_ev(const genv::event &key_ev, int key_held = false) override;
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
+        virtual void on_key_ev(const genv::event &key_ev, int key_held = false) override;
     };
 }
 

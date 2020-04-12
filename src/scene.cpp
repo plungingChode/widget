@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include <algorithm>
 
 using namespace genv;
 
@@ -121,28 +122,15 @@ namespace Controls
             key_hold_delay = KEY_DELAY;
         }
 
-        if (kc == key_tab)
+        if (key_held == key_tab && !held)
         {
             ++focused_index;
             if (focused_index > controls.size()-1)
             {
                 focused_index = 0;
             }
-
-            if (held)
-            {
-                held = nullptr;
-                held->schedule_update();
-            }
-
-            if (focused)
-            {
-                focused->set_focus(false);
-
-                focused = controls[focused_index];
-                focused->set_focus(true);
-                return true;
-            }
+            focus(focused_index);
+            return true;
         }
         
         if (focused != nullptr)
@@ -165,7 +153,7 @@ namespace Controls
         }
     }
 
-    void Scene::add_control(Control* c)
+    void Scene::add_control(Control *c)
     {
         controls.push_back(c);
         needs_update = true;
@@ -174,6 +162,31 @@ namespace Controls
     void Scene::add_listener(void(*listener)(event))
     {
         listeners.push_back(listener);
+    }
+
+    void Scene::focus(Control *c)
+    {
+        if (focused)
+        {
+            focused->set_focus(false);
+        }
+
+        focused = c;
+        focused_index = std::distance(std::find(controls.begin(), controls.end(), c), controls.begin());
+        focused_index = std::min(focused_index, controls.size()-1);
+        focused->set_focus(true);
+    }
+
+    void Scene::focus(int index)
+    {
+        if (focused)
+        {
+            focused->set_focus(false);
+        }
+
+        focused = controls[index];
+        focused_index = index;
+        focused->set_focus(true);
     }
 
     int Scene::run(bool fullscreen)

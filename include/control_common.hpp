@@ -4,7 +4,7 @@
 #include "graphics.hpp"
 #include <vector>
 
-#define minmax(val, lbound, ubound) std::max(std::min(val, ubound), lbound)
+#define force_bounds(val, lbound, ubound) std::max(std::min(val, ubound), lbound)
 
 namespace Controls
 {

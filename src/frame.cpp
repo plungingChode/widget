@@ -81,8 +81,8 @@ namespace Controls
                 dragged = true;
             }
 
-            start.x = minmax(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
-            start.y = minmax(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
+            start.x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
+            start.y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
         }
         else
         {

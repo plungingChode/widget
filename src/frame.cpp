@@ -5,13 +5,11 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(Scene *owner, vec2 start, int width, int height)
-        : Control(owner),
-          rect(start, width, height),
+    Frame::Frame(Scene *s, int x, int y, int w, int h, const genv::font *f)
+        : Control(s, x, y, w, h, f),
           border_thickness(10),
           min_width(15), 
-          min_height(15),
-          rendered(width, height)
+          min_height(15)
     {
     }
 
@@ -23,7 +21,7 @@ namespace Controls
 
     void Frame::reset_resize_hitbox()
     {
-        vec2 hb_start(width - 8, height - 8);
+        vec2 hb_start(w-8, h-8);
         resize_hitbox = rect(hb_start, 8, 8);
     }
 
@@ -55,7 +53,7 @@ namespace Controls
 
         if (held && resizable)
         {
-            vec2 m_rel(m.pos_x - start.x, m.pos_y - start.y);
+            vec2 m_rel(m.pos_x - x, m.pos_y - y);
             bool resize_hit = resize_hitbox.intersects(m_rel);
 
             resizing = resizing || (m.button == btn_left && resize_hit);
@@ -64,25 +62,25 @@ namespace Controls
         if (resizing && held)
         {
             vec2 m_limit(
-                std::max(m.pos_x, start.x + (int)min_width),
-                std::max(m.pos_y, start.y + (int)min_height)
+                std::max((unsigned)m.pos_x, x + min_width),
+                std::max((unsigned)m.pos_y, y + min_height)
             );
             
-            width  += m_limit.x - start.x - width;
-            height += m_limit.y - start.y - height;
+            w += m_limit.x - x - w;
+            h += m_limit.y - y - h;
         }
         else if (draggable && held)
         {
             if (!dragged)
             {
-                drag_center.x = m.pos_x - start.x;
-                drag_center.y = m.pos_y - start.y;
+                drag_center.x = m.pos_x - x;
+                drag_center.y = m.pos_y - y;
 
                 dragged = true;
             }
 
-            start.x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - (int)width);
-            start.y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - (int)height);
+            x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - w);
+            y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - h);
         }
         else
         {
@@ -97,7 +95,7 @@ namespace Controls
             }
             if (dragged)
             {
-                drag_center = start;
+                drag_center = vec2(x, y); // necessary?
                 dragged = false;
                 held = false;
             }
@@ -107,22 +105,23 @@ namespace Controls
     void Frame::render_resize_area()
     {
         rendered 
-            << move_to(resize_hitbox.start.x, resize_hitbox.start.y)
+            << move_to(resize_hitbox.x, resize_hitbox.y)
             << DEFAULT_TEXT_NORMAL
-            << box(resize_hitbox.width, resize_hitbox.height);
+            << box(resize_hitbox.w, resize_hitbox.h);
     }
 
     void Frame::update()
     {
         if (size_changed)
         {
-            rendered = canvas(width, height);
+            rendered = canvas(w, h);
+            set_font(this->font);
         }
 
         // draw border
         rendered 
             << move_to(0, 0) 
-            << border << box(width, height);
+            << border << box(w, h);
 
         // draw interior
         if (held)
@@ -144,7 +143,7 @@ namespace Controls
         
         rendered 
             << move_to(border_thickness, border_thickness) 
-            << box(width-2*border_thickness, height-2*border_thickness);
+            << box(w-2*border_thickness, h-2*border_thickness);
 
         // draw resize marker
         if (resizable)
@@ -157,9 +156,9 @@ namespace Controls
     {
         if (resizing)
         {
-            c << move_to(start.x, start.y)
+            c << move_to(x, y)
               << border 
-              << box(width, height);
+              << box(w, h);
         }
         else
         {
@@ -168,7 +167,7 @@ namespace Controls
                 update();
                 needs_update = false;
             }
-            c << stamp(rendered, start.x, start.y);
+            c << stamp(rendered, x, y);
         }
     }
 }

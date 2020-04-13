@@ -10,7 +10,7 @@ using namespace Controls;
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-const std::string FONT = "LiberationSans-Regular.ttf";
+const genv::font *FONT = new genv::font("LiberationSans-Regular.ttf", 16);
 
 bool bg = true;
 genv::color gray = genv::color(60, 60, 60);
@@ -110,26 +110,26 @@ void dewit()
 void add_sample(Scene &s)
 {
     // Frame
-    Frame *f = new Frame(&s, vec2(20, 20), 120, 70);
+    Frame *f = new Frame(&s, 20,  20, 120, 70);
     f->set_border_thickness(3);
     f->set_resizable(true);
     
     // Label
-    Label *l1 = new Label(&s, vec2(150, 20), "Liberation Sans, 18px", 190, FONT, 18);
+    Label *l1 = new Label(&s, 150,  20, "Liberation Sans, 18px", 190, FONT);
     l1->hittest_visible = true;
     l1->set_resizable(true);
     
-    Label *l2 = new Label(&s, vec2(150, 60), "Default font Label", 190);
+    Label *l2 = new Label(&s, 150,  60, "Default font Label", 190);
     l2->hittest_visible = true;
     l2->set_resizable(true);
     
     // TextBox
-    TextBox *tb1 = new TextBox(&s, vec2(350, 20), "Liberation Sans, 20px", 220, FONT, 20);
-    TextBox *tb2 = new TextBox(&s, vec2(350,60), "Default font TextBox", 200);
+    TextBox *tb1 = new TextBox(&s, 350, 20, "Liberation Sans, 20px", 220, FONT);
+    TextBox *tb2 = new TextBox(&s, 350, 60, "Default font TextBox", 200);
      
     // Button
-    Button *b1 = new Button(&s, vec2(20, 100), switch_background, "Default button", 150);
-    Button *b2 = new Button(&s, vec2(20, 140), switch_background, "Styled button", 150, FONT, 16);
+    Button *b1 = new Button(&s, 20,  100, switch_background, "Default button", 150);
+    Button *b2 = new Button(&s, 20,  140, switch_background, "Styled button", 150, FONT);
     b2->set_border_color(0xe5d96e);
     b2->set_text_fill_normal(0xe5d96e);
     b2->set_normal_bg(0x6c6c6c);
@@ -138,15 +138,15 @@ void add_sample(Scene &s)
     b2->set_hold_bg(0x8c8c8c);
     
     // Spinner
-    Spinner *s1 = new Spinner(&s, vec2(180, 100), 50, 80, FONT, 18);
+    Spinner *s1 = new Spinner(&s, 180,  100, 50, 80, FONT);
     s1->set_border_thickness(2);
     
-    Spinner *s2 = new Spinner(&s, vec2(180, 140), 1, 40, 40, vec2(7, 8), FONT, 18);
+    Spinner *s2 = new Spinner(&s, 180,  140, 1, 40, 40, vec2(7, 8), FONT);
     s2->min_value = 1;
     s2->max_value = 9;
     
     // ListBox
-    lb = new ListBox(&s, vec2(20, 200), 150, 6, FONT, 18);
+    lb = new ListBox(&s, 20,  200, 150, 6);
     lb->set_border_color(0x999999);
     
     for (int i = 0; i < 10; i++)
@@ -154,12 +154,12 @@ void add_sample(Scene &s)
         lb->add_item(new Entry("entry", i));
     }
 
-    Button *rm = new Button(&s, vec2(20, 330), remove_selected, "Remove selected", 150, vec2(10, 5), FONT);
-    Button *add = new Button(&s, vec2(20, 360), add_entry, "Add random", 150, vec2(28, 5), FONT);
-    Button *sbv = new Button(&s, vec2(20, 390), sort_list_values, "Sort by value", 150, vec2(25, 5), FONT);
-    Button *sln = new Button(&s, vec2(20, 420), sort_list_names, "Sort by name", 150, vec2(25, 5), FONT);
+    Button *rm = new Button(&s, 20, 330, remove_selected, "Remove selected", 150, vec2(10, 5), FONT);
+    Button *add = new Button(&s, 20, 360, add_entry, "Add random", 150, vec2(28, 5), FONT);
+    Button *sbv = new Button(&s, 20, 390, sort_list_values, "Sort by value", 150, vec2(25, 5), FONT);
+    Button *sln = new Button(&s, 20, 420, sort_list_names, "Sort by name", 150, vec2(25, 5), FONT);
     
-    options = new ListBox(&s, vec2(180, 200), 200, 6, FONT, 18);
+    options = new ListBox(&s, 180,  200, 200, 6, FONT);
     options->set_border_color(0xff5555);
     
     options->add_item(new Option(0, "Remove selected"));
@@ -167,7 +167,7 @@ void add_sample(Scene &s)
     options->add_item(new Option(2, "Sort by value (desc)"));
     options->add_item(new Option(3, "Sort by name"));
 
-    Button *dw = new Button(&s, vec2(180, 330), dewit, "Do it", 200, vec2(80, 5), FONT);
+    Button *dw = new Button(&s, 180,  330, dewit, "Do it", 200, vec2(80, 5), FONT);
 }
 
 class Sample

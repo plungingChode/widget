@@ -32,9 +32,6 @@ namespace Controls
         int items_visible;
         int show_from;
 
-        std::string font;
-        int font_size;
-
         rect thumb;
         bool thumb_hovered = false;
         bool thumb_dragged = false;
@@ -48,10 +45,10 @@ namespace Controls
         virtual void update() override;
         
     public:
-        ListBox(Scene *owner, vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font = "", int font_size = 16);
-        ListBox(Scene *owner, vec2 start, int width, int items_visible, std::string font = "", int font_size = 16);
+        ListBox(Scene *owner, int x, int y, int width, int items_visible, std::vector<ListBoxItem*> items, const genv::font *font = &DEFAULT_FONT);
+        ListBox(Scene *owner, int x, int y, int width, int items_visible, const genv::font *font = &DEFAULT_FONT);
 
-        void set_font(std::string font, int font_size = 16);
+        void set_font(const genv::font *font) override;
 
         void add_item(ListBoxItem *item);
         void remove_item(int index);

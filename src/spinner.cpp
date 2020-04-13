@@ -5,12 +5,12 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font, int font_size)
-        : Label(owner, start, std::to_string(value), width, height, padding, font, font_size),
+    Spinner::Spinner(Scene *s, int x, int y, int val, int min_val, int max_val, int w, int h, vec2 pad, const genv::font *f)
+        : Label(s, x, y, std::to_string(val), w, h, pad, f),
           spin(spin_none),
-          value(value),
-          min_value(min_value),
-          max_value(max_value)
+          value(val),
+          min_value(min_val),
+          max_value(max_val)
     {
         Control::draggable = false;
         Control::hittest_visible = true;
@@ -18,12 +18,12 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, std::string font, int font_size)
-        : Label(owner, start, std::to_string(value), width, font, font_size),
+    Spinner::Spinner(Scene *s, int x, int y, int val, int min_val, int max_val, int w, const genv::font *f)
+        : Label(s, x, y, std::to_string(val), w, f),
           spin(spin_none),
-          value(value),
-          min_value(min_value),
-          max_value(max_value)
+          value(val),
+          min_value(min_val),
+          max_value(max_val)
     {
         Control::draggable = false;
         Control::hittest_visible = true;
@@ -31,24 +31,24 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(Scene *owner, vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
-        : Spinner(owner, start, value, INT_MIN, INT_MAX, width, height, padding, font, font_size)
+    Spinner::Spinner(Scene *s, int x, int y, int val, int w, int h, vec2 pad, const genv::font *f)
+        : Spinner(s, x, y, val, INT_MIN, INT_MAX, w, h, pad, f)
     {
     }
 
-    Spinner::Spinner(Scene *owner, vec2 start, int value, int width, std::string font, int font_size)
-        : Spinner(owner, start, value, INT_MIN, INT_MAX, width, font, font_size)
+    Spinner::Spinner(Scene *s, int x, int y, int val, int w, const genv::font *f)
+        : Spinner(s, x, y, val, INT_MIN, INT_MAX, w, f)
     {
     }
 
     void Spinner::set_spinner_hitboxes()
     {
         const int hb_width  = 17;
-        const int hb_height = height/2-border_thickness;
-        const int hb_x = width-hb_width-border_thickness;
+        const int hb_height = h/2-border_thickness;
+        const int hb_x = w-hb_width-border_thickness;
 
         spin_up_hitbox = rect(vec2(hb_x, border_thickness), hb_width, hb_height-1);
-        spin_dn_hitbox = rect(vec2(hb_x, height/2), hb_width, hb_height);
+        spin_dn_hitbox = rect(vec2(hb_x, h/2), hb_width, hb_height);
     }
 
     void Spinner::set_spin_color(int hex)
@@ -92,7 +92,7 @@ namespace Controls
         spin = spin_none;
         if (focused)
         {
-            vec2 m_rel = vec2(m.pos_x-start.x, m.pos_y-start.y);
+            vec2 m_rel = vec2(m.pos_x-x, m.pos_y-y);
 
             if (m.button == btn_wheelup || 
                (m.button == btn_left && spin_up_hitbox.intersects(m_rel)))
@@ -149,23 +149,23 @@ namespace Controls
         // button borders
         rendered 
             << border
-            << move_to(up.start.x-1, 0)
-            << line(0, height)
-            << move_to(dn.start.x, dn.start.y-1)
-            << line(dn.width, 0);
+            << move_to(up.x-1, 0)
+            << line(0, h)
+            << move_to(dn.x, dn.y-1)
+            << line(dn.w, 0);
 
         // up btn content
         rendered 
-            << move_to(up.start.x, up.start.y)
+            << move_to(up.x, up.y)
             << (spin == spin_up ? spin_color : normal_bg)
-            << box(up.width, up.height)
-            << stamp(spin_up_icon, up.start.x+3, up.start.y+(up.height/2)-3);
+            << box(up.w, up.h)
+            << stamp(spin_up_icon, up.x+3, up.y+(up.h/2)-3);
 
         // down btn content
         rendered 
-            << move_to(dn.start.x, dn.start.y)
+            << move_to(dn.x, dn.y)
             << (spin == spin_down ? spin_color : normal_bg)
-            << box(dn.width, dn.height)
-            << stamp(spin_dn_icon, dn.start.x+3, dn.start.y+(dn.height/2)-3);
+            << box(dn.w, dn.h)
+            << stamp(spin_dn_icon, dn.x+3, dn.y+(dn.h/2)-3);
     }
 }

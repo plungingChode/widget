@@ -5,25 +5,25 @@ using namespace genv;
 
 namespace Controls
 {
-    ListBox::ListBox(Scene *owner, vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font, int font_size)
-        : Frame(owner, start, width, items_visible*(font_size+item_padding)+2),
-          items(items), selected_item(nullptr), selected_index(-1),
-          items_visible(items_visible), show_from(0)
+    ListBox::ListBox(Scene *s, int x, int y, int w, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
+        : Frame(s, x, y, w, items_vis*(f->font_size+item_padding)+2, f),
+          items(v), selected_item(nullptr), selected_index(-1),
+          items_visible(items_vis), show_from(0)
     {
         Control::draggable = false;
         Frame::border_thickness = 1;
         
-        set_font(font, font_size);
+        set_font(f);
         set_hover_bg(0xffffff);
         set_focus_bg(0xffffff);
         set_hold_bg(0xffffff);
 
-        thumb = rect(vec2(width-1-15, 0), 15, -1);
+        thumb = rect(vec2(w-1-15, 0), 15, -1);
         adjust_thumb();
     }
 
-    ListBox::ListBox(Scene *owner, vec2 start, int width, int items_visible, std::string font, int font_size)
-        : ListBox(owner, start, width, items_visible, {}, font, font_size)
+    ListBox::ListBox(Scene *s, int x, int y, int w, int items_vis, const genv::font *f)
+        : ListBox(s, x, y, w, items_vis, {}, f)
     {
     }
 
@@ -31,19 +31,19 @@ namespace Controls
     {
         if ((int)items.size() < items_visible)
         {
-            thumb.height = height;
+            thumb.h = h;
         }
         else
         {
-            thumb.height = height * items_visible / (float)items.size();
+            thumb.h = h * items_visible / (float)items.size();
 
-            scroll_diff = force_bounds(thumb.height/2, 1u, 8u);
-            thumb.height = std::max(10u, thumb.height);
+            scroll_diff = force_bounds(thumb.h/2, 1, 8);
+            thumb.h = std::max(10, thumb.h);
         }
 
-        if (thumb.start.y+thumb.height > height)
+        if (thumb.y+thumb.h > h)
         {
-            thumb.start.y = height-thumb.height;
+            thumb.y = h-thumb.h;
         }
     }
 
@@ -86,8 +86,8 @@ namespace Controls
 
         // draw separator
         rendered
-            << move_to(width-1-thumb.width-1, 0)
-            << border << line(0, height);
+            << move_to(w-1-thumb.w-1, 0)
+            << border << line(0, h);
 
         // draw thumb
         if (thumb_dragged)
@@ -104,20 +104,20 @@ namespace Controls
         }
 
         rendered
-            << move_to(thumb.start.x, thumb.start.y)
-            << box(thumb.width, thumb.height);
+            << move_to(thumb.x, thumb.y)
+            << box(thumb.w, thumb.h);
 
         // draw items
         int ubound = std::min(items_visible, (int)items.size());
-        int baseline_offs = font.empty() ? rendered.cascent() : 0;
-        int item_height = font_size+item_padding;
+        int baseline_offs = font->font_name.empty() ? rendered.cascent() : 0;
+        int item_h = font->font_size+item_padding;
 
         for (int i = 0; i < ubound; i++)
         {
             int index = show_from+i;
             if (index == selected_index)
             {
-                rendered << move_to(1, i*item_height+1);
+                rendered << move_to(1, i*item_h+1);
                 if (focused)
                 {
                     rendered << selection_bg;
@@ -126,7 +126,7 @@ namespace Controls
                 {
                     rendered << unfocused_selection_bg;
                 }
-                rendered << box(width-thumb.width-2*1, item_height);
+                rendered << box(w-thumb.w-2*1, item_h);
                 rendered << selection_fg;
             }
             else
@@ -134,22 +134,24 @@ namespace Controls
                 rendered << foreground;
             }
             rendered 
-                << move_to(5+1, i*item_height+1+baseline_offs)
+                << move_to(5+1, i*item_h+1+baseline_offs)
                 << text(items[index]->to_string());
         }
     }
 
-    void ListBox::set_font(std::string font, int font_size)
+    void ListBox::set_font(const genv::font *f)
     {
-        if (rendered.load_font(font, font_size))
+        if (font && (!f || f->font_size != font->font_size))
         {
-            this->font = font;
-            this->font_size = font_size;
+            size_changed = true;
+        }
+        if (f && rendered.load_font(f->font_name, f->font_size))
+        {
+            font = f;
         }
         else
         {
-            this->font = "";
-            this->font_size = 16;
+            font = &DEFAULT_FONT;
         }
         schedule_update();
     }
@@ -157,7 +159,7 @@ namespace Controls
     void ListBox::on_mouse_ev(const genv::event &mouse_ev, bool btn_held)
     {
         Frame::on_mouse_ev(mouse_ev, btn_held);
-        vec2 m_rel(mouse_ev.pos_x-start.x, mouse_ev.pos_y-start.y);
+        vec2 m_rel(mouse_ev.pos_x-x, mouse_ev.pos_y-y);
         
         bool new_thumb_hover = thumb.intersects(m_rel);
         if (new_thumb_hover != thumb_hovered)
@@ -177,10 +179,10 @@ namespace Controls
                 if (!thumb_dragged)
                 {
                     thumb_dragged = true;
-                    thumb_drag_y = m_rel.y - thumb.start.y;
+                    thumb_drag_y = m_rel.y - thumb.y;
                 }
 
-                thumb.start.y = m_rel.y - thumb_drag_y;
+                thumb.y = m_rel.y - thumb_drag_y;
                 thumb_moved = true;
             }
             
@@ -193,41 +195,41 @@ namespace Controls
             {
                 if (mouse_ev.button == btn_wheelup)
                 {
-                    thumb.start.y -= scroll_diff;
+                    thumb.y -= scroll_diff;
                     thumb_moved = true;
                 }
 
                 if (mouse_ev.button == btn_wheeldown)
                 {
-                    thumb.start.y += scroll_diff;
+                    thumb.y += scroll_diff;
                     thumb_moved = true;
                 }
             }
 
             if (!thumb_hovered && mouse_ev.button == btn_left)
             {
-                if ((unsigned)m_rel.x < width-1-thumb.width-1 &&
-                    (unsigned)m_rel.x > 1)
+                if (m_rel.x < w-1-thumb.w-1 &&
+                    m_rel.x > 1)
                 {
-                    float mouse_pos = m_rel.y / float(height-2+item_padding);
+                    float mouse_pos = m_rel.y / float(h-2+item_padding);
 
                     selected_index = show_from+(mouse_pos*items_visible);
                     selected_item = items[selected_index];
                 }
-                else if ((unsigned)m_rel.x > width-1-thumb.width &&
-                         (unsigned)m_rel.x < width-1)
+                else if (m_rel.x > w-1-thumb.w &&
+                         m_rel.x < w-1)
                 {
-                    thumb.start.y = m_rel.y - thumb.height/2;
+                    thumb.y = m_rel.y - thumb.h/2;
                     thumb_moved = true;
                 }
             }
 
             if (thumb_moved)
             {
-                thumb.start.y = force_bounds(thumb.start.y, 0, int(height-thumb.height));
+                thumb.y = force_bounds(thumb.y, 0, int(h-thumb.h));
 
-                show_from = (thumb.start.y / float(height-thumb.height)) * items.size();
-                show_from = force_bounds(show_from, 0, (int)items.size()-items_visible);
+                show_from = (thumb.y / float(h-thumb.h)) * items.size();
+                show_from = force_bounds(show_from, 0, int(items.size()-items_visible));
 
                 schedule_update();
             }

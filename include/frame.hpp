@@ -3,12 +3,10 @@
 
 #include "control.hpp"
 #include "control_common.hpp"
-// #include "rect.hpp"
-// #include "graphics.hpp"
 
 namespace Controls
 {
-    class Frame : public Control, public rect
+    class Frame : public Control
     {
     protected:
         genv::color normal_bg = DEFAULT_NORMAL;
@@ -19,17 +17,15 @@ namespace Controls
         unsigned int border_thickness;
         unsigned int min_width, min_height;
 
-        genv::canvas rendered;
-
         rect resize_hitbox;
 
-        void set_color(genv::color& target, int hex);        
+        void set_color(genv::color &target, int hex);        
         void reset_resize_hitbox();
         virtual void render_resize_area();
         virtual void update() override;
 
     public:
-        Frame(Scene *owner, vec2 start, int width, int height);
+        Frame(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
 
         void set_resizable(bool val) override;
         void set_normal_bg(int hex) { set_color(normal_bg, hex); }
@@ -38,13 +34,13 @@ namespace Controls
         void set_hold_bg(int hex) { set_color(hold_bg, hex); }
         void set_border_color(int hex) { set_color(border, hex); }
         
-        virtual void set_border_thickness(unsigned int thickness);
         void set_min_width(unsigned int w) { min_width = w; }
         void set_min_height(unsigned int h) { min_height = h; }
+        virtual void set_border_thickness(unsigned int thickness);
 
-        virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const genv::event& key_ev, int key_held = 0) override {}
-        virtual void render(genv::canvas& c) override;
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
+        virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override {}
+        virtual void render(genv::canvas &c) override;
     };
 }
 

@@ -4,20 +4,20 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(Scene *owner, vec2 start, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
-        : Label(owner, start, text, width, height, padding, font, font_size)
+    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, int h, vec2 pad, const genv::font *f)
+        : Label(owner, x, y, text_, w, h, pad, f)
     {
         Control::hittest_visible = true;
     }
 
-    TextBox::TextBox(Scene *owner, vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
-        : Label(owner, start, text, width, padding, font, font_size)
+    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, vec2 pad, const genv::font *f)
+        : Label(owner, x, y, text_, w, pad, f)
     {
         Control::hittest_visible = true;
     }
 
-    TextBox::TextBox(Scene *owner, vec2 start, std::string text, int width, std::string font, int font_size)
-        : Label(owner, start, text, width, font, font_size)
+    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, const genv::font *f)
+        : Label(owner, x, y, text_, w, f)
     {
         Control::hittest_visible = true;
     }
@@ -27,7 +27,7 @@ namespace Controls
         char kc = key_held ? (char)key_held : (char)key_ev.keycode;
 
         if (kc >= 32 && kc <= 255 && 
-            rendered.twidth(text+kc) <= (int)width - 2*padding.x)
+            rendered.twidth(text+kc) <= (int)w - 2*padding.x)
         {
             // visible charcodes: 32 - 255
             text += kc;

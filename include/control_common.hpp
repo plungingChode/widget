@@ -21,6 +21,8 @@ namespace Controls
     genv::color change_tint(const genv::color &c, float dr, float dg, float db);
     genv::color change_tint(const genv::color &c, float d);
 
+    const genv::font DEFAULT_FONT = genv::font("", 16);
+
     const genv::color BLACK = hex_to_color(0x000000);
     const genv::color DEFAULT_BORDER = hex_to_color(0x718EA4);
     const genv::color DEFAULT_NORMAL = hex_to_color(0xFFFFFF);

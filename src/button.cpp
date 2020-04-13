@@ -4,34 +4,34 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
-        : Label(owner, start, text, width, height, padding, font, font_size), action(action)
+    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, int h, vec2 pad, const genv::font *f)
+        : Label(s, x, y, tx, w, h, pad, f), action(a)
     {
-        if (!this->font.empty()) Frame::rendered.transparent(true);
+        if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, vec2 padding, std::string font, int font_size)
-        : Label(owner, start, text, width, padding, font, font_size), action(action)
+    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, vec2 pad, const genv::font *f)
+        : Label(s, x, y, tx, w, pad, f), action(a)
     {
-        if (!this->font.empty()) Frame::rendered.transparent(true);
+        if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, std::string font, int font_size)
-        : Label(owner, start, text, width, font, font_size), action(action)
+    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, const genv::font *f)
+        : Label(s, x, y, tx, w, f), action(a)
     {
-        if (!this->font.empty()) Frame::rendered.transparent(true);
+        if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    void Button::set_font(std::string font, int font_size)
+    void Button::set_font(const genv::font *f)
     {
-        Label::set_font(font, font_size);
-        if (font.empty())
+        Label::set_font(f);
+        if (!f)
         {
             rendered.transparent(false);
         }
@@ -49,7 +49,7 @@ namespace Controls
 
     void Button::update()
     {
-        if (size_changed && !font.empty())
+        if (size_changed && font)
         {
             rendered.transparent(true);
         }
@@ -57,7 +57,7 @@ namespace Controls
         rendered 
             << move_to(0, 0) 
             << BLACK 
-            << box(width, height);
+            << box(w, h);
 
         if (held)
         {
@@ -81,18 +81,18 @@ namespace Controls
         // draw background
         rendered 
             << move_to(0, 0) 
-            << box(width-b, height-b);
+            << box(w-b, h-b);
 
         int baseline = padding.y;
-        if (font.empty()) baseline += rendered.cascent();
+        if (!font) baseline += rendered.cascent();
 
         rendered << border;
         if (held)
         {
             // bevel on bottom right, push in text
             rendered 
-                << move_to(1, height-b) << box(width-1, b)
-                << move_to(width-b, 1) << box(b, height-1)
+                << move_to(1, h-b) << box(w-1, b)
+                << move_to(w-b, 1) << box(b, h-1)
                 << move_to(padding.x+1, baseline+1) 
                 << text_fill_normal << genv::text(text);
         }
@@ -100,8 +100,8 @@ namespace Controls
         {
             // bevel on top left
             rendered 
-                << move_to(0, 0) << box(width-b, b)
-                << move_to(0, 0) << box(b, height-b)
+                << move_to(0, 0) << box(w-b, b)
+                << move_to(0, 0) << box(b, h-b)
                 << move_to(padding.x, baseline) 
                 << text_fill_normal << genv::text(text);
         }

@@ -4,31 +4,30 @@ using namespace genv;
 
 namespace Controls
 {
-    Label::Label(Scene *owner, vec2 start, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
-        : Frame(owner, start, width, height),
-          padding(padding),
-          text(text)
+    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, int h, vec2 pad, const genv::font *f)
+        : Frame(s, x, y, w, h, f),
+          padding(pad),
+          text(tx)
     {
-        set_font(font, font_size);
         Frame::border_thickness = 1;
         Control::hittest_visible = false;
     }
 
-    Label::Label(Scene *owner, vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
-        : Frame(owner, start, width, 0),
-          padding(padding),
-          text(text)
+    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, vec2 pad, const genv::font *f)
+        : Frame(s, x, y, w, 0, f),
+          padding(pad),
+          text(tx)
     {
-        set_font(font, font_size);
         Frame::border_thickness = 1;
-        Frame::height = rendered.cascent() + rendered.cdescent() + 10;
-        rendered.open(Frame::width, Frame::height);
         Control::hittest_visible = false;
+
+        Control::h = rendered.cascent() + rendered.cdescent() + 10;
+        rendered.open(Control::w, Control::h);
     }
 
 
-    Label::Label(Scene *owner, vec2 start, std::string text, int width, std::string font, int font_size)
-        : Label(owner, start, text, width, vec2(5, 5), font, font_size)
+    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, const genv::font *f)
+        : Label(s, x, y, tx, w, vec2(5, 5), f)
     {
     }
 
@@ -38,40 +37,20 @@ namespace Controls
         schedule_update();
     }
 
-    void Label::set_text(std::string text)
+    void Label::set_text(const std::string &tx)
     {
-        this->text = text;
-        schedule_update();
-    }
-
-    void Label::set_font(std::string font, int font_size)
-    {
-        if (rendered.load_font(font, font_size))
-        {
-            this->font = font;
-            this->font_size = font_size;
-        }
-        else
-        {
-            this->font = "";
-            this->font_size = 16;
-        }
+        this->text = tx;
         schedule_update();
     }
 
     void Label::update()
     {        
         Frame::update();
-
-        if (size_changed)
-        {
-            set_font(font, font_size);
-        }
         
         if (text.empty()) return;
 
         int baseline = padding.y;
-        if (font.empty()) baseline += rendered.cascent();
+        if (!font) baseline += rendered.cascent();
 
         if (focused)
         {   

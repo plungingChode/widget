@@ -9,9 +9,11 @@ namespace Controls
 {
     class Scene;
 
-    class Control
+    class Control : public rect
     {
     protected:
+        genv::canvas rendered;
+
         bool hovered, focused, held;
         bool resizable, resizing, size_changed;
         bool needs_update;
@@ -20,9 +22,10 @@ namespace Controls
         // Coordinates of the mouse event that started the drag
         vec2 drag_center;
 
-        Scene *owner;
+        const Scene *owner;
+        const genv::font *font;
 
-        Control(Scene *owner);
+        Control(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
 
         virtual void update() = 0;
 
@@ -39,7 +42,8 @@ namespace Controls
         bool is_resizable() const { return resizable; }
 
         virtual void set_resizable(bool val) { resizable = val; }
-        
+        virtual void set_font(const genv::font *font);
+    
         virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) = 0;
         virtual void on_key_ev(const genv::event& key_ev, int key_held = 0) = 0;
 

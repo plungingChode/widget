@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 #include "frame.hpp"
 
 namespace Controls
@@ -14,6 +15,7 @@ namespace Controls
         virtual std::string to_string() = 0;
     };
 
+    typedef std::function<bool(ListBoxItem*, ListBoxItem*)> Compare;
 
     class ListBox : public Frame
     {
@@ -49,15 +51,18 @@ namespace Controls
         ListBox(vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font = "", int font_size = 16);
         ListBox(vec2 start, int width, int items_visible, std::string font = "", int font_size = 16);
 
+        void set_font(std::string font, int font_size = 16);
+
         void add_item(ListBoxItem *item);
         void remove_item(int index);
-        void set_font(std::string font, int font_size = 16);
+        void sort(Compare comp);       
 
         ListBoxItem* get_selected_item() const { return selected_item; }
         int get_selected_index() const { return selected_index; }
 
         const std::vector<ListBoxItem*>& get_items() const { return items; }
 
+        
         virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
         virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override;
     };

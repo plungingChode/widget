@@ -1,4 +1,5 @@
 #include "listbox.hpp"
+#include <algorithm>
 
 using namespace genv;
 
@@ -11,7 +12,11 @@ namespace Controls
     {
         Control::draggable = false;
         Frame::border_thickness = 1;
+        
         set_font(font, font_size);
+        set_hover_bg(0xffffff);
+        set_focus_bg(0xffffff);
+        set_hold_bg(0xffffff);
 
         thumb = rect(vec2(width-1-15, 0), 15, -1);
         adjust_thumb();
@@ -67,6 +72,12 @@ namespace Controls
             adjust_thumb();
             schedule_update();
         }
+    }
+
+    void ListBox::sort(Compare comp)
+    {
+        std::sort(items.begin(), items.end(), comp);
+        schedule_update();
     }
 
     void ListBox::update()

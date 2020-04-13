@@ -42,6 +42,8 @@ struct Entry : public ListBoxItem
     }
 };
 
+
+
 ListBox *lb;
 void remove_selected()
 {
@@ -50,7 +52,59 @@ void remove_selected()
 
 void add_entry()
 {
-    lb->add_item(new Entry("entry", std::rand()%100));
+    std::stringstream ss;
+    for (int i = 0; i < 6; i++)
+    {
+        ss << char(std::rand()%(122-97)+97);
+    }
+
+    lb->add_item(new Entry(ss.str(), std::rand()%100));
+}
+
+bool by_value_desc(ListBoxItem *lhs, ListBoxItem *rhs)
+{
+    return static_cast<Entry*>(lhs)->value > static_cast<Entry*>(rhs)->value;
+}
+void sort_list_values()
+{
+    lb->sort(by_value_desc);
+}
+
+bool by_name_asc(ListBoxItem *lhs, ListBoxItem *rhs)
+{
+    return static_cast<Entry*>(lhs)->name < static_cast<Entry*>(rhs)->name;
+}
+void sort_list_names()
+{
+    lb->sort(by_name_asc);
+}
+
+ListBox *options;
+class Option : public ListBoxItem
+{
+public:
+    int id;
+    std::string name;
+
+    Option(int id, std::string name) : id(id), name(name) {}
+
+    std::string to_string() override { return name; }
+};
+
+void dewit()
+{
+    Option* op = static_cast<Option*>(options->get_selected_item());
+    if (op)
+    {
+        switch(op->id)
+        {
+        case 0: remove_selected(); break;
+        case 1: add_entry(); break;
+        case 2: sort_list_values(); break;
+        case 3: sort_list_names(); break;
+        default: break;
+        }
+    }
 }
 
 void add_sample(Scene &s)
@@ -103,12 +157,8 @@ void add_sample(Scene &s)
     s.add_control(s2);
 
     // ListBox
-    lb = new ListBox(vec2(180, 200), 150, 6, FONT, 18);
-    lb->set_hover_bg(0xffffff);
-    lb->set_focus_bg(0xffffff);
-    lb->set_hold_bg(0xffffff);
+    lb = new ListBox(vec2(20, 200), 150, 6, FONT, 18);
     lb->set_border_color(0x999999);
-    lb->set_border_thickness(1);
     s.add_control(lb);
 
     for (int i = 0; i < 10; i++)
@@ -116,11 +166,29 @@ void add_sample(Scene &s)
         lb->add_item(new Entry("entry", i));
     }
 
-    Button *rm = new Button(vec2(180, 330), remove_selected, "Remove selected", 150, FONT);
+    Button *rm = new Button(vec2(20, 330), remove_selected, "Remove selected", 150, FONT);
     s.add_control(rm);
 
-    Button *add = new Button(vec2(180, 360), add_entry, "Add random", 150);
+    Button *add = new Button(vec2(20, 360), add_entry, "Add random", 150);
     s.add_control(add);
+
+    Button *sbv = new Button(vec2(20, 390), sort_list_values, "Sort by value", 150, FONT);
+    s.add_control(sbv);
+
+    Button *sln = new Button(vec2(20, 420), sort_list_names, "Sort by name", 150, FONT);
+    s.add_control(sln);
+
+    options = new ListBox(vec2(180, 200), 200, 6, FONT, 18);
+    options->set_border_color(0xff5555);
+    s.add_control(options);
+
+    options->add_item(new Option(0, "Remove selected"));
+    options->add_item(new Option(1, "Add random"));
+    options->add_item(new Option(2, "Sort by value (desc)"));
+    options->add_item(new Option(3, "Sort by name"));
+
+    Button *dw = new Button(vec2(180, 330), dewit, "Do it", 200, vec2(80, 5), FONT);
+    s.add_control(dw);
 }
 
 class Sample

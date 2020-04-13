@@ -110,95 +110,79 @@ void dewit()
 void add_sample(Scene &s)
 {
     // Frame
-    Frame *f = new Frame(vec2(20, 20), 120, 70);
+    Frame *f = new Frame(&s, vec2(20, 20), 120, 70);
     f->set_border_thickness(3);
     f->set_resizable(true);
-    s.add_control(f);
-
+    
     // Label
-    Label *l1 = new Label(vec2(150, 20), "Liberation Sans, 18px", 190, FONT, 18);
+    Label *l1 = new Label(&s, vec2(150, 20), "Liberation Sans, 18px", 190, FONT, 18);
     l1->hittest_visible = true;
     l1->set_resizable(true);
-    s.add_control(l1);
-
-    Label *l2 = new Label(vec2(150, 60), "Default font Label", 190);
+    
+    Label *l2 = new Label(&s, vec2(150, 60), "Default font Label", 190);
     l2->hittest_visible = true;
     l2->set_resizable(true);
-    s.add_control(l2);
-
+    
     // TextBox
-    TextBox *tb1 = new TextBox(vec2(350, 20), "Liberation Sans, 20px", 220, FONT, 20);
-    s.add_control(tb1);
-
-    TextBox *tb2 = new TextBox(vec2(350,60), "Default font TextBox", 200);
-    s.add_control(tb2);
- 
+    TextBox *tb1 = new TextBox(&s, vec2(350, 20), "Liberation Sans, 20px", 220, FONT, 20);
+    TextBox *tb2 = new TextBox(&s, vec2(350,60), "Default font TextBox", 200);
+     
     // Button
-    Button *b1 = new Button(vec2(20, 100), switch_background, "Default button", 150, FONT, 16);
-    s.add_control(b1);
-
-    Button *b2 = new Button(vec2(20, 140), switch_background, "Styled button", 150, FONT, 16);
+    Button *b1 = new Button(&s, vec2(20, 100), switch_background, "Default button", 150);
+    Button *b2 = new Button(&s, vec2(20, 140), switch_background, "Styled button", 150, FONT, 16);
     b2->set_border_color(0xe5d96e);
     b2->set_text_fill_normal(0xe5d96e);
     b2->set_normal_bg(0x6c6c6c);
     b2->set_hover_bg(0x7c7c7c);
     b2->set_focus_bg(0x7c7c7c);
     b2->set_hold_bg(0x8c8c8c);
-    s.add_control(b2);
-
+    
     // Spinner
-    Spinner *s1 = new Spinner(vec2(180, 100), 50, 80, FONT, 18);
+    Spinner *s1 = new Spinner(&s, vec2(180, 100), 50, 80, FONT, 18);
     s1->set_border_thickness(2);
-    s.add_control(s1);
-
-    Spinner *s2 = new Spinner(vec2(180, 140), 1, 40, 40, vec2(7, 8), FONT, 18);
+    
+    Spinner *s2 = new Spinner(&s, vec2(180, 140), 1, 40, 40, vec2(7, 8), FONT, 18);
     s2->min_value = 1;
     s2->max_value = 9;
-    s.add_control(s2);
-
+    
     // ListBox
-    lb = new ListBox(vec2(20, 200), 150, 6, FONT, 18);
+    lb = new ListBox(&s, vec2(20, 200), 150, 6, FONT, 18);
     lb->set_border_color(0x999999);
-    s.add_control(lb);
-
+    
     for (int i = 0; i < 10; i++)
     {
         lb->add_item(new Entry("entry", i));
     }
 
-    Button *rm = new Button(vec2(20, 330), remove_selected, "Remove selected", 150, FONT);
-    s.add_control(rm);
-
-    Button *add = new Button(vec2(20, 360), add_entry, "Add random", 150);
-    s.add_control(add);
-
-    Button *sbv = new Button(vec2(20, 390), sort_list_values, "Sort by value", 150, FONT);
-    s.add_control(sbv);
-
-    Button *sln = new Button(vec2(20, 420), sort_list_names, "Sort by name", 150, FONT);
-    s.add_control(sln);
-
-    options = new ListBox(vec2(180, 200), 200, 6, FONT, 18);
+    Button *rm = new Button(&s, vec2(20, 330), remove_selected, "Remove selected", 150, vec2(10, 5), FONT);
+    Button *add = new Button(&s, vec2(20, 360), add_entry, "Add random", 150, vec2(28, 5), FONT);
+    Button *sbv = new Button(&s, vec2(20, 390), sort_list_values, "Sort by value", 150, vec2(25, 5), FONT);
+    Button *sln = new Button(&s, vec2(20, 420), sort_list_names, "Sort by name", 150, vec2(25, 5), FONT);
+    
+    options = new ListBox(&s, vec2(180, 200), 200, 6, FONT, 18);
     options->set_border_color(0xff5555);
-    s.add_control(options);
-
+    
     options->add_item(new Option(0, "Remove selected"));
     options->add_item(new Option(1, "Add random"));
     options->add_item(new Option(2, "Sort by value (desc)"));
     options->add_item(new Option(3, "Sort by name"));
 
-    Button *dw = new Button(vec2(180, 330), dewit, "Do it", 200, vec2(80, 5), FONT);
-    s.add_control(dw);
+    Button *dw = new Button(&s, vec2(180, 330), dewit, "Do it", 200, vec2(80, 5), FONT);
 }
 
 class Sample
 {
+private:
+    std::string word;
+
 public:
+    Sample(std::string word) : word(word) {}
+
     void f(const genv::event &ev)
     {
         if (ev.keycode == 'c')
         {
-            printf("hello\n");
+            printf("%s\n", word.c_str());
         }
     }
 };
@@ -208,8 +192,11 @@ int main(int argc, char const *argv[])
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
     add_sample(s);
 
-    Sample smp;
-    s.add_listener(&Sample::f, &smp);
+    Sample smp1("hello");
+    s.add_listener(&Sample::f, &smp1);
+
+    Sample smp2("goodbye");
+    s.add_listener(&Sample::f, &smp2);
     
     return s.run();
 }

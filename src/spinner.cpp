@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font, int font_size)
-        : Label(start, std::to_string(value), width, height, padding, font, font_size),
+    Spinner::Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font, int font_size)
+        : Label(owner, start, std::to_string(value), width, height, padding, font, font_size),
           spin(spin_none),
           value(value),
           min_value(min_value),
@@ -18,8 +18,8 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(vec2 start, int value, int min_value, int max_value, int width, std::string font, int font_size)
-        : Label(start, std::to_string(value), width, font, font_size),
+    Spinner::Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, std::string font, int font_size)
+        : Label(owner, start, std::to_string(value), width, font, font_size),
           spin(spin_none),
           value(value),
           min_value(min_value),
@@ -31,13 +31,13 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
-        : Spinner(start, value, INT_MIN, INT_MAX, width, height, padding, font, font_size)
+    Spinner::Spinner(Scene *owner, vec2 start, int value, int width, int height, vec2 padding, std::string font, int font_size)
+        : Spinner(owner, start, value, INT_MIN, INT_MAX, width, height, padding, font, font_size)
     {
     }
 
-    Spinner::Spinner(vec2 start, int value, int width, std::string font, int font_size)
-        : Spinner(start, value, INT_MIN, INT_MAX, width, font, font_size)
+    Spinner::Spinner(Scene *owner, vec2 start, int value, int width, std::string font, int font_size)
+        : Spinner(owner, start, value, INT_MIN, INT_MAX, width, font, font_size)
     {
     }
 

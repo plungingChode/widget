@@ -4,24 +4,24 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
-        : Label(start, text, width, height, padding, font, font_size), action(action)
+    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
+        : Label(owner, start, text, width, height, padding, font, font_size), action(action)
     {
         if (!this->font.empty()) Frame::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, vec2 padding, std::string font, int font_size)
-        : Label(start, text, width, padding, font, font_size), action(action)
+    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, vec2 padding, std::string font, int font_size)
+        : Label(owner, start, text, width, padding, font, font_size), action(action)
     {
         if (!this->font.empty()) Frame::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(vec2 start, std::function<void()> action, std::string text, int width, std::string font, int font_size)
-        : Label(start, text, width, font, font_size), action(action)
+    Button::Button(Scene *owner, vec2 start, std::function<void()> action, std::string text, int width, std::string font, int font_size)
+        : Label(owner, start, text, width, font, font_size), action(action)
     {
         if (!this->font.empty()) Frame::rendered.transparent(true);
         Control::draggable = false;

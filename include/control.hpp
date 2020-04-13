@@ -7,6 +7,8 @@
 
 namespace Controls
 {
+    class Scene;
+
     class Control
     {
     protected:
@@ -18,9 +20,9 @@ namespace Controls
         // Coordinates of the mouse event that started the drag
         vec2 drag_center;
 
-        rect resize_hitbox;
+        Scene *owner;
 
-        Control(vec2 drag_center);
+        Control(Scene *owner);
 
         virtual void update() = 0;
 

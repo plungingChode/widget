@@ -18,9 +18,9 @@ namespace Controls
         virtual void update() override;
 
     public:
-        Label(vec2 start, std::string text, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
-        Label(vec2 start, std::string text, int width, vec2 padding, std::string font = "", int font_size = 16);
-        Label(vec2 start, std::string text, int width, std::string font = "", int font_size = 16);
+        Label(Scene *owner, vec2 start, std::string text, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
+        Label(Scene *owner, vec2 start, std::string text, int width, vec2 padding, std::string font = "", int font_size = 16);
+        Label(Scene *owner, vec2 start, std::string text, int width, std::string font = "", int font_size = 16);
 
         void set_padding(vec2 p);
         void set_text(std::string text);

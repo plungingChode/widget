@@ -48,8 +48,8 @@ namespace Controls
         virtual void update() override;
         
     public:
-        ListBox(vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font = "", int font_size = 16);
-        ListBox(vec2 start, int width, int items_visible, std::string font = "", int font_size = 16);
+        ListBox(Scene *owner, vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font = "", int font_size = 16);
+        ListBox(Scene *owner, vec2 start, int width, int items_visible, std::string font = "", int font_size = 16);
 
         void set_font(std::string font, int font_size = 16);
 

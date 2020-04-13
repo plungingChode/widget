@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    ListBox::ListBox(vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font, int font_size)
-        : Frame(start, width, items_visible*(font_size+item_padding)+2),
+    ListBox::ListBox(Scene *owner, vec2 start, int width, int items_visible, std::vector<ListBoxItem*> items, std::string font, int font_size)
+        : Frame(owner, start, width, items_visible*(font_size+item_padding)+2),
           items(items), selected_item(nullptr), selected_index(-1),
           items_visible(items_visible), show_from(0)
     {
@@ -22,8 +22,8 @@ namespace Controls
         adjust_thumb();
     }
 
-    ListBox::ListBox(vec2 start, int width, int items_visible, std::string font, int font_size)
-        : ListBox(start, width, items_visible, {}, font, font_size)
+    ListBox::ListBox(Scene *owner, vec2 start, int width, int items_visible, std::string font, int font_size)
+        : ListBox(owner, start, width, items_visible, {}, font, font_size)
     {
     }
 

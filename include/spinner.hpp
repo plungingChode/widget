@@ -40,10 +40,10 @@ namespace Controls
         int diff_small = 1;
         int diff_big   = 10;
 
-        Spinner(vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
-        Spinner(vec2 start, int value, int min_value, int max_value, int width, std::string font = "", int font_size = 16);
-        Spinner(vec2 start, int value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
-        Spinner(vec2 start, int value, int width, std::string font = "", int font_size = 16);
+        Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
+        Spinner(Scene *owner, vec2 start, int value, int min_value, int max_value, int width, std::string font = "", int font_size = 16);
+        Spinner(Scene *owner, vec2 start, int value, int width, int height, vec2 padding, std::string font = "", int font_size = 16);
+        Spinner(Scene *owner, vec2 start, int value, int width, std::string font = "", int font_size = 16);
 
         void set_spin_color(int hex);
         void set_border_thickness(unsigned thickness) override;

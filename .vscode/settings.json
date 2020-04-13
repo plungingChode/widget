@@ -79,6 +79,7 @@
     "thread": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "climits": "cpp"
+    "climits": "cpp",
+    "*.rh": "cpp"
   }
 }

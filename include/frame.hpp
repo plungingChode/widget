@@ -21,13 +21,15 @@ namespace Controls
 
         genv::canvas rendered;
 
+        rect resize_hitbox;
+
         void set_color(genv::color& target, int hex);        
         void reset_resize_hitbox();
         virtual void render_resize_area();
         virtual void update() override;
 
     public:
-        Frame(vec2 start, int width, int height);
+        Frame(Scene *owner, vec2 start, int width, int height);
 
         void set_resizable(bool val) override;
         void set_normal_bg(int hex) { set_color(normal_bg, hex); }

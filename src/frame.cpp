@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(vec2 start, int width, int height)
-        : Control(start),
+    Frame::Frame(Scene *owner, vec2 start, int width, int height)
+        : Control(owner),
           rect(start, width, height),
           border_thickness(10),
           min_width(15), 

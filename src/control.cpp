@@ -1,8 +1,9 @@
 #include "control.hpp"
+#include "scene.hpp"
 
 namespace Controls
 {
-    Control::Control(vec2 drag_center)
+    Control::Control(Scene *owner)
         : hovered(false), 
           focused(false), 
           held(false),
@@ -11,9 +12,11 @@ namespace Controls
           size_changed(false),
           needs_update(true),
           dragged(false),
-          drag_center(drag_center),
+          drag_center(vec2(0, 0)),
+          owner(owner),
           hittest_visible(true),
           draggable(true)
     {
+        owner->add_control(this);
     }
 }

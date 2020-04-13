@@ -4,8 +4,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Label::Label(vec2 start, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
-        : Frame(start, width, height),
+    Label::Label(Scene *owner, vec2 start, std::string text, int width, int height, vec2 padding, std::string font, int font_size)
+        : Frame(owner, start, width, height),
           padding(padding),
           text(text)
     {
@@ -14,8 +14,8 @@ namespace Controls
         Control::hittest_visible = false;
     }
 
-    Label::Label(vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
-        : Frame(start, width, 0),
+    Label::Label(Scene *owner, vec2 start, std::string text, int width, vec2 padding, std::string font, int font_size)
+        : Frame(owner, start, width, 0),
           padding(padding),
           text(text)
     {
@@ -27,8 +27,8 @@ namespace Controls
     }
 
 
-    Label::Label(vec2 start, std::string text, int width, std::string font, int font_size)
-        : Label(start, text, width, vec2(5, 5), font, font_size)
+    Label::Label(Scene *owner, vec2 start, std::string text, int width, std::string font, int font_size)
+        : Label(owner, start, text, width, vec2(5, 5), font, font_size)
     {
     }
 

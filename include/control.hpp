@@ -30,6 +30,8 @@ namespace Controls
         virtual void update() = 0;
 
     public:
+        static bool FORCE_GLOBAL_FONT;
+
         bool hittest_visible;
         bool draggable;
 

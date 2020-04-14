@@ -31,6 +31,8 @@ namespace Controls
 
         bool needs_update = false;
 
+        const genv::font *global_font = nullptr;
+
         virtual bool on_mouse_event(const genv::event &mev);
         virtual bool on_key_event(const genv::event &kev);
         void render(genv::canvas& c);
@@ -43,6 +45,9 @@ namespace Controls
         void add_listener(listener_t f);  
         void focus(Control *c);
         void focus(int index);
+
+        void set_global_font(const genv::font *f);
+        const genv::font* get_global_font() const;
 
         template<typename T>
         void add_listener(void(T::*f)(const genv::event&), T *owner)

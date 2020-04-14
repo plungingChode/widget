@@ -209,6 +209,10 @@ public:
 int main(int argc, char const *argv[])
 {
     Scene s(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    s.set_global_font(FONT);
+    Control::FORCE_GLOBAL_FONT = true;
+
     add_sample(s);
 
     Sample smp1("hello");

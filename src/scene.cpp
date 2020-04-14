@@ -157,6 +157,10 @@ namespace Controls
     {
         controls.push_back(c);
         c->set_owner(this);
+        if (Control::FORCE_GLOBAL_FONT)
+        {
+            c->set_font(global_font);
+        }
         needs_update = true;
     }
 
@@ -188,6 +192,16 @@ namespace Controls
         focused = controls[index];
         focused_index = index;
         focused->set_focus(true);
+    }
+
+    void Scene::set_global_font(const genv::font *f)
+    {
+        global_font = f;
+    }
+
+    const genv::font* Scene::get_global_font() const
+    {
+        return global_font;
     }
 
     int Scene::run(bool fullscreen)
@@ -226,6 +240,12 @@ namespace Controls
                 }
                 render(gout);
                 gout << refresh;
+            } 
+            else if (needs_update)
+            {
+                render(gout);
+                gout << refresh;
+                needs_update = false;
             }
         }
         return 0;

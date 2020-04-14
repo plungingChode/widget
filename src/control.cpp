@@ -3,6 +3,8 @@
 
 namespace Controls
 {
+    bool Control::FORCE_GLOBAL_FONT = false;
+
     Control::Control(int x_, int y_, int w_, int h_, const genv::font *f)
         : rect(x_, y_, w_, h_),
           rendered(w_, h_),
@@ -16,7 +18,7 @@ namespace Controls
           dragged(false),
           drag_center(vec2(0, 0)),
           owner(nullptr),
-          font(f),
+          font(nullptr),
           hittest_visible(true),
           draggable(true)
     {
@@ -25,6 +27,11 @@ namespace Controls
 
     void Control::set_font(const genv::font *f)
     {
+        if (FORCE_GLOBAL_FONT && owner)
+        {
+            f = owner->get_global_font();
+        }
+
         if (f && rendered.load_font(f->font_name, f->font_size))
         {
             this->font = f;

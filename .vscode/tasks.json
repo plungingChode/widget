@@ -55,11 +55,10 @@
             "label": "g++ build for debug",
             "command": "g++",
             "args": [
-                "-g", "${file}",
-                "-std=c++0x",
-                "-L", "./lib",
-                "-I", "./include",
-                "-l", "controls",
+                "-g", 
+                "widget.cpp",
+                "src/*.cpp",
+                "-I", "include",
                 "-l", "graphics",
                 "-l", "SDL",
                 "-l", "SDL_ttf"

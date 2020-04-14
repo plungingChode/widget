@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    ListBox::ListBox(Scene *s, int x, int y, int w, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
-        : Frame(s, x, y, w, items_vis*(f->font_size+item_padding)+2, f),
+    ListBox::ListBox(int x_, int y_, int w_, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
+        : Frame(x_, y_, w_, items_vis*(f->font_size+item_padding)+2, f),
           items(v), selected_item(nullptr), selected_index(-1),
           items_visible(items_vis), show_from(0)
     {
@@ -18,12 +18,12 @@ namespace Controls
         set_focus_bg(0xffffff);
         set_hold_bg(0xffffff);
 
-        thumb = rect(vec2(w-1-15, 0), 15, -1);
+        thumb = rect(vec2(w_-1-15, 0), 15, -1);
         adjust_thumb();
     }
 
-    ListBox::ListBox(Scene *s, int x, int y, int w, int items_vis, const genv::font *f)
-        : ListBox(s, x, y, w, items_vis, {}, f)
+    ListBox::ListBox(int x_, int y_, int w_, int items_vis, const genv::font *f)
+        : ListBox(x_, y_, w_, items_vis, {}, f)
     {
     }
 

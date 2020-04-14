@@ -156,6 +156,7 @@ namespace Controls
     void Scene::add_control(Control *c)
     {
         controls.push_back(c);
+        c->set_owner(this);
         needs_update = true;
     }
 

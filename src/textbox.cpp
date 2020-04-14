@@ -4,20 +4,20 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, int h, vec2 pad, const genv::font *f)
-        : Label(owner, x, y, text_, w, h, pad, f)
+    TextBox::TextBox(int x_, int y_, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
+        : Label(x_, y_, text_, w_, h_, pad, f)
     {
         Control::hittest_visible = true;
     }
 
-    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, vec2 pad, const genv::font *f)
-        : Label(owner, x, y, text_, w, pad, f)
+    TextBox::TextBox(int x_, int y_, const std::string &text_, int w_, vec2 pad, const genv::font *f)
+        : Label(x_, y_, text_, w_, pad, f)
     {
         Control::hittest_visible = true;
     }
 
-    TextBox::TextBox(Scene *owner, int x, int y, const std::string &text_, int w, const genv::font *f)
-        : Label(owner, x, y, text_, w, f)
+    TextBox::TextBox(int x_, int y_, const std::string &text_, int w_, const genv::font *f)
+        : Label(x_, y_, text_, w_, f)
     {
         Control::hittest_visible = true;
     }

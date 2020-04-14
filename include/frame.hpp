@@ -25,7 +25,7 @@ namespace Controls
         virtual void update() override;
 
     public:
-        Frame(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
+        Frame(int x, int y, int width, int height, const genv::font *font = nullptr);
 
         void set_resizable(bool val) override;
         void set_normal_bg(int hex) { set_color(normal_bg, hex); }
@@ -34,8 +34,8 @@ namespace Controls
         void set_hold_bg(int hex) { set_color(hold_bg, hex); }
         void set_border_color(int hex) { set_color(border, hex); }
         
-        void set_min_width(unsigned int w) { min_width = w; }
-        void set_min_height(unsigned int h) { min_height = h; }
+        void set_min_width(int mw) { min_width = mw; }
+        void set_min_height(int mh) { min_height = mh; }
         virtual void set_border_thickness(unsigned int thickness);
 
         virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;

@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(Scene *s, int x, int y, int val, int min_val, int max_val, int w, int h, vec2 pad, const genv::font *f)
-        : Label(s, x, y, std::to_string(val), w, h, pad, f),
+    Spinner::Spinner(int x_, int y_, int val, int min_val, int max_val, int w_, int h_, vec2 pad, const genv::font *f)
+        : Label(x_, y_, std::to_string(val), w_, h_, pad, f),
           spin(spin_none),
           value(val),
           min_value(min_val),
@@ -18,8 +18,8 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(Scene *s, int x, int y, int val, int min_val, int max_val, int w, const genv::font *f)
-        : Label(s, x, y, std::to_string(val), w, f),
+    Spinner::Spinner(int x_, int y_, int val, int min_val, int max_val, int w_, const genv::font *f)
+        : Label(x_, y_, std::to_string(val), w_, f),
           spin(spin_none),
           value(val),
           min_value(min_val),
@@ -31,13 +31,13 @@ namespace Controls
         set_spinner_hitboxes();
     }
 
-    Spinner::Spinner(Scene *s, int x, int y, int val, int w, int h, vec2 pad, const genv::font *f)
-        : Spinner(s, x, y, val, INT_MIN, INT_MAX, w, h, pad, f)
+    Spinner::Spinner(int x_, int y_, int val, int w_, int h_, vec2 pad, const genv::font *f)
+        : Spinner(x_, y_, val, INT_MIN, INT_MAX, w_, h_, pad, f)
     {
     }
 
-    Spinner::Spinner(Scene *s, int x, int y, int val, int w, const genv::font *f)
-        : Spinner(s, x, y, val, INT_MIN, INT_MAX, w, f)
+    Spinner::Spinner(int x_, int y_, int val, int w_, const genv::font *f)
+        : Spinner(x_, y_, val, INT_MIN, INT_MAX, w_, f)
     {
     }
 

@@ -4,24 +4,24 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, int h, vec2 pad, const genv::font *f)
-        : Label(s, x, y, tx, w, h, pad, f), action(a)
+    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
+        : Label(x_, y_, text_, w_, h_, pad, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, vec2 pad, const genv::font *f)
-        : Label(s, x, y, tx, w, pad, f), action(a)
+    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, vec2 pad, const genv::font *f)
+        : Label(x_, y_, text_, w_, pad, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(Scene *s, int x, int y, std::function<void()> a, const std::string &tx, int w, const genv::font *f)
-        : Label(s, x, y, tx, w, f), action(a)
+    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, const genv::font *f)
+        : Label(x_, y_, text_, w_, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;

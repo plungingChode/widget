@@ -3,9 +3,9 @@
 
 namespace Controls
 {
-    Control::Control(Scene *s, int x, int y, int w, int h, const genv::font *f)
-        : rect(x, y, w, h),
-          rendered(w, h),
+    Control::Control(int x_, int y_, int w_, int h_, const genv::font *f)
+        : rect(x_, y_, w_, h_),
+          rendered(w_, h_),
           hovered(false), 
           focused(false), 
           held(false),
@@ -15,12 +15,11 @@ namespace Controls
           needs_update(true),
           dragged(false),
           drag_center(vec2(0, 0)),
-          owner(s),
+          owner(nullptr),
           font(f),
           hittest_visible(true),
           draggable(true)
     {
-        s->add_control(this);
         set_font(f);
     }
 

@@ -17,7 +17,7 @@ genv::color gray = genv::color(60, 60, 60);
 genv::color pink = hex_to_color(0xff9999);
 void switch_background()
 {
-    if (bg = !bg)
+    if (bg)
     {
         Controls::BACKGROUND_COLOR = gray;
     }
@@ -25,6 +25,7 @@ void switch_background()
     {
         Controls::BACKGROUND_COLOR = pink;
     }
+    bg = !bg;
 }
 
 struct Entry : public ListBoxItem
@@ -32,7 +33,7 @@ struct Entry : public ListBoxItem
     std::string name;
     int value;
 
-    Entry(std::string name, int value) : name(name), value(value) {}
+    Entry(std::string name_, int value_) : name(name_), value(value_) {}
 
     std::string to_string() override
     {
@@ -86,7 +87,7 @@ public:
     int id;
     std::string name;
 
-    Option(int id, std::string name) : id(id), name(name) {}
+    Option(int id_, std::string name_) : id(id_), name(name_) {}
 
     std::string to_string() override { return name; }
 };
@@ -110,26 +111,34 @@ void dewit()
 void add_sample(Scene &s)
 {
     // Frame
-    Frame *f = new Frame(&s, 20,  20, 120, 70);
+    Frame *f = new Frame(20,  20, 120, 70);
     f->set_border_thickness(3);
     f->set_resizable(true);
+    s.add_control(f);
     
     // Label
-    Label *l1 = new Label(&s, 150,  20, "Liberation Sans, 18px", 190, FONT);
+    Label *l1 = new Label(150,  20, "Liberation Sans, 18px", 190, FONT);
     l1->hittest_visible = true;
     l1->set_resizable(true);
+    s.add_control(l1);
     
-    Label *l2 = new Label(&s, 150,  60, "Default font Label", 190);
+    Label *l2 = new Label(150,  60, "Default font Label", 190);
     l2->hittest_visible = true;
     l2->set_resizable(true);
+    s.add_control(l2);
     
     // TextBox
-    TextBox *tb1 = new TextBox(&s, 350, 20, "Liberation Sans, 20px", 220, FONT);
-    TextBox *tb2 = new TextBox(&s, 350, 60, "Default font TextBox", 200);
+    TextBox *tb1 = new TextBox(350, 20, "Liberation Sans, 20px", 220, FONT);
+    s.add_control(tb1);
+
+    TextBox *tb2 = new TextBox(350, 60, "Default font TextBox", 200);
+    s.add_control(tb2);
      
     // Button
-    Button *b1 = new Button(&s, 20,  100, switch_background, "Default button", 150);
-    Button *b2 = new Button(&s, 20,  140, switch_background, "Styled button", 150, FONT);
+    Button *b1 = new Button(20,  100, switch_background, "Default button", 150);
+    s.add_control(b1);
+
+    Button *b2 = new Button(20,  140, switch_background, "Styled button", 150, FONT);
     b2->set_border_color(0xe5d96e);
     b2->set_text_fill_normal(0xe5d96e);
     b2->set_normal_bg(0x6c6c6c);
@@ -138,36 +147,46 @@ void add_sample(Scene &s)
     b2->set_hold_bg(0x8c8c8c);
     
     // Spinner
-    Spinner *s1 = new Spinner(&s, 180,  100, 50, 80, FONT);
+    Spinner *s1 = new Spinner(180,  100, 50, 80, FONT);
     s1->set_border_thickness(2);
+    s.add_control(s1);
     
-    Spinner *s2 = new Spinner(&s, 180,  140, 1, 40, 40, vec2(7, 8), FONT);
+    Spinner *s2 = new Spinner(180,  140, 1, 40, 40, vec2(7, 8), FONT);
     s2->min_value = 1;
     s2->max_value = 9;
+    s.add_control(s2);
     
     // ListBox
-    lb = new ListBox(&s, 20,  200, 150, 6);
+    lb = new ListBox(20,  200, 150, 6);
     lb->set_border_color(0x999999);
     
     for (int i = 0; i < 10; i++)
     {
         lb->add_item(new Entry("entry", i));
     }
+    s.add_control(lb);
 
-    Button *rm = new Button(&s, 20, 330, remove_selected, "Remove selected", 150, vec2(10, 5), FONT);
-    Button *add = new Button(&s, 20, 360, add_entry, "Add random", 150, vec2(28, 5), FONT);
-    Button *sbv = new Button(&s, 20, 390, sort_list_values, "Sort by value", 150, vec2(25, 5), FONT);
-    Button *sln = new Button(&s, 20, 420, sort_list_names, "Sort by name", 150, vec2(25, 5), FONT);
+    Button *rm = new Button(20, 330, remove_selected, "Remove selected", 150, vec2(10, 5), FONT);
+    Button *add = new Button(20, 360, add_entry, "Add random", 150, vec2(28, 5), FONT);
+    Button *srt1 = new Button(20, 390, sort_list_values, "Sort by value", 150, vec2(25, 5), FONT);
+    Button *srt2 = new Button(20, 420, sort_list_names, "Sort by name", 150, vec2(25, 5), FONT);
     
-    options = new ListBox(&s, 180,  200, 200, 6, FONT);
+    s.add_control(rm);
+    s.add_control(add);
+    s.add_control(srt1);
+    s.add_control(srt2);
+
+    options = new ListBox(180,  200, 200, 6, FONT);
     options->set_border_color(0xff5555);
     
     options->add_item(new Option(0, "Remove selected"));
     options->add_item(new Option(1, "Add random"));
     options->add_item(new Option(2, "Sort by value (desc)"));
     options->add_item(new Option(3, "Sort by name"));
+    s.add_control(options);
 
-    Button *dw = new Button(&s, 180,  330, dewit, "Do it", 200, vec2(80, 5), FONT);
+    Button *doit = new Button(180,  330, dewit, "Do it", 200, vec2(80, 5), FONT);
+    s.add_control(doit);
 }
 
 class Sample
@@ -176,7 +195,7 @@ private:
     std::string word;
 
 public:
-    Sample(std::string word) : word(word) {}
+    Sample(std::string word_) : word(word_) {}
 
     void f(const genv::event &ev)
     {

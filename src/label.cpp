@@ -4,8 +4,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, int h, vec2 pad, const genv::font *f)
-        : Frame(s, x, y, w, h, f),
+    Label::Label(int x_, int y_, const std::string &tx, int w_, int h_, vec2 pad, const genv::font *f)
+        : Frame(x_, y_, w_, h_, f),
           padding(pad),
           text(tx)
     {
@@ -13,8 +13,8 @@ namespace Controls
         Control::hittest_visible = false;
     }
 
-    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, vec2 pad, const genv::font *f)
-        : Frame(s, x, y, w, 0, f),
+    Label::Label(int x_, int y_, const std::string &tx, int w_, vec2 pad, const genv::font *f)
+        : Frame(x_, y_, w_, 0, f),
           padding(pad),
           text(tx)
     {
@@ -26,8 +26,8 @@ namespace Controls
     }
 
 
-    Label::Label(Scene *s, int x, int y, const std::string &tx, int w, const genv::font *f)
-        : Label(s, x, y, tx, w, vec2(5, 5), f)
+    Label::Label(int x_, int y_, const std::string &tx, int w_, const genv::font *f)
+        : Label(x_, y_, tx, w_, vec2(5, 5), f)
     {
     }
 
@@ -37,9 +37,9 @@ namespace Controls
         schedule_update();
     }
 
-    void Label::set_text(const std::string &tx)
+    void Label::set_text(const std::string &text_)
     {
-        this->text = tx;
+        this->text = text_;
         schedule_update();
     }
 

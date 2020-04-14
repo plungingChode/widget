@@ -25,7 +25,7 @@ namespace Controls
         const Scene *owner;
         const genv::font *font;
 
-        Control(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
+        Control(int x, int y, int width, int height, const genv::font *font = nullptr);
 
         virtual void update() = 0;
 
@@ -33,8 +33,11 @@ namespace Controls
         bool hittest_visible;
         bool draggable;
 
+        virtual ~Control() = default; 
+
         void set_focus(bool val) { focused = val; schedule_update(); }
         void set_hover(bool val) { hovered = val; schedule_update(); }
+        void set_owner(const Scene *s) { owner = s; }
 
         bool is_focused() const { return focused; }
         bool is_hovered() const { return hovered; }

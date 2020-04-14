@@ -5,15 +5,15 @@ using namespace genv;
 
 namespace Controls
 {
-    Frame::Frame(Scene *s, int x, int y, int w, int h, const genv::font *f)
-        : Control(s, x, y, w, h, f),
+    Frame::Frame(int x_, int y_, int w_, int h_, const genv::font *f)
+        : Control(x_, y_, w_, h_, f),
           border_thickness(10),
           min_width(15), 
           min_height(15)
     {
     }
 
-    void Frame::set_resizable(const bool val)
+    void Frame::set_resizable(bool val)
     {
         resizable = val;
         reset_resize_hitbox();

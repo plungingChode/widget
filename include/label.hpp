@@ -17,9 +17,9 @@ namespace Controls
         virtual void update() override;
 
     public:
-        Label(Scene *owner, int x, int y, const std::string &text, int width, int height, vec2 padding, const genv::font *font = nullptr);
-        Label(Scene *owner, int x, int y, const std::string &text, int width, vec2 padding, const genv::font *font = nullptr);
-        Label(Scene *owner, int x, int y, const std::string &text, int width, const genv::font *font = nullptr);
+        Label(int x, int y, const std::string &text, int width, int height, vec2 padding, const genv::font *font = nullptr);
+        Label(int x, int y, const std::string &text, int width, vec2 padding, const genv::font *font = nullptr);
+        Label(int x, int y, const std::string &text, int width, const genv::font *font = nullptr);
 
         void set_padding(vec2 p);
         void set_text(const std::string &text);

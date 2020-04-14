@@ -19,11 +19,12 @@
             "label": "g++ build widget.cpp",
             "command": "g++",
             "args": [
-                "${cwd}/widget.cpp",
-                "-std=c++0x",
-                "-L", "./lib",
-                "-I", "./include",
-                "-l", "controls",
+                "widget.cpp",
+                "src/*.cpp",
+                "-Wshadow",
+                "-Wall",
+                "-std=c++11",
+                "-I", "include",
                 "-l", "graphics",
                 "-l", "SDL",
                 "-l", "SDL_ttf"

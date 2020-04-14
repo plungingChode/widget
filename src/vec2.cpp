@@ -2,31 +2,31 @@
 
 namespace Controls
 {
-    vec2::vec2(int x, int y) : x(x), y(y) {}
+    vec2::vec2(int x_, int y_) : x(x_), y(y_) {}
     vec2::vec2() : x(0), y(0) {}
 
     vec2& vec2::operator+=(const vec2& rhs)
     {
-        this->x += rhs.x;
-        this->y += rhs.y;
+        x += rhs.x;
+        y += rhs.y;
         return *this;
     }
     vec2& vec2::operator-=(const vec2& rhs)
     {
-        this->x -= rhs.x;
-        this->y -= rhs.y;
+        x -= rhs.x;
+        y -= rhs.y;
         return *this;
     }
     vec2& vec2::operator*=(int scalar)
     {
-        this->x *= scalar;
-        this->y *= scalar;
+        x *= scalar;
+        y *= scalar;
         return *this;
     }
     vec2& vec2::operator/=(int scalar)
     {
-        this->x /= scalar;
-        this->y /= scalar;
+        x /= scalar;
+        y /= scalar;
         return *this;
     }
 

@@ -37,5 +37,6 @@
 # Text files
 *.txt
 
-# Personal
-beadando/**
+# Platform specific
+/.vscode
+*.sh

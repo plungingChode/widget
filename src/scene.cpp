@@ -164,11 +164,6 @@ namespace Controls
         needs_update = true;
     }
 
-    void Scene::add_listener(listener_t listener)
-    {
-        listeners.push_back(listener);
-    }
-
     void Scene::focus(Control *c)
     {
         if (focused)
@@ -215,11 +210,6 @@ namespace Controls
         event ev;
         while (gin >> ev && ev.keycode != key_escape)
         {
-            for (listener_t f : listeners)
-            {
-                f(ev);
-            }
-
             if (ev.type == ev_key && on_key_event(ev))
             {
                 render(gout);              

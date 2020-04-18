@@ -7,8 +7,6 @@
 
 namespace Controls
 {
-    typedef std::function<void(const genv::event&)> listener_t;
-
     class Scene
     {
     protected:
@@ -16,7 +14,6 @@ namespace Controls
         const int REFRESH_RATE = 40;
 
         std::vector<Control*> controls;
-        std::vector<listener_t> listeners;
 
         int click_buffer = 0; 
         bool mouse_held = false;
@@ -33,27 +30,22 @@ namespace Controls
 
         const genv::font *global_font = nullptr;
 
-        virtual bool on_mouse_event(const genv::event &mev);
-        virtual bool on_key_event(const genv::event &kev);
+        bool on_mouse_event(const genv::event &mev);
+        bool on_key_event(const genv::event &kev);
         void render(genv::canvas& c);
 
     public:
         Scene(int width, int height);
-        ~Scene();
+        virtual ~Scene();
 
         void add_control(Control *c);
-        void add_listener(listener_t f);  
         void focus(Control *c);
         void focus(int index);
 
+        virtual void action(int cmd) = 0;
+
         void set_global_font(const genv::font *f);
         const genv::font* get_global_font() const;
-
-        template<typename T>
-        void add_listener(void(T::*f)(const genv::event&), T *owner)
-        {
-            listeners.push_back(std::bind(f, owner, std::placeholders::_1));
-        }
 
         int run(bool fullscreen = false);
     };

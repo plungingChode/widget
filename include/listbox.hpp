@@ -15,7 +15,7 @@ namespace Controls
         virtual std::string to_string() = 0;
     };
 
-    typedef std::function<bool(ListBoxItem*, ListBoxItem*)> Compare;
+    typedef std::function<bool(ListBoxItem*, ListBoxItem*)> listbox_sort;
 
     class ListBox : public Frame
     {
@@ -45,21 +45,20 @@ namespace Controls
         virtual void update() override;
         
     public:
-        ListBox(int x, int y, int width, int items_visible, std::vector<ListBoxItem*> items, const genv::font *font = &DEFAULT_FONT);
-        ListBox(int x, int y, int width, int items_visible, const genv::font *font = &DEFAULT_FONT);
+        ListBox(Scene *owner, int x, int y, int width, int items_visible, std::vector<ListBoxItem*> items, const genv::font *font = &DEFAULT_FONT);
+        ListBox(Scene *owner, int x, int y, int width, int items_visible, const genv::font *font = &DEFAULT_FONT);
 
         void set_font(const genv::font *font) override;
 
         void add_item(ListBoxItem *item);
         void remove_item(int index);
-        void sort(Compare comp);       
+        void sort(listbox_sort comp);       
 
         ListBoxItem* get_selected_item() const { return selected_item; }
         int get_selected_index() const { return selected_index; }
 
         const std::vector<ListBoxItem*>& get_items() const { return items; }
 
-        
         virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
         virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override;
     };

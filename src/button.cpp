@@ -1,27 +1,28 @@
 #include "button.hpp"
+#include "scene.hpp"
 
 using namespace genv;
 
 namespace Controls
 {
-    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
-        : Label(x_, y_, text_, w_, h_, pad, f), action(a)
+    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
+        : Label(s, x_, y_, text_, w_, h_, pad, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, vec2 pad, const genv::font *f)
-        : Label(x_, y_, text_, w_, pad, f), action(a)
+    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, vec2 pad, const genv::font *f)
+        : Label(s, x_, y_, text_, w_, pad, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(int x_, int y_, std::function<void()> a, const std::string &text_, int w_, const genv::font *f)
-        : Label(x_, y_, text_, w_, f), action(a)
+    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, const genv::font *f)
+        : Label(s, x_, y_, text_, w_, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
@@ -42,7 +43,7 @@ namespace Controls
     {
         if (m.button == -btn_left && held && hovered)
         {
-            action();
+            owner->action(action);
         }
         Label::on_mouse_ev(m, btn_held);
     }

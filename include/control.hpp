@@ -22,10 +22,10 @@ namespace Controls
         // Coordinates of the mouse event that started the drag
         vec2 drag_center;
 
-        const Scene *owner;
+        Scene *owner;
         const genv::font *font;
 
-        Control(int x, int y, int width, int height, const genv::font *font = nullptr);
+        Control(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
 
         virtual void update() = 0;
 
@@ -39,7 +39,7 @@ namespace Controls
 
         void set_focus(bool val) { focused = val; schedule_update(); }
         void set_hover(bool val) { hovered = val; schedule_update(); }
-        void set_owner(const Scene *s) { owner = s; }
+        void set_owner(Scene *s) { owner = s; }
 
         bool is_focused() const { return focused; }
         bool is_hovered() const { return hovered; }

@@ -25,7 +25,7 @@ namespace Controls
         virtual void update() override;
 
     public:
-        Frame(int x, int y, int width, int height, const genv::font *font = nullptr);
+        Frame(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
 
         void set_resizable(bool val) override;
         void set_normal_bg(int hex) { set_color(normal_bg, hex); }

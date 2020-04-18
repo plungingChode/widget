@@ -5,7 +5,7 @@ namespace Controls
 {
     bool Control::FORCE_GLOBAL_FONT = false;
 
-    Control::Control(int x_, int y_, int w_, int h_, const genv::font *f)
+    Control::Control(Scene *s, int x_, int y_, int w_, int h_, const genv::font *f)
         : rect(x_, y_, w_, h_),
           rendered(w_, h_),
           hovered(false), 
@@ -17,12 +17,13 @@ namespace Controls
           needs_update(true),
           dragged(false),
           drag_center(vec2(0, 0)),
-          owner(nullptr),
+          owner(s),
           font(nullptr),
           hittest_visible(true),
           draggable(true)
     {
         set_font(f);
+        s->add_control(this);
     }
 
     void Control::set_font(const genv::font *f)

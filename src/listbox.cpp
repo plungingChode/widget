@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    ListBox::ListBox(int x_, int y_, int w_, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
-        : Frame(x_, y_, w_, items_vis*(f->font_size+item_padding)+2, f),
+    ListBox::ListBox(Scene *s, int x_, int y_, int w_, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
+        : Frame(s, x_, y_, w_, items_vis*(f->font_size+item_padding)+2, f),
           items(v), selected_item(nullptr), selected_index(-1),
           items_visible(items_vis), show_from(0)
     {
@@ -22,8 +22,8 @@ namespace Controls
         adjust_thumb();
     }
 
-    ListBox::ListBox(int x_, int y_, int w_, int items_vis, const genv::font *f)
-        : ListBox(x_, y_, w_, items_vis, {}, f)
+    ListBox::ListBox(Scene *s, int x_, int y_, int w_, int items_vis, const genv::font *f)
+        : ListBox(s, x_, y_, w_, items_vis, {}, f)
     {
     }
 
@@ -74,9 +74,9 @@ namespace Controls
         }
     }
 
-    void ListBox::sort(Compare comp)
+    void ListBox::sort(listbox_sort sort)
     {
-        std::sort(items.begin(), items.end(), comp);
+        std::sort(items.begin(), items.end(), sort);
         schedule_update();
     }
 
@@ -141,18 +141,15 @@ namespace Controls
 
     void ListBox::set_font(const genv::font *f)
     {
-        if (font && (!f || f->font_size != font->font_size))
+        if (!f)
+        {
+            f = &DEFAULT_FONT;
+        }
+        if (!font || f->font_size != font->font_size)
         {
             size_changed = true;
         }
-        if (f && rendered.load_font(f->font_name, f->font_size))
-        {
-            font = f;
-        }
-        else
-        {
-            font = &DEFAULT_FONT;
-        }
+        Control::set_font(f);
         schedule_update();
     }
 

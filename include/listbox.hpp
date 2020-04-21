@@ -47,6 +47,7 @@ namespace Controls
     public:
         ListBox(Scene *owner, int x, int y, int width, int items_visible, std::vector<ListBoxItem*> items, const genv::font *font = &DEFAULT_FONT);
         ListBox(Scene *owner, int x, int y, int width, int items_visible, const genv::font *font = &DEFAULT_FONT);
+        virtual ~ListBox();
 
         void set_font(const genv::font *font) override;
 

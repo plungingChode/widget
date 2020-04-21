@@ -19,7 +19,7 @@ namespace Controls
         }
     }
 
-    bool Scene::on_mouse_event(const event& m)
+    bool Scene::on_mouse_event(const genv::event& m)
     {
         click_buffer += m.button;
         mouse_held = (click_buffer != 0 && m.button == 0);
@@ -109,7 +109,7 @@ namespace Controls
         return false;
     }
 
-    bool Scene::on_key_event(const event& kev)
+    bool Scene::on_key_event(const genv::event& kev)
     {
         int kc = kev.keycode;
         if (kc >= 0)
@@ -189,6 +189,19 @@ namespace Controls
         focused->set_focus(true);
     }
 
+    void Scene::action(int cmd)
+    {
+        event ev;
+        ev.type = ev_command;
+        ev.command = cmd;
+        ev.pos_x = 0;
+        ev.pos_y = 0;
+        ev.keycode = 0;
+        ev.button = 0;
+        ev.time = 0;
+        action(ev);
+    }
+
     void Scene::set_global_font(const genv::font *f)
     {
         global_font = f;
@@ -207,9 +220,20 @@ namespace Controls
 
         gin.timer(70);
 
-        event ev;
+        genv::event ev;
         while (gin >> ev && ev.keycode != key_escape)
         {
+            if (ev.keycode != 0)
+            {
+                event cev;
+                cev.type = ev.type;
+                cev.command = 0;
+                cev.keycode = ev.keycode;
+                cev.pos_x = ev.pos_x;
+                cev.pos_y = ev.pos_y;
+                cev.button = ev.button;
+                cev.time = ev.time;
+            }
             if (ev.type == ev_key && on_key_event(ev))
             {
                 render(gout);              

@@ -182,17 +182,25 @@ public:
         doit = new Button(this, 180,  330, exec_selected, "Do it", 200, vec2(80, 5), FONT);
     }
 
-    void action(int cmd) override
+    void action(event ev) override
     {
-        switch(cmd)
+        if (ev.type == ev_command)
         {
-        case rm_selected: remove_selected(); break;
-        case add_random: add_entry(); break;
-        case switch_bg: switch_background(); break;
-        case sort_vals: sort_list_values(); break;
-        case sort_names: sort_list_names(); break;
-        case exec_selected: dewit(); break;
-        default: break;
+            switch(ev.command)
+            {
+            case rm_selected: remove_selected(); break;
+            case add_random: add_entry(); break;
+            case switch_bg: switch_background(); break;
+            case sort_vals: sort_list_values(); break;
+            case sort_names: sort_list_names(); break;
+            case exec_selected: dewit(); break;
+            default: break;
+            }
+        }
+
+        if (ev.type == genv::ev_key && ev.keycode == genv::key_enter)
+        {
+            printf("hello\n");
         }
     }
 };
@@ -200,8 +208,8 @@ public:
 int main(int argc, char const *argv[])
 {
     SampleApp s;    
-    s.set_global_font(FONT);
-    Control::FORCE_GLOBAL_FONT = true;
+    // s.set_global_font(FONT);
+    // Control::FORCE_GLOBAL_FONT = true;
     
     return s.run();
 }

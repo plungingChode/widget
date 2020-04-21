@@ -27,6 +27,14 @@ namespace Controls
     {
     }
 
+    ListBox::~ListBox()
+    {
+        for (ListBoxItem *it : items)
+        {
+            delete it;
+        }
+    }
+
     void ListBox::adjust_thumb()
     {
         if ((int)items.size() < items_visible)
@@ -141,15 +149,15 @@ namespace Controls
 
     void ListBox::set_font(const genv::font *f)
     {
-        if (!f)
-        {
-            f = &DEFAULT_FONT;
-        }
         if (!font || f->font_size != font->font_size)
         {
             size_changed = true;
         }
         Control::set_font(f);
+        if (!font)
+        {
+            font = &DEFAULT_FONT;
+        }
         schedule_update();
     }
 

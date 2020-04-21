@@ -7,6 +7,16 @@
 
 namespace Controls
 {
+    struct event : public genv::event
+    {
+        int command;
+    };
+
+    enum event_t
+    {
+        ev_command = -1
+    };
+
     class Scene
     {
     protected:
@@ -42,7 +52,8 @@ namespace Controls
         void focus(Control *c);
         void focus(int index);
 
-        virtual void action(int cmd) = 0;
+        void action(int cmd);
+        virtual void action(event ev) = 0;
 
         void set_global_font(const genv::font *f);
         const genv::font* get_global_font() const;

@@ -39,7 +39,7 @@ namespace Controls
     }
 
 
-    void Button::on_mouse_ev(const event& m, bool btn_held)
+    void Button::on_mouse_ev(const genv::event& m, bool btn_held)
     {
         if (m.button == -btn_left && held && hovered)
         {

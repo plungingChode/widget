@@ -19,7 +19,7 @@ namespace Controls
         Button(Scene *owner, int x, int y, int action, const std::string &text, int width, const genv::font *font = nullptr);
 
         virtual void set_font(const genv::font *font) override;
-        virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) override;
+        virtual void on_mouse_ev(const event& mouse_ev, bool btn_held = false) override;
     };
 }
 

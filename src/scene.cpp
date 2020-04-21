@@ -32,7 +32,7 @@ namespace Controls
             {
                 Control *c = controls[i];
 
-                c->on_mouse_ev(m, mouse_held);
+                c->on_mouse_ev(from_genv_ev(m), mouse_held);
 
                 if (c->hittest_visible && c->is_hovered())
                 {
@@ -65,7 +65,7 @@ namespace Controls
         else
         {
             // something is held --> update hold state
-            held->on_mouse_ev(m, mouse_held);
+            held->on_mouse_ev(from_genv_ev(m), mouse_held);
         }
         
         if (hovered != nullptr && !hovered->is_hovered())
@@ -135,7 +135,7 @@ namespace Controls
         
         if (focused != nullptr)
         {
-            focused->on_key_ev(kev, key_held);
+            focused->on_key_ev(from_genv_ev(kev), key_held);
             return focused->updated();
         }
         return false;
@@ -189,7 +189,7 @@ namespace Controls
         focused->set_focus(true);
     }
 
-    void Scene::action(int cmd)
+    event Scene::from_command(int cmd)
     {
         event ev;
         ev.type = ev_command;
@@ -199,7 +199,25 @@ namespace Controls
         ev.keycode = 0;
         ev.button = 0;
         ev.time = 0;
-        action(ev);
+        return ev;
+    }
+
+    event Scene::from_genv_ev(const genv::event &e)
+    {
+        event ev;
+        ev.type = e.type;
+        ev.command = 0;
+        ev.keycode = e.keycode;
+        ev.pos_x = e.pos_x;
+        ev.pos_y = e.pos_y;
+        ev.button = e.button;
+        ev.time = e.time;
+        return ev;
+    }
+
+    void Scene::action(int cmd)
+    {
+        action(from_command(cmd));
     }
 
     void Scene::set_global_font(const genv::font *f)
@@ -225,14 +243,7 @@ namespace Controls
         {
             if (ev.keycode != 0)
             {
-                event cev;
-                cev.type = ev.type;
-                cev.command = 0;
-                cev.keycode = ev.keycode;
-                cev.pos_x = ev.pos_x;
-                cev.pos_y = ev.pos_y;
-                cev.button = ev.button;
-                cev.time = ev.time;
+                
             }
             if (ev.type == ev_key && on_key_event(ev))
             {
@@ -250,7 +261,7 @@ namespace Controls
 
                 if (focused && !key_hold_delay)
                 {
-                    if (key_held) focused->on_key_ev(ev, key_held);
+                    if (key_held) focused->on_key_ev(from_genv_ev(ev), key_held);
                 }
                 render(gout);
                 gout << refresh;

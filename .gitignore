@@ -40,3 +40,4 @@
 # Platform specific
 /.vscode
 *.sh
+build

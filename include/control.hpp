@@ -3,6 +3,7 @@
 
 #include "vec2.hpp"
 #include "rect.hpp"
+#include "event.hpp"
 #include "control_common.hpp"
 
 namespace Controls
@@ -49,8 +50,8 @@ namespace Controls
         virtual void set_resizable(bool val) { resizable = val; }
         virtual void set_font(const genv::font *font);
     
-        virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held = false) = 0;
-        virtual void on_key_ev(const genv::event& key_ev, int key_held = 0) = 0;
+        virtual void on_mouse_ev(const event& mouse_ev, bool btn_held = false) = 0;
+        virtual void on_key_ev(const event& key_ev, int key_held = 0) = 0;
 
         void schedule_update() { needs_update = true; }
         bool updated() const { return needs_update; }

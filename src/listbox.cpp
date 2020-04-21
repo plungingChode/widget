@@ -161,7 +161,7 @@ namespace Controls
         schedule_update();
     }
 
-    void ListBox::on_mouse_ev(const genv::event &mouse_ev, bool btn_held)
+    void ListBox::on_mouse_ev(const event &mouse_ev, bool btn_held)
     {
         Frame::on_mouse_ev(mouse_ev, btn_held);
         vec2 m_rel(mouse_ev.pos_x-x, mouse_ev.pos_y-y);
@@ -241,7 +241,7 @@ namespace Controls
         }    
     }
 
-    void ListBox::on_key_ev(const genv::event &key_ev, int key_held)
+    void ListBox::on_key_ev(const event &key_ev, int key_held)
     {
         // TODO
         

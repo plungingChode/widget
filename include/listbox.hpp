@@ -60,8 +60,8 @@ namespace Controls
 
         const std::vector<ListBoxItem*>& get_items() const { return items; }
 
-        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override;
+        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
+        virtual void on_key_ev(const event &key_ev, int key_held = 0) override;
     };
 }
 

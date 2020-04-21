@@ -38,8 +38,8 @@ namespace Controls
         void set_min_height(int mh) { min_height = mh; }
         virtual void set_border_thickness(unsigned int thickness);
 
-        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const genv::event &key_ev, int key_held = 0) override {}
+        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
+        virtual void on_key_ev(const event &key_ev, int key_held = 0) override {}
         virtual void render(genv::canvas &c) override;
     };
 }

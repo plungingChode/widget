@@ -2,23 +2,18 @@
 #define SCENE_HPP_INCLUDED
 
 #include "control.hpp"
+#include "event.hpp"
 #include <vector>
 #include <functional>
 
 namespace Controls
 {
-    struct event : public genv::event
-    {
-        int command;
-    };
-
-    enum event_t
-    {
-        ev_command = -1
-    };
-
     class Scene
     {
+    private:
+        event from_genv_ev(const genv::event &ev);
+        event from_command(int cmd);
+
     protected:
         const int KEY_DELAY = 7;
         const int REFRESH_RATE = 40;

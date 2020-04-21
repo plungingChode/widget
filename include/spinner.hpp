@@ -50,8 +50,8 @@ namespace Controls
 
         int get_value() const;
         
-        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const genv::event &key_ev, int key_held = false) override;
+        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
+        virtual void on_key_ev(const event &key_ev, int key_held = false) override;
     };
 }
 

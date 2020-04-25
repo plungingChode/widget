@@ -47,8 +47,8 @@ namespace Controls
         void focus(Control *c);
         void focus(int index);
 
-        void action(int cmd);
-        virtual void action(event ev) = 0;
+        void action(int cmd, Control *caller);
+        virtual void action(event ev, Control *caller) = 0;
 
         void set_global_font(const genv::font *f);
         const genv::font* get_global_font() const;

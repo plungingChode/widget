@@ -38,12 +38,11 @@ namespace Controls
         }
     }
 
-
     void Button::on_mouse_ev(const event& m, bool btn_held)
     {
         if (m.button == -btn_left && held && hovered)
         {
-            owner->action(action);
+            owner->action(action, this);
         }
         Label::on_mouse_ev(m, btn_held);
     }

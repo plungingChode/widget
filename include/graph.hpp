@@ -10,9 +10,8 @@ namespace Controls
 {
     class GraphItem
     {
-    public:
-        virtual int x() const = 0;
-        virtual std::string y() const = 0;
+        virtual int x() = 0;
+        virtual const std::string& y() const = 0;
     };
 
     enum graph_t

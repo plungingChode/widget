@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include <functional>
-#include "graph.hpp"
 
 using namespace Controls;
 
@@ -13,7 +12,7 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const genv::font *FONT = new genv::font("LiberationSans-Regular.ttf", 16);
 
-struct Entry : public ListBoxItem, public GraphItem
+struct Entry : public ListBoxItem
 {
     std::string name;
     int value;
@@ -26,9 +25,6 @@ struct Entry : public ListBoxItem, public GraphItem
         ss << name << " [" << value << "]";
         return ss.str();
     }
-
-    int x() const override { return value; }
-    std::string y() const override { return name; }
 };
 
 class Option : public ListBoxItem
@@ -74,7 +70,6 @@ protected:
     Button *rm, *add, *srt1, *srt2;
     ListBox *options;
     Button *doit;
-    Graph *grp;
 
     bool bg = false;
     genv::color gray = genv::color(60, 60, 60);
@@ -100,9 +95,7 @@ protected:
             ss << char(std::rand()%(122-97)+97);
         }
 
-        Entry *e = new Entry(ss.str(), std::rand()%100);
-        lb->add_item(e);
-        grp->add_item(e);
+        lb->add_item(new Entry(ss.str(), std::rand()%100));
     }
 
     void sort_list_values() { lb->sort(by_value_desc); }
@@ -167,12 +160,10 @@ public:
         // ListBox
         lb = new ListBox(this, 20,  200, 150, 6);
         lb->set_border_color(0x999999);
-
-        grp = new Graph(this, 400, 200, 200, 150, 10, graph_bar);
         
         for (int i = 0; i < 10; i++)
         {
-            add_entry();
+            lb->add_item(new Entry("entry", i));
         }
 
         rm = new Button(this, 20, 330, rm_selected, "Remove selected", 150, vec2(10, 5), FONT);
@@ -191,7 +182,7 @@ public:
         doit = new Button(this, 180,  330, exec_selected, "Do it", 200, vec2(80, 5), FONT);
     }
 
-    void action(event ev, Control *caller) override
+    void action(event ev) override
     {
         if (ev.type == ev_command)
         {
@@ -213,7 +204,7 @@ public:
         }
     }
 };
- 
+
 int main(int argc, char const *argv[])
 {
     SampleApp s;    

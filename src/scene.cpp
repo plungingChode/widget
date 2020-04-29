@@ -215,9 +215,9 @@ namespace Controls
         return ev;
     }
 
-    void Scene::action(int cmd, Control *caller)
+    void Scene::action(int cmd)
     {
-        action(from_command(cmd), caller);
+        action(from_command(cmd));
     }
 
     void Scene::set_global_font(const genv::font *f)

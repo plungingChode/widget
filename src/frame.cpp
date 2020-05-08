@@ -1,4 +1,5 @@
 #include "frame.hpp"
+#include "scene.hpp"
 #include "control_common.hpp"
 
 using namespace genv;
@@ -80,10 +81,8 @@ namespace Controls
                 dragged = true;
             }
             
-            x = std::min(std::max(m.pos_x - drag_center.x, 0), ENV_WIDTH - w);
-            y = std::min(std::max(m.pos_y - drag_center.y, 0), ENV_HEIGHT - h);
-            // x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - w);
-            // y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - h);
+            x = std::min(std::max(m.pos_x - drag_center.x, 0), owner->ENV_WIDTH - w);
+            y = std::min(std::max(m.pos_y - drag_center.y, 0), owner->ENV_HEIGHT - h);
         }
         else
         {

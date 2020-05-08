@@ -5,10 +5,9 @@ using namespace genv;
 
 namespace Controls
 {
-    Scene::Scene(int width, int height)
+    Scene::Scene(int width, int height) 
+        : ENV_WIDTH(width), ENV_HEIGHT(height), background_color(color(60, 60, 60))
     {
-        ENV_WIDTH = width;
-        ENV_HEIGHT = height;
     }
 
     Scene::~Scene()
@@ -144,7 +143,7 @@ namespace Controls
     void Scene::render(canvas& c)
     {
         c << move_to(0, 0) 
-          << BACKGROUND_COLOR 
+          << background_color
           << box(ENV_WIDTH, ENV_HEIGHT);
 
         for (int i = controls.size() - 1; i >= 0; i--)

@@ -79,7 +79,7 @@ namespace Controls
         rendered << border;
         if (held)
         {
-            // bevel on bottom right, push in text
+            // bevel on bottom right
             rendered 
                 << move_to(1, h-border_thickness) << box(w-1, border_thickness)
                 << move_to(w-border_thickness, 1) << box(border_thickness, h-1);

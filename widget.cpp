@@ -77,11 +77,11 @@ protected:
     {
         if (bg)
         {
-            Controls::BACKGROUND_COLOR = gray;
+            background_color = gray;
         }
         else
         {
-            Controls::BACKGROUND_COLOR = pink;
+            background_color = pink;
         }
         bg = !bg;
     }
@@ -111,7 +111,14 @@ protected:
         lb->set_items(display);
     }
 
-    void remove_selected() { lb->remove_item(lb->get_selected_index()); }
+    void remove_selected() 
+    { 
+        int index = lb->get_selected_index();
+        if (index != -1)
+        {
+            lb->remove_item(index); 
+        }
+    }
 
     void dewit()
     {

@@ -4,14 +4,8 @@
 #include "graphics.hpp"
 #include <vector>
 
-#define force_bounds(val, lbound, ubound) std::max(std::min(val, ubound), lbound)
-
 namespace Controls
 {
-    extern int ENV_WIDTH;
-    extern int ENV_HEIGHT;
-    extern genv::color BACKGROUND_COLOR;
-
     genv::canvas read_kep(const std::string& fname);
     genv::canvas read_matrix(const std::vector<std::vector<int>> matrix, genv::color color);
     

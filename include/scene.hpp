@@ -35,6 +35,10 @@ namespace Controls
         void render(genv::canvas& c);
 
     public:
+        const int ENV_WIDTH;
+        const int ENV_HEIGHT;
+        genv::color background_color;
+
         Scene(int width, int height);
         virtual ~Scene();
 

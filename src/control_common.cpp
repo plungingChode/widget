@@ -7,10 +7,6 @@ using namespace genv;
 
 namespace Controls
 {
-    int ENV_WIDTH  = 999999;
-    int ENV_HEIGHT = 999999;
-    color BACKGROUND_COLOR = color(60, 60, 60);
-
     canvas read_kep(const std::string& fname)
     {
         std::ifstream f(fname);

@@ -31,7 +31,7 @@ namespace Controls
         if (text.empty()) return;
 
         int baseline = -10;
-        if (!font) baseline += rendered.cascent();
+        if (!font) baseline += rendered.cascent()+2;
 
         if (focused)
         {   

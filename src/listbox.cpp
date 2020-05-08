@@ -36,7 +36,7 @@ namespace Controls
         {
             thumb.h = h * items_visible / (float)items.size();
 
-            scroll_diff = force_bounds(thumb.h/2, 1, 8);
+            scroll_diff = std::min(std::max(thumb.h/2, 1), 8);
             thumb.h = std::max(10, thumb.h);
         }
 
@@ -57,12 +57,20 @@ namespace Controls
     {
         items.erase(items.begin() + index);
 
-        show_from = force_bounds(show_from, 0, (int)items.size()-items_visible);
+        show_from = std::max(std::min(show_from, int(items.size()-items_visible)), 0);
 
         if (index == selected_index)
         {
-            selected_item = nullptr;
-            selected_index = -1;
+            if (items.size() > 0)
+            {
+                selected_index = std::min(selected_index, (int)items.size()-1);
+                selected_item = &items[selected_index];   
+            }
+            else
+            {
+                selected_item = nullptr;
+                selected_index = -1;
+            }
         }
 
         adjust_thumb();
@@ -218,10 +226,10 @@ namespace Controls
 
             if (thumb_moved)
             {
-                thumb.y = force_bounds(thumb.y, 0, int(h-thumb.h));
+                thumb.y = std::min(std::max(thumb.y, 0), int(h-thumb.h));
 
                 show_from = (thumb.y / float(h-thumb.h)) * items.size();
-                show_from = force_bounds(show_from, 0, int(items.size()-items_visible));
+                show_from = std::min(std::max(show_from, 0), int(items.size()-items_visible));
 
                 schedule_update();
             }

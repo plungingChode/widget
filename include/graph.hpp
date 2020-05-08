@@ -10,8 +10,9 @@ namespace Controls
 {
     class GraphItem
     {
-        virtual int x() = 0;
-        virtual const std::string& y() const = 0;
+    public:
+        virtual int x() const = 0;
+        virtual std::string y() const = 0;
     };
 
     enum graph_t
@@ -46,8 +47,8 @@ namespace Controls
 
         virtual void set_font(const genv::font *f);
 
-        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held) override { }
-        virtual void on_key_ev(const event &key_ev, int key_held) override { }
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held) override { }
+        virtual void on_key_ev(const genv::event &key_ev, int key_held) override { }
     };
 }
 

@@ -2,6 +2,7 @@
 #define SPINNER_HPP_INCLUDED
 
 #include "label.hpp"
+#include <climits>
 
 namespace Controls
 {
@@ -40,18 +41,15 @@ namespace Controls
         int diff_small = 1;
         int diff_big   = 10;
 
-        Spinner(Scene *owner, int x, int y, int value, int min_value, int max_value, int width, int height, vec2 padding, const genv::font *font = nullptr);
-        Spinner(Scene *owner, int x, int y, int value, int min_value, int max_value, int width, const genv::font *font = nullptr);
-        Spinner(Scene *owner, int x, int y, int value, int width, int height, vec2 padding, const genv::font *font = nullptr);
-        Spinner(Scene *owner, int x, int y, int value, int width, const genv::font *font = nullptr);
+        Spinner(Scene *owner, int x, int y, int width, int height, int value, int min_value = INT_MIN, int max_value = INT_MAX, const genv::font *font = nullptr);
 
         void set_spin_color(int hex);
-        void set_border_thickness(unsigned thickness) override;
+        void set_border_thickness(int thickness) override;
 
         int get_value() const;
         
-        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const event &key_ev, int key_held = false) override;
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held) override;
+        virtual void on_key_ev(const genv::event &key_ev, int key_held) override;
     };
 }
 

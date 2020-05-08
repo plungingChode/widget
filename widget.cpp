@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <functional>
 
 using namespace Controls;
@@ -12,14 +13,14 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const genv::font *FONT = new genv::font("LiberationSans-Regular.ttf", 16);
 
-struct Entry : public ListBoxItem
+struct Entry
 {
     std::string name;
     int value;
 
     Entry(std::string name_, int value_) : name(name_), value(value_) {}
 
-    std::string to_string() override
+    std::string to_string() const
     {
         std::stringstream ss;
         ss << name << " [" << value << "]";
@@ -27,7 +28,7 @@ struct Entry : public ListBoxItem
     }
 };
 
-class Option : public ListBoxItem
+class Option
 {
 public:
     int id;
@@ -35,41 +36,39 @@ public:
 
     Option(int id_, std::string name_) : id(id_), name(name_) {}
 
-    std::string to_string() override { return name; }
+    std::string to_string() const { return name; }
 };
 
-bool by_value_desc(ListBoxItem *lhs, ListBoxItem *rhs)
+bool by_value_desc(const Entry &lhs, const Entry &rhs)
 {
-    return static_cast<Entry*>(lhs)->value > static_cast<Entry*>(rhs)->value;
+    return lhs.value > rhs.value;
 }
 
-bool by_name_asc(ListBoxItem *lhs, ListBoxItem *rhs)
+bool by_name_asc(const Entry &lhs, const Entry &rhs)
 {
-    return static_cast<Entry*>(lhs)->name < static_cast<Entry*>(rhs)->name;
+    return lhs.name < rhs.name;
 }
 
 class SampleApp : public Scene
 {
 protected:
-    enum action_t
-    {
-        switch_bg = 0,
-        rm_selected,
-        add_random,
-        sort_vals,
-        sort_names,
-        exec_selected
-    };
-
     Frame *f;
     Label *l1, *l2;
     TextBox *tb1, *tb2;
     Button *b1, *b2;
     Spinner *s1, *s2;
-    ListBox *lb;
+    ListBox *lb, *lb2;
     Button *rm, *add, *srt1, *srt2;
-    ListBox *options;
     Button *doit;
+
+    std::vector<Entry> entries;
+    std::vector<Option> options
+    {
+        Option(0, "Remove selected"),
+        Option(1, "Add random"),
+        Option(2, "Sort by value (desc)"),
+        Option(3, "Sort by name")
+    };
 
     bool bg = false;
     genv::color gray = genv::color(60, 60, 60);
@@ -95,24 +94,36 @@ protected:
             ss << char(std::rand()%(122-97)+97);
         }
 
-        lb->add_item(new Entry(ss.str(), std::rand()%100));
+        Entry e(ss.str(), std::rand()%100);
+
+        entries.push_back(e);
+        lb->add_item(e.to_string());
     }
 
-    void sort_list_values() { lb->sort(by_value_desc); }
-    void sort_list_names() { lb->sort(by_name_asc); }
+    void sort_entries(std::function<bool(const Entry&, const Entry&)> sort)
+    {
+        std::sort(entries.begin(), entries.end(), sort);
+        
+        // synchronize with display
+        std::vector<std::string> display;
+        auto to_str = [](const Entry &e) { return e.to_string(); };
+        std::transform(entries.begin(), entries.end(), std::back_inserter(display), to_str);
+        lb->set_items(display);
+    }
+
     void remove_selected() { lb->remove_item(lb->get_selected_index()); }
 
     void dewit()
     {
-        Option* op = static_cast<Option*>(options->get_selected_item());
-        if (op)
+        int index = lb2->get_selected_index();
+        if (index != -1)
         {
-            switch(op->id)
+            switch(options[index].id)
             {
             case 0: remove_selected(); break;
             case 1: add_entry(); break;
-            case 2: sort_list_values(); break;
-            case 3: sort_list_names(); break;
+            case 2: sort_entries(by_value_desc); break;
+            case 3: sort_entries(by_name_asc); break;
             default: break;
             }
         }
@@ -122,17 +133,17 @@ public:
     SampleApp() : Scene(640, 480)
     {
         // Frame
-        f = new Frame(this, 20,  20, 120, 70);
+        f = new Frame(this, 20, 20, 120, 70);
         f->set_border_thickness(3);
         f->set_resizable(true);
         
         // Label
-        l1 = new Label(this, 150,  20, "Liberation Sans, 18px", 190, FONT);
-        l1->hittest_visible = true;
+        l1 = new Label(this, 150, 20, 190, "Liberation Sans, 18px", FONT);
+        l1->set_hittest_visible(true);
         l1->set_resizable(true);
         
-        l2 = new Label(this, 150,  60, "Default font Label", 190);
-        l2->hittest_visible = true;
+        l2 = new Label(this, 150, 60, 190, "Default font Label");
+        l2->set_hittest_visible(true);
         l2->set_resizable(true);
         
         // TextBox
@@ -140,8 +151,8 @@ public:
         tb2 = new TextBox(this, 350, 60, "Default font TextBox", 200);
 
         // Button
-        b1 = new Button(this, 20,  100, switch_bg, "Default button", 150);
-        b2 = new Button(this, 20,  140, switch_bg, "Styled button", 150, FONT);
+        b1 = new Button(this, 20,  100, 150, "Default button", [this](){ switch_background(); });
+        b2 = new Button(this, 20,  140, 150, "Styled button",  [this](){ switch_background(); }, FONT);
         b2->set_border_color(0xe5d96e);
         b2->set_text_fill_normal(0xe5d96e);
         b2->set_normal_bg(0x6c6c6c);
@@ -150,10 +161,10 @@ public:
         b2->set_hold_bg(0x8c8c8c);
         
         // Spinner
-        s1 = new Spinner(this, 180,  100, 50, 80, FONT);
+        s1 = new Spinner(this, 180, 100, 80, 30, 0, INT_MIN, INT_MAX, FONT);
         s1->set_border_thickness(2);
         
-        s2 = new Spinner(this, 180,  140, 1, 40, 40, vec2(7, 8), FONT);
+        s2 = new Spinner(this, 180, 140, 40, 40, 1, -100, 100, FONT);
         s2->min_value = 1;
         s2->max_value = 9;
         
@@ -163,45 +174,24 @@ public:
         
         for (int i = 0; i < 10; i++)
         {
-            lb->add_item(new Entry("entry", i));
+            Entry e("entry", i);
+            entries.push_back(e);
+            lb->add_item(e.to_string());
         }
 
-        rm = new Button(this, 20, 330, rm_selected, "Remove selected", 150, vec2(10, 5), FONT);
-        add = new Button(this, 20, 360, add_random, "Add random", 150, vec2(28, 5), FONT);
-        srt1 = new Button(this, 20, 390, sort_vals, "Sort by value", 150, vec2(25, 5), FONT);
-        srt2 = new Button(this, 20, 420, sort_names, "Sort by name", 150, vec2(25, 5), FONT);
+        rm = new Button(this, 20, 330, 150, "Remove selected", [this](){ remove_selected(); },  FONT);
+        add = new Button(this, 20, 360, 150, "Add random", [this](){ add_entry(); }, FONT);
+        srt1 = new Button(this, 20, 390, 150, "Sort by value", [this](){ sort_entries(by_value_desc); }, FONT);
+        srt2 = new Button(this, 20, 420, 150, "Sort by name", [this](){ sort_entries(by_name_asc); }, FONT);
 
-        options = new ListBox(this, 180,  200, 200, 6, FONT);
-        options->set_border_color(0xff5555);
-        
-        options->add_item(new Option(0, "Remove selected"));
-        options->add_item(new Option(1, "Add random"));
-        options->add_item(new Option(2, "Sort by value (desc)"));
-        options->add_item(new Option(3, "Sort by name"));
-
-        doit = new Button(this, 180,  330, exec_selected, "Do it", 200, vec2(80, 5), FONT);
-    }
-
-    void action(event ev) override
-    {
-        if (ev.type == ev_command)
+        lb2 = new ListBox(this, 180,  200, 200, 6, FONT);
+        lb2->set_border_color(0xff5555);
+        for (const Option &o : options)
         {
-            switch(ev.command)
-            {
-            case rm_selected: remove_selected(); break;
-            case add_random: add_entry(); break;
-            case switch_bg: switch_background(); break;
-            case sort_vals: sort_list_values(); break;
-            case sort_names: sort_list_names(); break;
-            case exec_selected: dewit(); break;
-            default: break;
-            }
+            lb2->add_item(o.to_string());
         }
 
-        if (ev.type == genv::ev_key && ev.keycode == genv::key_enter)
-        {
-            printf("hello\n");
-        }
+        doit = new Button(this, 180,  330, 200, 50, "Do it", [this](){ dewit(); }, FONT);
     }
 };
 

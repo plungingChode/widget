@@ -31,13 +31,13 @@ namespace Controls
         schedule_update();
     }
 
-    void Frame::set_border_thickness(const unsigned thickness)
+    void Frame::set_border_thickness(int thickness)
     {
         border_thickness = thickness;
         schedule_update();
     }
 
-    void Frame::on_mouse_ev(const event& m, const bool btn_held)
+    void Frame::on_mouse_ev(const event& m, bool btn_held)
     {
         if (!hittest_visible) return;
         size_changed = false; // assume change was handled
@@ -61,9 +61,10 @@ namespace Controls
         
         if (resizing && held)
         {
-            vec2 m_limit(
-                std::max((unsigned)m.pos_x, x + min_width),
-                std::max((unsigned)m.pos_y, y + min_height)
+            vec2 m_limit
+            (
+                std::max(m.pos_x, x + min_width),
+                std::max(m.pos_y, y + min_height)
             );
             
             w += m_limit.x - x - w;
@@ -78,9 +79,11 @@ namespace Controls
 
                 dragged = true;
             }
-
-            x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - w);
-            y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - h);
+            
+            x = std::min(std::max(m.pos_x - drag_center.x, 0), ENV_WIDTH - w);
+            y = std::min(std::max(m.pos_y - drag_center.y, 0), ENV_HEIGHT - h);
+            // x = force_bounds(m.pos_x - drag_center.x, 0, ENV_WIDTH - w);
+            // y = force_bounds(m.pos_y - drag_center.y, 0, ENV_HEIGHT - h);
         }
         else
         {

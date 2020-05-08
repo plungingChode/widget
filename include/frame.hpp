@@ -14,8 +14,8 @@ namespace Controls
         genv::color focus_bg  = DEFAULT_FOCUS;
         genv::color hold_bg   = DEFAULT_MOUSEDOWN;
         genv::color border    = DEFAULT_BORDER;
-        unsigned int border_thickness;
-        unsigned int min_width, min_height;
+        int border_thickness;
+        int min_width, min_height;
 
         rect resize_hitbox;
 
@@ -36,10 +36,10 @@ namespace Controls
         
         void set_min_width(int mw) { min_width = mw; }
         void set_min_height(int mh) { min_height = mh; }
-        virtual void set_border_thickness(unsigned int thickness);
+        virtual void set_border_thickness(int thickness);
 
-        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const event &key_ev, int key_held = 0) override {}
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held) override;
+        virtual void on_key_ev(const genv::event &key_ev, int key_held) override {}
         virtual void render(genv::canvas &c) override;
     };
 }

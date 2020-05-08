@@ -1,11 +1,10 @@
 #include "listbox.hpp"
-#include <algorithm>
 
 using namespace genv;
 
 namespace Controls
 {
-    ListBox::ListBox(Scene *s, int x_, int y_, int w_, int items_vis, std::vector<ListBoxItem*> v, const genv::font *f)
+    ListBox::ListBox(Scene *s, int x_, int y_, int w_, int items_vis, std::vector<std::string> v, const genv::font *f)
         : Frame(s, x_, y_, w_, items_vis*(f->font_size+item_padding)+2, f),
           items(v), selected_item(nullptr), selected_index(-1),
           items_visible(items_vis), show_from(0)
@@ -25,14 +24,6 @@ namespace Controls
     ListBox::ListBox(Scene *s, int x_, int y_, int w_, int items_vis, const genv::font *f)
         : ListBox(s, x_, y_, w_, items_vis, {}, f)
     {
-    }
-
-    ListBox::~ListBox()
-    {
-        for (ListBoxItem *it : items)
-        {
-            delete it;
-        }
     }
 
     void ListBox::adjust_thumb()
@@ -55,7 +46,7 @@ namespace Controls
         }
     }
 
-    void ListBox::add_item(ListBoxItem *item)
+    void ListBox::add_item(const std::string &item)
     {
         items.push_back(item);
         adjust_thumb();
@@ -64,27 +55,23 @@ namespace Controls
     
     void ListBox::remove_item(int index)
     {
-        if (index >= 0 && index < (int)items.size())
+        items.erase(items.begin() + index);
+
+        show_from = force_bounds(show_from, 0, (int)items.size()-items_visible);
+
+        if (index == selected_index)
         {
-            delete items[index];
-            items.erase(items.begin() + index);
-
-            show_from = force_bounds(show_from, 0, (int)items.size()-items_visible);
-
-            if (index == selected_index)
-            {
-                selected_item = nullptr;
-                selected_index = -1;
-            }
-
-            adjust_thumb();
-            schedule_update();
+            selected_item = nullptr;
+            selected_index = -1;
         }
+
+        adjust_thumb();
+        schedule_update();
     }
 
-    void ListBox::sort(listbox_sort sort)
+    void ListBox::set_items(const std::vector<std::string> &new_items)
     {
-        std::sort(items.begin(), items.end(), sort);
+        items = new_items;
         schedule_update();
     }
 
@@ -143,7 +130,7 @@ namespace Controls
             }
             rendered 
                 << move_to(5+1, i*item_h+1+baseline_offs)
-                << text(items[index]->to_string());
+                << text(items[index]);
         }
     }
 
@@ -219,7 +206,7 @@ namespace Controls
                     float mouse_pos = m_rel.y / float(h-2+item_padding);
 
                     selected_index = show_from+(mouse_pos*items_visible);
-                    selected_item = items[selected_index];
+                    selected_item = &items[selected_index];
                 }
                 else if (m_rel.x > w-1-thumb.w &&
                          m_rel.x < w-1)

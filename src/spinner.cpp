@@ -5,8 +5,8 @@ using namespace genv;
 
 namespace Controls
 {
-    Spinner::Spinner(Scene *s, int x_, int y_, int val, int min_val, int max_val, int w_, int h_, vec2 pad, const genv::font *f)
-        : Label(s, x_, y_, std::to_string(val), w_, h_, pad, f),
+    Spinner::Spinner(Scene *s, int x_, int y_, int w_, int h_, int val, int min_val, int max_val, const genv::font *f)
+        : Label(s, x_, y_,  w_, h_, std::to_string(val), f),
           spin(spin_none),
           value(val),
           min_value(min_val),
@@ -16,29 +16,6 @@ namespace Controls
         Control::hittest_visible = true;
         Frame::hold_bg = DEFAULT_FOCUS;
         set_spinner_hitboxes();
-    }
-
-    Spinner::Spinner(Scene *s, int x_, int y_, int val, int min_val, int max_val, int w_, const genv::font *f)
-        : Label(s, x_, y_, std::to_string(val), w_, f),
-          spin(spin_none),
-          value(val),
-          min_value(min_val),
-          max_value(max_val)
-    {
-        Control::draggable = false;
-        Control::hittest_visible = true;
-        Frame::hold_bg = DEFAULT_FOCUS;
-        set_spinner_hitboxes();
-    }
-
-    Spinner::Spinner(Scene *s, int x_, int y_, int val, int w_, int h_, vec2 pad, const genv::font *f)
-        : Spinner(s, x_, y_, val, INT_MIN, INT_MAX, w_, h_, pad, f)
-    {
-    }
-
-    Spinner::Spinner(Scene *s, int x_, int y_, int val, int w_, const genv::font *f)
-        : Spinner(s, x_, y_, val, INT_MIN, INT_MAX, w_, f)
-    {
     }
 
     void Spinner::set_spinner_hitboxes()
@@ -78,7 +55,7 @@ namespace Controls
         return value;
     }
 
-    void Spinner::set_border_thickness(unsigned int thickness)
+    void Spinner::set_border_thickness(int thickness)
     {
         Frame::set_border_thickness(thickness);
         set_spinner_hitboxes();

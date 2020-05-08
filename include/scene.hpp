@@ -2,7 +2,6 @@
 #define SCENE_HPP_INCLUDED
 
 #include "control.hpp"
-#include "event.hpp"
 #include <vector>
 #include <functional>
 
@@ -10,10 +9,6 @@ namespace Controls
 {
     class Scene
     {
-    private:
-        event from_genv_ev(const genv::event &ev);
-        event from_command(int cmd);
-
     protected:
         const int KEY_DELAY = 7;
         const int REFRESH_RATE = 40;
@@ -46,9 +41,6 @@ namespace Controls
         void add_control(Control *c);
         void focus(Control *c);
         void focus(int index);
-
-        void action(int cmd);
-        virtual void action(event ev) = 0;
 
         void set_global_font(const genv::font *f);
         const genv::font* get_global_font() const;

@@ -16,11 +16,11 @@ namespace Controls
           size_changed(false),
           needs_update(true),
           dragged(false),
+          hittest_visible(true),
+          draggable(true),
           drag_center(vec2(0, 0)),
           owner(s),
-          font(nullptr),
-          hittest_visible(true),
-          draggable(true)
+          font(nullptr)
     {
         set_font(f);
         s->add_control(this);

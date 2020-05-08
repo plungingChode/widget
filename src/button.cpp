@@ -5,24 +5,16 @@ using namespace genv;
 
 namespace Controls
 {
-    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, h_, pad, f), action(a)
+    Button::Button(Scene *s, int x_, int y_, int w_, const std::string &text_, std::function<void()> a, const genv::font *f)
+        : Label(s, x_, y_, w_, text_, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
         Control::hittest_visible = true;
     }
 
-    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, vec2 pad, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, pad, f), action(a)
-    {
-        if (font) Control::rendered.transparent(true);
-        Control::draggable = false;
-        Control::hittest_visible = true;
-    }
-
-    Button::Button(Scene *s, int x_, int y_, int a, const std::string &text_, int w_, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, f), action(a)
+    Button::Button(Scene *s, int x_, int y_, int w_, int h_, const std::string &text_, std::function<void()> a, const genv::font *f)
+        : Label(s, x_, y_, w_, h_, text_, f), action(a)
     {
         if (font) Control::rendered.transparent(true);
         Control::draggable = false;
@@ -38,12 +30,11 @@ namespace Controls
         }
     }
 
-
     void Button::on_mouse_ev(const event& m, bool btn_held)
     {
         if (m.button == -btn_left && held && hovered)
         {
-            owner->action(action);
+            action();
         }
         Label::on_mouse_ev(m, btn_held);
     }
@@ -77,35 +68,32 @@ namespace Controls
             rendered << normal_bg;
         }
 
-        unsigned int b = border_thickness;
-
         // draw background
         rendered 
             << move_to(0, 0) 
-            << box(w-b, h-b);
+            << box(w-border_thickness, h-border_thickness);
 
-        int baseline = padding.y;
-        if (!font) baseline += rendered.cascent();
+        int baseline = -10;
+        if (!font) baseline += rendered.cascent()+2;
 
         rendered << border;
         if (held)
         {
             // bevel on bottom right, push in text
             rendered 
-                << move_to(1, h-b) << box(w-1, b)
-                << move_to(w-b, 1) << box(b, h-1)
-                << move_to(padding.x+1, baseline+1) 
-                << text_fill_normal << genv::text(text);
+                << move_to(1, h-border_thickness) << box(w-1, border_thickness)
+                << move_to(w-border_thickness, 1) << box(border_thickness, h-1);
         }
         else
         {
             // bevel on top left
             rendered 
-                << move_to(0, 0) << box(w-b, b)
-                << move_to(0, 0) << box(b, h-b)
-                << move_to(padding.x, baseline) 
-                << text_fill_normal << genv::text(text);
+                << move_to(0, 0) << box(w-border_thickness, border_thickness)
+                << move_to(0, 0) << box(border_thickness, h-border_thickness);
         }
+        // text in the middle
+        rendered << move_to(w/2-rendered.twidth(text)/2+held, h/2+baseline+held)
+                 << text_fill_normal << genv::text(text); 
 
         if(resizable)
         {

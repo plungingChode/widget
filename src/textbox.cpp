@@ -4,20 +4,8 @@ using namespace genv;
 
 namespace Controls
 {
-    TextBox::TextBox(Scene *s, int x_, int y_, const std::string &text_, int w_, int h_, vec2 pad, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, h_, pad, f)
-    {
-        Control::hittest_visible = true;
-    }
-
-    TextBox::TextBox(Scene *s, int x_, int y_, const std::string &text_, int w_, vec2 pad, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, pad, f)
-    {
-        Control::hittest_visible = true;
-    }
-
     TextBox::TextBox(Scene *s, int x_, int y_, const std::string &text_, int w_, const genv::font *f)
-        : Label(s, x_, y_, text_, w_, f)
+        : Label(s, x_, y_, w_, text_, f)
     {
         Control::hittest_visible = true;
     }
@@ -27,7 +15,7 @@ namespace Controls
         char kc = key_held ? (char)key_held : (char)key_ev.keycode;
 
         if (kc >= 32 && kc <= 255 && 
-            rendered.twidth(text+kc) <= (int)w - 2*padding.x)
+            rendered.twidth(text+kc) <= w - 10)
         {
             // visible charcodes: 32 - 255
             text += kc;
@@ -45,8 +33,8 @@ namespace Controls
         Label::update();
         if (focused)
         {
-            int cursor_x = padding.x + rendered.twidth(text) + 2;
-            int cursor_y = padding.y;
+            int cursor_x = 5 + rendered.twidth(text) + 2;
+            int cursor_y = 5;
 
             rendered << move_to(cursor_x, cursor_y)
                      << text_fill_focused

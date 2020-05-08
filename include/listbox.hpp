@@ -8,15 +8,6 @@
 
 namespace Controls
 {
-    class ListBoxItem
-    {
-    public:
-        virtual ~ListBoxItem() = default;
-        virtual std::string to_string() = 0;
-    };
-
-    typedef std::function<bool(ListBoxItem*, ListBoxItem*)> listbox_sort;
-
     class ListBox : public Frame
     {
     private:
@@ -26,8 +17,8 @@ namespace Controls
     protected:
         static const int item_padding = 2;
 
-        std::vector<ListBoxItem*> items;
-        ListBoxItem *selected_item;
+        std::vector<std::string> items;
+        std::string *selected_item;
         int selected_index;
         int items_visible;
         int show_from;
@@ -45,23 +36,22 @@ namespace Controls
         virtual void update() override;
         
     public:
-        ListBox(Scene *owner, int x, int y, int width, int items_visible, std::vector<ListBoxItem*> items, const genv::font *font = &DEFAULT_FONT);
+        ListBox(Scene *owner, int x, int y, int width, int items_visible, std::vector<std::string> items, const genv::font *font = &DEFAULT_FONT);
         ListBox(Scene *owner, int x, int y, int width, int items_visible, const genv::font *font = &DEFAULT_FONT);
-        virtual ~ListBox();
 
         void set_font(const genv::font *font) override;
 
-        void add_item(ListBoxItem *item);
+        void add_item(const std::string &item);
         void remove_item(int index);
-        void sort(listbox_sort comp);       
 
-        ListBoxItem* get_selected_item() const { return selected_item; }
+        std::string get_selected_item() const { return *selected_item; }
         int get_selected_index() const { return selected_index; }
 
-        const std::vector<ListBoxItem*>& get_items() const { return items; }
+        const std::vector<std::string>& get_items() const { return items; }
+        void set_items(const std::vector<std::string> &new_items);
 
-        virtual void on_mouse_ev(const event &mouse_ev, bool btn_held = false) override;
-        virtual void on_key_ev(const event &key_ev, int key_held = 0) override;
+        virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held) override;
+        virtual void on_key_ev(const genv::event &key_ev, int key_held) override;
     };
 }
 

@@ -6,3 +6,5 @@ Makefile
 *.out
 *.ttf
 build
+lib
+*.sh

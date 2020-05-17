@@ -6,8 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <functional>
-
-using namespace Controls;
+#include "styles.hpp"
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -155,17 +154,13 @@ public:
         
         // TextBox
         tb1 = new TextBox(this, 350, 20, "Liberation Sans, 20px", 220, FONT);
+        set_style(tb1, DARK);
         tb2 = new TextBox(this, 350, 60, "Default font TextBox", 200);
 
         // Button
         b1 = new Button(this, 20,  100, 150, "Default button", [this](){ switch_background(); });
         b2 = new Button(this, 20,  140, 150, "Styled button",  [this](){ switch_background(); }, FONT);
-        b2->set_border_color(0xe5d96e);
-        b2->set_text_fill_normal(0xe5d96e);
-        b2->set_normal_bg(0x6c6c6c);
-        b2->set_hover_bg(0x7c7c7c);
-        b2->set_focus_bg(0x7c7c7c);
-        b2->set_hold_bg(0x8c8c8c);
+        set_style(b2, DARK);
         
         // Spinner
         s1 = new Spinner(this, 180, 100, 80, 30, 0, INT_MIN, INT_MAX, FONT);
@@ -174,14 +169,16 @@ public:
         s2 = new Spinner(this, 180, 140, 40, 40, 1, -100, 100, FONT);
         s2->min_value = 1;
         s2->max_value = 9;
+        set_style(s2, DARK);
         
         // ListBox
         lb = new ListBox(this, 20,  200, 150, 6);
-        lb->set_border_color(0x999999);
+        // lb->set_border_color(0x999999);
+        set_style(lb, DARK);
         
         for (int i = 0; i < 10; i++)
         {
-            Entry e("entry", i);
+            Entry e("entry", i+1);
             entries.push_back(e);
             lb->add_item(e.to_string());
         }
@@ -192,7 +189,8 @@ public:
         srt2 = new Button(this, 20, 420, 150, "Sort by name", [this](){ sort_entries(by_name_asc); }, FONT);
 
         lb2 = new ListBox(this, 180,  200, 200, 6, FONT);
-        lb2->set_border_color(0xff5555);
+        set_style(lb2, DEFAULT);
+        // lb2->set_border_color(0xff5555);
         for (const Option &o : options)
         {
             lb2->add_item(o.to_string());

@@ -3,18 +3,17 @@
 
 #include "label.hpp"
 
-namespace Controls
+class TextBox : public Label
 {
-    class TextBox : public Label
-    {
-    protected:
-        void update() override;
+protected:
+    void update() override;
 
-    public:
-        TextBox(Scene *owner, int x, int y, const std::string &text, int width, const genv::font *font = nullptr);
+public:
+    TextBox(Scene *owner, int x, int y, const std::string &text, int width, const genv::font *font = nullptr);
 
-        virtual void on_key_ev(const genv::event& key_ev, int key_held) override;
-    };
-}
+    std::string get_text() const { return text; }
+
+    virtual void on_key_ev(const genv::event& key_ev, int key_held) override;
+};
 
 #endif

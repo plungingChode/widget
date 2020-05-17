@@ -3,22 +3,19 @@
 
 #include "vec2.hpp"
 
-namespace Controls
+struct rect
 {
-    struct rect
-    {
-        int x, y;
-        int w, h;
+    int x, y;
+    int w, h;
 
-        rect(int x, int y, int width, int height);
-        rect(vec2 start, int width, int height);
-        rect(int width, int height);
-        rect();
+    rect(int x, int y, int width, int height);
+    rect(vec2 start, int width, int height);
+    rect(int width, int height);
+    rect();
 
-        bool intersects(const vec2& point) const;
-        bool intersects(int x, int y) const;
-        bool intersects(const rect& rect) const;
-    };
-}
+    bool intersects(const vec2& point) const;
+    bool intersects(int x, int y) const;
+    bool intersects(const rect& rect) const;
+};
 
 #endif

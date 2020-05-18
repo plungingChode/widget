@@ -12,7 +12,7 @@ Spinner::Spinner(Scene *s, int x_, int y_, int w_, int h_, int val, int min_val,
 {
     Control::draggable = false;
     Control::hittest_visible = true;
-    Frame::hold_bg = DEFAULT_FOCUS;
+    Frame::hold_bg = DEFAULT_BACKGROUND_FOCUS;
 
     spin_up_icon = read_matrix(UP_ARROW, spin_btn_color);
     spin_dn_icon = read_matrix(DOWN_ARROW, spin_btn_color);

@@ -13,8 +13,9 @@ Label::Label(Scene *s, int x_, int y_, int w_, int h_, const std::string &tx, co
 Label::Label(Scene *s, int x_, int y_, int w_, const std::string &tx, const genv::font *f)
     : Label(s, x_, y_, w_, 0, tx, f)
 {
-    Control::h = rendered.cascent() + rendered.cdescent() + 10;
-    rendered.open(Control::w, Control::h);
+    h = rendered.cascent() + rendered.cdescent() + 10;
+    rendered.open(w, h);
+    set_font(f);
 }
 
 void Label::set_text(const std::string &text_)

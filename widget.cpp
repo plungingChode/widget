@@ -10,7 +10,7 @@
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-const genv::font *FONT = new genv::font("LiberationSans-Regular.ttf", 16);
+const genv::font *FONT = new genv::font("LiberationSans-Regular.ttf", 18);
 
 struct Entry
 {
@@ -56,6 +56,8 @@ protected:
     TextBox *tb1, *tb2;
     Button *b1, *b2;
     Spinner *s1, *s2;
+    StaticText *st1, *st2;
+    CheckBox *cb1, *cb2;
     ListBox *lb, *lb2;
     Button *rm, *add, *srt1, *srt2;
     Button *doit;
@@ -153,7 +155,7 @@ public:
         l2->set_resizable(true);
         
         // TextBox
-        tb1 = new TextBox(this, 350, 20, "Liberation Sans, 20px", 220, FONT);
+        tb1 = new TextBox(this, 350, 20, "Liberation Sans, 18px", 220, FONT);
         set_style(tb1, DARK);
         tb2 = new TextBox(this, 350, 60, "Default font TextBox", 200);
 
@@ -170,6 +172,15 @@ public:
         s2->min_value = 1;
         s2->max_value = 9;
         set_style(s2, DARK);
+
+        // StaticText
+        // st1 = new StaticText(this, 300, 100, "Default font StaticText");
+        st2 = new StaticText(this, 300, 140, "Liberation Sans, 18px", FONT);
+
+        // CheckBox
+        cb1 = new CheckBox(this, 300, 100, "Default font CheckBox");
+        set_style(cb1, DARK);
+        set_style(cb1, DEFAULT);
         
         // ListBox
         lb = new ListBox(this, 20,  200, 150, 6);

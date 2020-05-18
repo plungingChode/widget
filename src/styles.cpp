@@ -26,7 +26,7 @@ void set_style(Button *b, style_t style)
     b->set_text_focus_color(palette[TEXT_FOCUS]);
 }
 
-void set_frame(Frame *f, style_t style)
+void set_style(Frame *f, style_t style)
 {
     const int *palette = get_palette(style);
     f->set_background_color(palette[NORMAL]);
@@ -86,4 +86,15 @@ void set_style(TextBox *tb, style_t style)
     tb->set_hold_color(palette[FOCUS]);
     tb->set_text_color(palette[TEXT_NORMAL]);
     tb->set_text_focus_color(palette[TEXT_FOCUS]); 
+}
+
+void set_style(CheckBox *c, style_t style)
+{
+    const int *palette = get_palette(style);
+    c->set_background_color(palette[NORMAL]);
+    c->set_focus_color(palette[FOCUS]);
+    c->set_border_color(palette[BORDER]);
+    c->set_hover_color(palette[HOVER]);
+    c->set_hold_color(palette[HOLD]);
+    c->set_text_color(palette[TEXT_FOCUS]);
 }

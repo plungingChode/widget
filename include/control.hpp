@@ -21,12 +21,15 @@ protected:
 
     // Coordinates of the mouse event that started the drag
     vec2 drag_center;
+    rect resize_hitbox;
+    int min_width, min_height;
 
     Scene *owner;
     const genv::font *font;
 
     Control(Scene *owner, int x, int y, int width, int height, const genv::font *font = nullptr);
 
+    void reset_resize_hitbox();
     virtual void update() = 0;
 
 public:
@@ -49,13 +52,15 @@ public:
     void set_draggable(bool val) { draggable = val; }
     void set_hittest_visible(bool val) { hittest_visible = val; }
     virtual void set_font(const genv::font *font);
+    void set_min_width(int mw) { min_width = mw; }
+    void set_min_height(int mh) { min_height = mh; }
 
-    virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held) = 0;
-    virtual void on_key_ev(const genv::event& key_ev, int key_held) = 0;
+    virtual void on_mouse_ev(const genv::event& mouse_ev, bool btn_held);
+    virtual void on_key_ev(const genv::event& key_ev, int key_held);
 
     void schedule_update() { needs_update = true; }
     bool updated() const { return needs_update; }
-    virtual void render(genv::canvas& c) = 0;
+    virtual void render(genv::canvas& c);
 };
 
 #endif

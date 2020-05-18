@@ -26,7 +26,7 @@ protected:
     vec2 up_icon_pos;
     vec2 dn_icon_pos;
 
-    genv::color spin_color = DEFAULT_MOUSEDOWN;
+    genv::color spin_color = DEFAULT_BACKGROUND_HOLD;
     genv::color spin_btn_color = DEFAULT_TEXT_NORMAL;
 
     virtual void update() override;

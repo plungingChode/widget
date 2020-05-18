@@ -7,18 +7,14 @@
 class Frame : public Control
 {
 protected:
-    genv::color normal_bg = DEFAULT_NORMAL;
-    genv::color hover_bg  = DEFAULT_HOVER;
-    genv::color focus_bg  = DEFAULT_FOCUS;
-    genv::color hold_bg   = DEFAULT_MOUSEDOWN;
+    genv::color normal_bg = DEFAULT_BACKGROUND_NORMAL;
+    genv::color hover_bg  = DEFAULT_BACKGROUND_HOVER;
+    genv::color focus_bg  = DEFAULT_BACKGROUND_FOCUS;
+    genv::color hold_bg   = DEFAULT_BACKGROUND_HOLD;
     genv::color border    = DEFAULT_BORDER;
     int border_thickness;
-    int min_width, min_height;
-
-    rect resize_hitbox;
 
     void set_color(genv::color &target, int hex);        
-    void reset_resize_hitbox();
     virtual void render_resize_area();
     virtual void update() override;
 
@@ -31,12 +27,9 @@ public:
     void set_hover_color(int hex) { set_color(hover_bg, hex); }
     void set_hold_color(int hex) { set_color(hold_bg, hex); }
     void set_border_color(int hex) { set_color(border, hex); }
-    
-    void set_min_width(int mw) { min_width = mw; }
-    void set_min_height(int mh) { min_height = mh; }
+
     virtual void set_border_thickness(int thickness);
 
-    virtual void on_mouse_ev(const genv::event &mouse_ev, bool btn_held) override;
     virtual void on_key_ev(const genv::event &key_ev, int key_held) override {}
     virtual void render(genv::canvas &c) override;
 };

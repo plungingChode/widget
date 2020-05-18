@@ -7,6 +7,7 @@ class Label;
 class ListBox;
 class Spinner;
 class TextBox;
+class CheckBox;
 
 enum style_t
 {
@@ -33,11 +34,11 @@ const int default_colors[9] =
 
 const int dark_colors[9] = 
 {
-    0x6C6C6C, // dk gray
-    0x7C7C7C, // lighter dk gray
+    0x5C5C5C, // dk gray
+    0x6C6C6C, // lighter dk gray
     0xE5D96E, // lt yellow
-    0x7C7C7C, // lighter dk gray
-    0x8C8C8C, // even lighter dk gray
+    0x6C6C6C, // lighter dk gray
+    0x7C7C7C, // even lighter dk gray
     0xE5D96E, // lt yellow
     0xE5D96E, // lt yellow
     0xB7B49C, // desaturated lt yellow
@@ -55,5 +56,6 @@ void set_style(Label* lbl, style_t style);
 void set_style(ListBox* lb, style_t style);
 void set_style(Spinner* spn, style_t style);
 void set_style(TextBox* tb, style_t style);
+void set_style(CheckBox* cb, style_t style);
 
 #endif

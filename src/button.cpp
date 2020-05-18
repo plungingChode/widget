@@ -6,7 +6,7 @@ using namespace genv;
 Button::Button(Scene *s, int x_, int y_, int w_, const std::string &text_, std::function<void()> a, const genv::font *f)
     : Label(s, x_, y_, w_, text_, f), action(a)
 {
-    if (font) Control::rendered.transparent(true);
+    if (font) rendered.transparent(true);
     Control::draggable = false;
     Control::hittest_visible = true;
 }
@@ -14,7 +14,7 @@ Button::Button(Scene *s, int x_, int y_, int w_, const std::string &text_, std::
 Button::Button(Scene *s, int x_, int y_, int w_, int h_, const std::string &text_, std::function<void()> a, const genv::font *f)
     : Label(s, x_, y_, w_, h_, text_, f), action(a)
 {
-    if (font) Control::rendered.transparent(true);
+    if (font) rendered.transparent(true);
     Control::draggable = false;
     Control::hittest_visible = true;
 }

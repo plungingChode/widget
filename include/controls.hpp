@@ -9,3 +9,5 @@
 #include "textbox.hpp"
 #include "scene.hpp"
 #include "listbox.hpp"
+#include "statictext.hpp"
+#include "checkbox.hpp"
